@@ -1,6 +1,6 @@
 # Web-Based Online Examination Management System (FRONTEND)
 ------------
-#### Annyeong :tw-2764: :tw-2764: :tw-2764:
+#### Annyeong :heart: :heart: :heart:
 
 After nyong ma clone tong front end sa mga computer nyo, eto mga need nyo gawin:
 
