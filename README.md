@@ -10,7 +10,10 @@ After nyong ma clone tong front end sa mga computer nyo, eto mga need nyo gawin:
 - Dapat same din tayo ng version ng NPM bago kayo tumuloy sa next step. importante na pareparehas tayo ng version para iwas problema :)
 - Para makita kung same, bukas kayo cmd and run nyo yung command na `node -v` para makita version ng node, and `npm -v` para sa version ng npm.
 - Compare nyo yung version sa nakalagay sa `versions.txt` file. If parehas, pwidi na tumuloy sa next step.
-
+\
+&nbsp;
+\
+&nbsp;
 
 2. **Buksan nyo command prompt, then navigate kayo sa folder ng project na to kung san nyo man sinave sa computer nyo**.
 - Type nyo tong command na to `npm install` tas enter. Iiinstall neto lahat ng dependencies na nasa `package.json` file.
