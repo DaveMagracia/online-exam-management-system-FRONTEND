@@ -1,70 +1,23 @@
-# Getting Started with Create React App
+# Web-Based Online Examination Management System (FRONTEND)
+------------
+#### Annyeong :tw-2764: :tw-2764: :tw-2764:
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+After nyong ma clone tong front end sa mga computer nyo, eto mga need nyo gawin:
 
-## Available Scripts
+## STEPS:
 
-In the project directory, you can run:
+1. **Bago nyo gawin to, isure nyo na nainstall nyo na nodeJS**
+- Dapat same din tayo ng version ng NPM bago kayo tumuloy sa next step. importante na pareparehas tayo ng version para iwas problema :)
+- Para makita kung same, bukas kayo cmd and run nyo yung command na `node -v` para makita version ng node, and `npm -v` para sa version ng npm.
+- Compare nyo yung version sa nakalagay sa `versions.txt` file. If parehas, pwidi na tumuloy sa next step.
 
-### `npm start`
+2. **Buksan nyo command prompt, then navigate kayo sa folder ng project na to kung san nyo man sinave sa computer nyo**.
+- Type nyo tong command na to `npm install` tas enter. Iiinstall neto lahat ng dependencies na nasa `package.json` file.
+- After install, ipagcompare nyo yung versions ng dependencies sa `package.json` AND sa `versions.txt`
+- Sa `package.json` nyo makikita yung lahat ng package na nakainstall sa proj na to pati yung mga version nila. (nasa 'dependencies')
+- Yung `versions.txt` ginawa ko para macompare nyo kung same ba ng version yung mga nainstall nyo. Importante kasi na pareparehas taung lahat. okie poh????
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+3. **Pag tapos icheck if pareparehas ng version. pwede na irun tong frontend**
+- Sa cmd, run nyo yung command na `npm start`
+- Automatic mag bubukas na yung browser nyo and mapupunta sa localhost
+- If walang lumabas, type nyo nalang sa browser `localhost:3000`
