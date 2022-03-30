@@ -19,6 +19,7 @@ After nyong ma clone tong front end sa mga computer nyo, eto mga need nyo gawin:
 - Sa `package.json` nyo makikita yung lahat ng package na nakainstall sa proj na to pati yung mga version nila. (nasa 'dependencies')
 - Yung `versions.txt` ginawa ko para macompare nyo kung same ba ng version yung mga nainstall nyo. Importante kasi na pareparehas taung lahat. okie poh????
 
+&nbsp;
 
 3. **Pag tapos icheck if pareparehas ng version. pwede na irun tong frontend**
 - Sa cmd, run nyo yung command na `npm start`
