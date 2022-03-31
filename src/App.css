@@ -1,3 +1,5 @@
+/* UNIVERSAL STYLES */
+
 * {
     box-sizing: border-box;
 }
@@ -5,30 +7,5 @@
 body {
     margin: 0;
     padding: 0;
-    background-color: #20232a !important;
     height: 100%;
-}
-
-.App{
-    height: 100vh;
-}
-
-.App img {
-    width: 150px;
-    margin-right: 20px;
-}
-
-.navbar{
-    position: fixed !important;
-    padding: 20px;
-    width: 100%;
-    background-color: #282c34;
-}
-
-.nav-link, .navbar-brand{
-    color: rgb(97, 219, 251) !important;
-}
-
-h1 {
-    color: rgb(97, 219, 251);
 }

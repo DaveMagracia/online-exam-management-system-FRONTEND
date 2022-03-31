@@ -1,0 +1,7 @@
+.login_root{
+    min-height: calc(100vh - 50px);
+}
+
+.form_container{
+    background-color: white;
+}

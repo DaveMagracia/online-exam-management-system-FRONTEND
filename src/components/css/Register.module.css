@@ -1,0 +1,39 @@
+.register_root{
+    min-height: 100vh;
+}
+
+.left{
+    background-color: #9c2a22 !important;
+    min-width: 25%;
+    min-height: 100%;
+}
+
+.right{
+    background-color: white;
+    min-width: 75%;
+}
+
+.divider{
+    background-color: #992219 !important;
+    height: 50px;
+    width: 100vw;
+}
+
+.form{
+    max-width: 500px !important;
+    margin: 0;
+}
+
+.reg_btn{
+    width: 100% !important;
+    height: 40px !important;
+}
+
+.tac{
+    cursor: pointer;
+}
+
+.field{
+    outline: none !important;
+    border: none !important;
+}
