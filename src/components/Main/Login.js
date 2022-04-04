@@ -5,7 +5,6 @@ import axios from 'axios'
 import { useNavigate } from "react-router-dom";
 
 export default function Login(){
-
     let navigate = useNavigate();
     //form state
     const [formData, setFormData] = React.useState({
@@ -55,6 +54,15 @@ export default function Login(){
         return !hasEmptyFields;
     }
     
+
+    React.useEffect(()  => {
+        //if user accesses this page while logged in, log the user out
+        const token = localStorage.getItem('token')
+        if(token) navigate('/dashboard')
+    })
+
+
+
     async function loginUser(event){
         event.preventDefault()
         if(validateForm()){
@@ -67,8 +75,8 @@ export default function Login(){
             //in this then, redirect user to main page
             .then(data => {
                 if(data.data.user){
-                    alert('test: login successful')
-                    navigate("/");
+                    localStorage.setItem('token', data.data.user) //put the token in local storage
+                    navigate("/dashboard");
                 }
             })
             .catch(err => {
@@ -88,7 +96,6 @@ export default function Login(){
                 <div className={`${css.form_container} container`}>    
                 <h1 className="mb-4">Login</h1>
                     <form onSubmit={loginUser}>
-                        {/* TODO: if credentials are invalid, server must respond back */}
                         {   
                             loginError.hasError &&
                             <div className="alert alert-danger" role="alert">

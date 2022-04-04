@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import css from './css/Register.module.css';
 import axios from 'axios'
 import { useNavigate } from "react-router-dom";
@@ -71,7 +71,6 @@ export default function Register(){
             ...prevFormData,
             [name]: type === "checkbox" ? checked : value
         })})
-
     }
 
     // validates fields; returns true if form is valid, else returns false
@@ -130,13 +129,16 @@ export default function Register(){
         if(validateForm()){
             //SEND POST REQUEST TO API, THEN WRITE TO DB
             setLoading(true)
+            //crud
+            //c - post
+            //r - get
+            //u - put/patch
+            //d - delete
             await axios({
                 method: 'POST',
                 url: 'http://localhost:5000/user/register',
                 data: formData
-            })
-            //in this then, redirect user to login page
-            .then(data => {
+            }).then(data => { //in this then, redirect user to login page
                 setTimeout(() => {
                     setLoading(false)
                     navigate("/login");
@@ -154,17 +156,24 @@ export default function Register(){
         }
     }
 
+    React.useEffect(()  => {
+        //if user accesses this page while logged in, log the user out
+        const token = localStorage.getItem('token')
+        if(token) localStorage.removeItem('token')
+    })
+
+
     return (
         <div>
             {
                 loading ?
-                <div className={`${css.register_root} d-flex flex-column align-items-center justify-content-center`}>
-                    <PuffLoader  
-                        loading={loading} 
-                        color="#9c2a22"
-                        size={80} />
-                    <p className='lead mt-4'>&nbsp;&nbsp;Creating your account...</p>
-                </div>
+                    <div className={`${css.register_root} d-flex flex-column align-items-center justify-content-center`}>
+                        <PuffLoader  
+                            loading={loading} 
+                            color="#9c2a22"
+                            size={80} />
+                        <p className='lead mt-4'>&nbsp;&nbsp;Creating your account...</p>
+                    </div>
                 :
                 <div>
                     <div className={`${css.register_root} d-flex`}>

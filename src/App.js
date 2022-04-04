@@ -1,19 +1,26 @@
 import React from 'react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
-import Login from './components/Login'
-import Register from './components/Register'
-import Landing from './components/Landing'
+import Login from './components/Main/Login'
+import Register from './components/Main/Register'
+import Landing from './components/Main/Landing'
+import Main from './components/Main/Main'
+import { UserContext } from './UserContext'
 
 import './App.css'
 
 export default function App() {
+  const [user, setUser] = React.useState({})
+
   return (
-      <Router>
-        <Routes>
-          <Route path='/' element={<Landing />}/>
-          <Route path='/login' element={<Login/>}/>
-          <Route path='/register' element={<Register/>}/>
-        </Routes>
-      </Router>
+      <UserContext.Provider value={{ user, setUser }}>
+        <Router>
+          <Routes>
+            <Route path='/' element={<Landing />}/>
+            <Route path='/login' element={<Login/>}/>
+            <Route path='/register' element={<Register/>}/>
+            <Route path='/dashboard' element={<Main/>}/>
+          </Routes>
+        </Router>
+      </UserContext.Provider>
   )
 }
