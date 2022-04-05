@@ -1,8 +1,6 @@
 import React, { useContext, useEffect } from 'react'
 //components
-import StudentNavbar from '../Student/StudentNavbar'
 import StudentDashboard from '../Student/StudentDashboard'
-import FacultyNavbar from '../Faculty/FacultyNavbar'
 import FacultyDashboard from '../Faculty/FacultyDashboard'
 import { UserContext } from '../../UserContext'
 import css from './css/Main.module.css'
