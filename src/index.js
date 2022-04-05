@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 // import ReactDOM from 'react-dom';
-import {createRoot} from 'react-dom/client';
-import App from './App';
-import "bootstrap/dist/css/bootstrap.min.css"
+import { createRoot } from "react-dom/client";
+import App from "./App";
+import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
 
 // OLD CODE
@@ -10,6 +10,5 @@ import "bootstrap/dist/js/bootstrap.min.js";
 // ReactDOM.render(<App />, document.getElementById('root'));
 
 // SOLUTION:
-const root = createRoot(document.getElementById('root'));
-root.render(<App />)
-
+const root = createRoot(document.getElementById("root"));
+root.render(<App />);

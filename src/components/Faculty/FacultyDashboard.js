@@ -5,23 +5,23 @@ import ExamList from "./ExamList";
 import QuestionBankList from "./QuestionBankList";
 
 export default function FacultyDashboard(props) {
-  return (
-    <>
-      <FacultyNavbar username={props.username} />
-      <div className={`${css.fact_dashboard_root} p-3`}>
-        <div className="d-flex flex-column container">
-          <h1 className="display-1 m-0">Faculty Dashboard</h1>
-          <hr />
+   return (
+      <>
+         <FacultyNavbar username={props.username} />
+         <div className={`${css.fact_dashboard_root} p-3`}>
+            <div className="d-flex flex-column container">
+               <h1 className="display-1 m-0">Faculty Dashboard</h1>
+               <hr />
 
-          <ExamList />
-          <hr className="mt-5" />
+               <ExamList />
+               <hr className="mt-5" />
 
-          <div>
-            <h3>Question Banks</h3>
-            <QuestionBankList />
-          </div>
-        </div>
-      </div>
-    </>
-  );
+               <div>
+                  <h3>Question Banks</h3>
+                  <QuestionBankList />
+               </div>
+            </div>
+         </div>
+      </>
+   );
 }
