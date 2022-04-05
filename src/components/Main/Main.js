@@ -89,11 +89,6 @@ export default function Main(){
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.5 }}>
                             { 
-                                user.userType === "student" ?
-                                <StudentNavbar username={user.username}/> :
-                                <FacultyNavbar username={user.username}/> 
-                            }
-                            { 
                                 user.userType === "student" ? 
                                 <StudentDashboard username={user.username}/>:
                                 <FacultyDashboard username={user.username}/>
