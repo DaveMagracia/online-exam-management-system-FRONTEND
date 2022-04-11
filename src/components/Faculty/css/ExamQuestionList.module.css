@@ -1,0 +1,25 @@
+.no_questions_container {
+   /* padding: 70px 0 200px 0; */
+   height: 350px;
+   padding-top: 70px;
+}
+
+.no_questions_container2 {
+   /* padding: 70px 0 200px 0; */
+   height: 350px;
+}
+
+.no_questions_alert {
+   background-color: #dc3545 !important;
+   border: #dc3545 !important;
+   padding: 12px !important;
+   color: white !important;
+}
+
+.questions_container {
+   min-height: 350px;
+}
+
+.action_button {
+   cursor: pointer;
+}

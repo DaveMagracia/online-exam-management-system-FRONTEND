@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 //components
 import StudentDashboard from "../Student/StudentDashboard";
 import FacultyDashboard from "../Faculty/FacultyDashboard";
@@ -14,9 +14,8 @@ import { motion, AnimatePresence } from "framer-motion"; //FRAMER MOTION FOR ANI
 export default function Main() {
    //useNavigate hook from React Router
    const { user, setUser } = useContext(UserContext);
+   const [isLoading, setLoading] = React.useState(true); //if the user is already set in the context, don't show loading
    const navigate = useNavigate();
-
-   const [isLoading, setLoading] = React.useState(true); //loading initially set to true
 
    // gets the user info based on the token
    const getUserInfo = async () => {
@@ -39,28 +38,42 @@ export default function Main() {
             }, 2000);
          })
          .catch((err) => {
+            console.log(err);
             setLoading(false);
          });
    };
 
    //runs after the component mounts
-   useEffect(() => {
-      const token = localStorage.getItem("token"); //get token from local storage; run 'localStorage' in console to see the token
-      if (token) {
-         let user = jwt_decode(token); //decode the received token
-         if (!user) {
-            setLoading(false);
-            localStorage.removeItem("token");
-            navigate("/login"); //redirect to login page if something went wrong
-         } else {
-            //if user exists, get their info
-            getUserInfo();
-         }
+   React.useEffect(() => {
+      //if userData is already on local storage, then there is no need to fetch user data from server
+      const userData = localStorage.getItem("userData");
+      if (userData) {
+         setLoading(false);
+         setUser(JSON.parse(userData));
       } else {
-         //if user tries to access dashboard while not logged in, redirect to login page
-         navigate("/login");
+         const token = localStorage.getItem("token"); //get token from local storage; run 'localStorage' in console to see the token
+         if (token) {
+            let user = jwt_decode(token); //decode the received token
+            if (!user) {
+               setLoading(false);
+               localStorage.removeItem("token");
+               navigate("/login"); //redirect to login page if something went wrong
+            } else {
+               //if user exists, get their info
+               getUserInfo();
+            }
+         } else {
+            //if user tries to access dashboard while not logged in, redirect to login page
+            navigate("/login");
+         }
       }
    }, []); // empty array as the second agument means this effect will only run once after the component mounts
+
+   React.useEffect(() => {
+      //put userData on local storage; data only contains email, username, and usertype
+      //This is for the browser to remember the user, to prevent from fetching user data everytime the page is reloaded
+      localStorage.setItem("userData", JSON.stringify(user));
+   });
 
    return (
       <>

@@ -1,21 +1,264 @@
 import React from "react";
 import css from "./css/ExamListBox.module.css";
 import { useNavigate } from "react-router-dom";
+import {
+   MdModeEdit,
+   MdDelete,
+   MdOutlineMoreVert,
+   MdContentCopy,
+} from "react-icons/md";
+import axios from "axios";
+import { Modal, Button } from "react-bootstrap";
 
 export default function ExamListBox(props) {
    const navigate = useNavigate();
+   const examData = props.examData;
+   const [isShownModal, setisShownModal] = React.useState(false);
+   const [isShownCodeModal, setIsShownCodeModal] = React.useState(false);
+   const [activeDeleteId, setActiveDeleteId] = React.useState(null);
+   const [examCode, setExamCode] = React.useState("");
 
-   function goToExamDetails() {
-      navigate(`/exam-details/${props.examId}`);
+   function openDeleteModal(examId) {
+      //open modal and set the activeDeleteId to the id of the item to be deleted
+
+      //this step is necessary because we cannot pass data to the modal directly
+      //so we put the id into a state, so that the modal will have a reference
+      //on what data to be deleted once the "continue" button is clicked
+      //the actual deletion happens on deleteQuestion()
+      setisShownModal(true);
+      setActiveDeleteId(examId);
+   }
+
+   function openExamCodeModal(examCode) {
+      setExamCode(examCode);
+      setIsShownCodeModal(true);
+   }
+
+   async function deleteQuestion() {
+      //delete the exam in db
+      await axios({
+         method: "DELETE",
+         baseURL: `http://www.localhost:5000/exam/${activeDeleteId}`,
+         headers: {
+            Authorization: localStorage.getItem("token"),
+         },
+      }).then(() => {
+         props.getExams(); //getExams again to refresh the list
+      });
+
+      setActiveDeleteId(null);
+      handleModalClose();
+   }
+
+   function handleModalClose() {
+      setisShownModal(false);
+   }
+
+   function handleCodeModalClose() {
+      setIsShownCodeModal(false);
+   }
+
+   function goToEditExam() {
+      navigate(`/edit-exam/${examData._id}`);
+   }
+
+   function getExamStatus(status) {
+      if (status === "posted") {
+         return <span className="badge rounded-pill bg-success">Posted</span>;
+      } else if (status === "open") {
+         return <span className="badge rounded-pill bg-warning">Open</span>;
+      } else {
+         // return <small className="text-muted">Unposted</small>;
+         return (
+            <span className="badge rounded-pill bg-secondary">Unposted</span>
+         );
+      }
+   }
+
+   function copyExamCode() {
+      // Copies the exam code from the modal to the clipboard
+      //code source: https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_copy_clipboard2
+      var copyText = document.getElementById("exam_code");
+      copyText.select();
+      copyText.setSelectionRange(0, 99999);
+      navigator.clipboard.writeText(copyText.value);
+
+      var tooltip = document.getElementById("tooltip");
+      tooltip.innerHTML = "Copied!";
+   }
+
+   function onMouseOutTooltip() {
+      var tooltip = document.getElementById("tooltip");
+      setTimeout(() => {
+         tooltip.innerHTML = "Copy to clipboard";
+      }, 300);
+   }
+
+   function formatDate(date) {
+      date = new Date(date);
+      var months = [
+         "Jan",
+         "Feb",
+         "Mar",
+         "Apr",
+         "May",
+         "Jun",
+         "Jul",
+         "Aug",
+         "Sep",
+         "Oct",
+         "Nov",
+         "Dec",
+      ];
+
+      var hour12HrFormat = date.getHours() % 12 || 12;
+      var ampm = date.getHours() < 12 || date.getHours() === 24 ? "AM" : "PM";
+
+      let formattedDate = `${
+         months[date.getMonth()]
+      } ${date.getDate()}, ${date.getFullYear()} at ${hour12HrFormat}:${date.getMinutes()} ${ampm}`;
+      return formattedDate;
+   }
+
+   function getItemsAndPoints() {
+      let items = examData.totalItems + " items";
+      let points = examData.totalPoints + " points";
+
+      if (examData.totalItems === 1) {
+         items = examData.totalItems + " item";
+      }
+
+      if (examData.totalPoints === 1) {
+         points = examData.totalPoints + " point";
+      }
+
+      return `${items} ⸱ ${points}`;
    }
 
    return (
       <>
-         <div className={`${css.exam_box} card p-4`} onClick={goToExamDetails}>
-            <h4>Subject Title</h4>
-            <p className="text-muted">Time available - Duration</p>
-            <p>Total items</p>
+         <div className={`${css.exam_box} card p-4`}>
+            <div className="d-flex flex-row justify-content-between">
+               <div>
+                  <h4 className="m-0">{examData.title}</h4>
+                  <span className="mt-1">{getExamStatus(examData.status)}</span>
+               </div>
+               {examData.status !== "unposted" && (
+                  <>
+                     <MdOutlineMoreVert
+                        type="button"
+                        id="defaultDropdown"
+                        data-bs-toggle="dropdown"
+                        data-bs-auto-close="true"
+                        aria-expanded="false"
+                        className={`${css.action_button}`}
+                        size={"28px"}
+                        color="#787878"
+                     />
+                     <ul
+                        className="dropdown-menu"
+                        aria-labelledby="defaultDropdown">
+                        <li
+                           className={`${css.action_button} dropdown-item`}
+                           onClick={() => openExamCodeModal(examData.examCode)}>
+                           Get exam code
+                        </li>
+                     </ul>
+                  </>
+               )}
+            </div>
+
+            {examData.status !== "unposted" && (
+               <>
+                  <small className="m-0 mt-3">
+                     Open from: {formatDate(examData.date_from)}
+                  </small>
+                  <small className="m-0">
+                     Until: {formatDate(examData.date_to)}
+                  </small>
+               </>
+            )}
+
+            <p className="mt-4 m-0">
+               {examData.totalItems === 0
+                  ? "No questions added"
+                  : getItemsAndPoints()}
+            </p>
+            <div className="d-flex flex-row justify-content-end mt-4">
+               {/* //show edit button only when exam is not posted/published */}
+               {examData.status === "unposted" && (
+                  <MdModeEdit
+                     size={"28px"}
+                     className={`${css.action_button} me-2`}
+                     color="#787878"
+                     onClick={goToEditExam}
+                  />
+               )}
+               <MdDelete
+                  className={`${css.action_button}`}
+                  size={"28px"}
+                  color="#787878"
+                  onClick={() => openDeleteModal(examData._id)}
+               />
+            </div>
          </div>
+
+         {/* MODAL FROM REACT-BOOTSTRAP LIBRARY */}
+         <Modal show={isShownModal} onHide={handleModalClose}>
+            <Modal.Header closeButton>
+               <Modal.Title>Delete Exam</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+               Are you sure you want to delete this exam? You won't be able to
+               undo this action.
+            </Modal.Body>
+            <Modal.Footer>
+               <Button variant="secondary" onClick={handleModalClose}>
+                  Cancel
+               </Button>
+               <Button variant="primary" onClick={deleteQuestion}>
+                  Continue
+               </Button>
+            </Modal.Footer>
+         </Modal>
+
+         {/* modal for exam code */}
+         <Modal
+            show={isShownCodeModal}
+            onHide={handleCodeModalClose}
+            size="lg" //size of the modal. can't change in css idk why
+            centered>
+            <Modal.Header className={css.modal_header} closeButton>
+               <h5 className="m-0">Exam Code</h5>
+            </Modal.Header>
+            <Modal.Body className={css.modal_body}>
+               <div className={`${css.body_container}`}>
+                  <div class={css.tooltip}>
+                     <button
+                        onClick={copyExamCode}
+                        onMouseLeave={onMouseOutTooltip}
+                        className={`${css.copy_button}`}>
+                        <span class={css.tooltiptext} id="tooltip">
+                           Copy to clipboard
+                        </span>
+                        <MdContentCopy />
+                     </button>
+                  </div>
+                  <input
+                     id="exam_code"
+                     type={"text"}
+                     value={examCode}
+                     className={`${css.exam_code} display-1 text-center`}
+                     readOnly
+                  />
+               </div>
+            </Modal.Body>
+            <Modal.Footer className={css.footer}>
+               <Button variant="secondary" onClick={handleCodeModalClose}>
+                  Close
+               </Button>
+            </Modal.Footer>
+         </Modal>
       </>
    );
 }

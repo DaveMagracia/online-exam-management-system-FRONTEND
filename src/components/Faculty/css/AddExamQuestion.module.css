@@ -1,0 +1,22 @@
+.back_arrow {
+   cursor: pointer;
+}
+
+.error_addon {
+   color: white !important;
+   background-color: #dc3545 !important;
+   border: #dc3545 !important;
+}
+
+/* REMOVES ARROW BUTTONS FROM TIME LIMIT FIELD */
+/* Chrome, Safari, Edge, Opera */
+.points_input::-webkit-outer-spin-button,
+.points_input::-webkit-inner-spin-button {
+   -webkit-appearance: none;
+   margin: 0;
+}
+
+/* Firefox */
+.time_limit_input[type="number"] {
+   -moz-appearance: textfield;
+}

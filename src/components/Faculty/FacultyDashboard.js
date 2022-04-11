@@ -16,10 +16,7 @@ export default function FacultyDashboard(props) {
                <ExamList />
                <hr className="mt-5" />
 
-               <div>
-                  <h3>Question Banks</h3>
-                  <QuestionBankList />
-               </div>
+               <QuestionBankList />
             </div>
          </div>
       </>

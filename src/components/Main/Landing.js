@@ -1,13 +1,15 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import css from "./css/Landing.module.css";
 
 export default function Landing() {
+   const navigate = useNavigate();
+
    React.useEffect(() => {
-      //if user accesses this page while logged in, log the user out
-      const token = localStorage.getItem("token");
-      if (token) localStorage.removeItem("token");
-   });
+      const userData = localStorage.getItem("userData");
+      if (userData) navigate("/dashboard");
+   }, []);
 
    return (
       <>

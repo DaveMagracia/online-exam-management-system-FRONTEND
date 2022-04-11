@@ -83,24 +83,24 @@ export default function StudentNavbar(props) {
          </nav>
 
          <div
-            class="modal fade"
+            className="modal fade"
             id="exampleModal"
             tabindex="-1"
             aria-labelledby="exampleModalLabel"
             aria-hidden="true">
-            <div class="modal-dialog">
-               <div class="modal-content">
-                  <div class="modal-header">
-                     <h5 class="modal-title" id="exampleModalLabel">
+            <div className="modal-dialog">
+               <div className="modal-content">
+                  <div className="modal-header">
+                     <h5 className="modal-title" id="exampleModalLabel">
                         Enter exam code
                      </h5>
                      <button
                         type="button"
-                        class="btn-close"
+                        className="btn-close"
                         data-bs-dismiss="modal"
                         aria-label="Close"></button>
                   </div>
-                  <div class="modal-body">
+                  <div className="modal-body">
                      <input
                         className="form-control"
                         type="text"
@@ -108,14 +108,14 @@ export default function StudentNavbar(props) {
                         aria-label="default input example"
                      />
                   </div>
-                  <div class="modal-footer">
+                  <div className="modal-footer">
                      <button
                         type="button"
-                        class="btn btn-secondary"
+                        className="btn btn-secondary"
                         data-bs-dismiss="modal">
                         Cancel
                      </button>
-                     <button type="button" class="btn btn-primary">
+                     <button type="button" className="btn btn-primary">
                         Join
                      </button>
                   </div>

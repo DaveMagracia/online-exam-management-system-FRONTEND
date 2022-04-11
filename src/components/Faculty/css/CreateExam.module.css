@@ -1,10 +1,59 @@
-.exam_box {
-   /* width: 420px; */
-   height: auto;
+.createExam_root {
+   height: 100vh;
 }
 
-.action_button {
-   cursor: pointer;
+.title_input {
+   font-size: 2rem !important;
+   height: 5rem !important;
+}
+
+.time_limit_input {
+   text-align: center;
+   width: 122px !important;
+   font-size: 1rem !important;
+}
+
+/* REMOVES ARROW BUTTONS FROM TIME LIMIT FIELD */
+/* Chrome, Safari, Edge, Opera */
+.time_limit_input::-webkit-outer-spin-button,
+.time_limit_input::-webkit-inner-spin-button {
+   -webkit-appearance: none;
+   margin: 0;
+}
+
+/* Firefox */
+.time_limit_input[type="number"] {
+   -moz-appearance: textfield;
+}
+
+.increment_btn,
+.decrement_btn {
+   height: 40px !important;
+   width: 40px !important;
+}
+
+.label {
+   width: 200px;
+}
+
+.char_counter {
+   background-color: rgba(0, 0, 0, 0.5);
+   color: white;
+   padding: 1px 5px;
+   border-radius: 0.2rem;
+   transform: translate(-10px, -32px);
+}
+
+.char_counter_title {
+   transform: translate(-10px, -75px);
+}
+
+.date_error {
+   font-size: 12px;
+}
+
+.date_field {
+   min-width: 250px !important;
 }
 
 /* FOR EXAM CODE MODAL */
