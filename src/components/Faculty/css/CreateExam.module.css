@@ -69,16 +69,17 @@
    border: none;
    outline: none;
    margin: 0;
+   cursor: default;
 }
 
 /* changes text highlight color to white */
-::-moz-selection {
+.exam_code::-moz-selection {
    background: white;
 }
-::-webkit-selection {
+.exam_code::-webkit-selection {
    background: white;
 }
-::selection {
+.exam_code::selection {
    background: white;
 }
 

@@ -7,7 +7,8 @@ import Main from "./components/Main/Main";
 import PageNotFound404 from "./components/Main/PageNotFound404";
 import ExamDetails from "./components/Faculty/ExamDetails";
 import QuestionBankDetails from "./components/Faculty/QuestionBankDetails";
-import AddExamQuestion from "./components/Faculty/AddExamQuestion";
+import CreateQuestionBank from "./components/Faculty/CreateQuestionBank";
+import AddQuestion from "./components/Faculty/AddQuestion";
 import CreateExam from "./components/Faculty/CreateExam";
 import { UserContext } from "./UserContext";
 
@@ -24,18 +25,21 @@ export default function App() {
                <Route path="/login" element={<Login />} />
                <Route path="/register" element={<Register />} />
                <Route path="/dashboard" element={<Main />} />
-               <Route
-                  path="/edit-exam/:exam_id"
-                  element={<CreateExam />}
-               />{" "}
                {/* editing and creating exams have the same UI, the reason why the
                same component is used */}
+               <Route path="/create-exam" element={<CreateExam />} />
+               <Route path="/edit-exam/:exam_id" element={<CreateExam />} />
+               <Route path="/exam-details/:exam_id" element={<ExamDetails />} />
                <Route
                   path="/question-bank/:bank_id"
                   element={<QuestionBankDetails />}
                />
-               <Route path="/create-exam" element={<CreateExam />} />
-               <Route path="/add-question" element={<AddExamQuestion />} />
+               <Route path="/create-bank" element={<CreateQuestionBank />} />
+               <Route
+                  path="/edit-question-bank/:bank_id"
+                  element={<CreateQuestionBank />}
+               />
+               <Route path="/add-question" element={<AddQuestion />} />
                {/* /f url has no match, display 404 page*/}
                <Route path="*" element={<PageNotFound404 />} />
             </Routes>

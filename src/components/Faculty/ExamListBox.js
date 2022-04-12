@@ -14,8 +14,8 @@ export default function ExamListBox(props) {
    const navigate = useNavigate();
    const examData = props.examData;
    const [isShownModal, setisShownModal] = React.useState(false);
-   const [isShownCodeModal, setIsShownCodeModal] = React.useState(false);
    const [activeDeleteId, setActiveDeleteId] = React.useState(null);
+   const [isShownCodeModal, setIsShownCodeModal] = React.useState(false);
    const [examCode, setExamCode] = React.useState("");
 
    function openDeleteModal(examId) {
@@ -38,13 +38,17 @@ export default function ExamListBox(props) {
       //delete the exam in db
       await axios({
          method: "DELETE",
-         baseURL: `http://www.localhost:5000/exam/${activeDeleteId}`,
+         baseURL: `http://www.localhost:5000/exams/${activeDeleteId}`,
          headers: {
             Authorization: localStorage.getItem("token"),
          },
-      }).then(() => {
-         props.getExams(); //getExams again to refresh the list
-      });
+      })
+         .then(() => {
+            props.getExams(); //getExams again to refresh the list
+         })
+         .catch((err) => {
+            console.log(err);
+         });
 
       setActiveDeleteId(null);
       handleModalClose();
@@ -65,8 +69,10 @@ export default function ExamListBox(props) {
    function getExamStatus(status) {
       if (status === "posted") {
          return <span className="badge rounded-pill bg-success">Posted</span>;
-      } else if (status === "open") {
+      } else if (status === "opened") {
          return <span className="badge rounded-pill bg-warning">Open</span>;
+      } else if (status === "closed") {
+         return <span className="badge rounded-pill bg-danger">Closed</span>;
       } else {
          // return <small className="text-muted">Unposted</small>;
          return (
@@ -112,12 +118,23 @@ export default function ExamListBox(props) {
       ];
 
       var hour12HrFormat = date.getHours() % 12 || 12;
+      var minutes = date.getMinutes();
+
+      if (minutes.toString().length === 1) {
+         //add 0 to start of number if minutes is a single digit
+         minutes = "0" + minutes.toString();
+      }
+
       var ampm = date.getHours() < 12 || date.getHours() === 24 ? "AM" : "PM";
 
       let formattedDate = `${
          months[date.getMonth()]
-      } ${date.getDate()}, ${date.getFullYear()} at ${hour12HrFormat}:${date.getMinutes()} ${ampm}`;
+      } ${date.getDate()}, ${date.getFullYear()} at ${hour12HrFormat}:${minutes} ${ampm}`;
       return formattedDate;
+   }
+
+   function goToExamDetails(examId) {
+      navigate(`/exam-details/${examId}`);
    }
 
    function getItemsAndPoints() {
@@ -160,6 +177,11 @@ export default function ExamListBox(props) {
                         aria-labelledby="defaultDropdown">
                         <li
                            className={`${css.action_button} dropdown-item`}
+                           onClick={() => goToExamDetails(examData._id)}>
+                           Details
+                        </li>
+                        <li
+                           className={`${css.action_button} dropdown-item`}
                            onClick={() => openExamCodeModal(examData.examCode)}>
                            Get exam code
                         </li>
@@ -184,7 +206,9 @@ export default function ExamListBox(props) {
                   ? "No questions added"
                   : getItemsAndPoints()}
             </p>
-            <div className="d-flex flex-row justify-content-end mt-4">
+
+            {/* ACTION BUTTONS */}
+            <div className="d-flex flex-row justify-content-end mt-4 mt-auto">
                {/* //show edit button only when exam is not posted/published */}
                {examData.status === "unposted" && (
                   <MdModeEdit
@@ -194,12 +218,14 @@ export default function ExamListBox(props) {
                      onClick={goToEditExam}
                   />
                )}
-               <MdDelete
-                  className={`${css.action_button}`}
-                  size={"28px"}
-                  color="#787878"
-                  onClick={() => openDeleteModal(examData._id)}
-               />
+               {examData.status !== "closed" && (
+                  <MdDelete
+                     className={`${css.action_button}`}
+                     size={"28px"}
+                     color="#787878"
+                     onClick={() => openDeleteModal(examData._id)}
+                  />
+               )}
             </div>
          </div>
 
@@ -233,12 +259,12 @@ export default function ExamListBox(props) {
             </Modal.Header>
             <Modal.Body className={css.modal_body}>
                <div className={`${css.body_container}`}>
-                  <div class={css.tooltip}>
+                  <div className={css.tooltip}>
                      <button
                         onClick={copyExamCode}
                         onMouseLeave={onMouseOutTooltip}
                         className={`${css.copy_button}`}>
-                        <span class={css.tooltiptext} id="tooltip">
+                        <span className={css.tooltiptext} id="tooltip">
                            Copy to clipboard
                         </span>
                         <MdContentCopy />

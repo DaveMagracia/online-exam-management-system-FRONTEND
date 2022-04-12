@@ -1,0 +1,8 @@
+.no_banks_container {
+   padding-top: 60px;
+   height: 300px;
+}
+
+.banks_container {
+   min-height: 300px;
+}

@@ -3,8 +3,8 @@ import css from "./css/CreateExam.module.css";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import FacultyNavbar from "./FacultyNavbar";
-import AddExamQuestion from "./AddExamQuestion";
-import ExamQuestionList from "./ExamQuestionList";
+import AddQuestion from "./AddQuestion";
+import QuestionList from "./QuestionList";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../UserContext";
 import DateFnsUtils from "@date-io/date-fns"; // choose your lib
@@ -33,7 +33,9 @@ export default function CreateExam(props) {
       React.useState(false);
 
    const [examCode, setExamCode] = React.useState("");
-   const [titleInput, setTitleInput] = React.useState("Enter Exam Title...");
+   const [titleInput, setTitleInput] = React.useState(
+      exam_id ? "Exam Title" : "Enter Exam Title..."
+   );
    const [questions, setQuestions] = React.useState([]); //initially, questions are empty
    const [initDateVals, setInitDateVals] = React.useState({});
    const [hasError, setHasError] = React.useState(false);
@@ -48,21 +50,24 @@ export default function CreateExam(props) {
    });
 
    const [errors, setErrors] = React.useState({
-      title: { hasError: false, msg: "This field is required" },
+      title: { hasError: false, msg: "This field is required." },
       date_from: {
          hasError: false,
-         msg: "Date should not be before the current time",
+         msg: "Date should not be before the current time.",
       },
       date_to: {
          hasError: false,
-         msg: "Date should not be before the current time",
+         msg: "Date should not be before the current time.",
       },
       time_limit: {
          hasError: false,
          msg: "Time limit must be at least 1 minute.",
       },
-      directions: { hasError: false, msg: "This field is required" },
-      questions: { hasError: false, msg: "Exam must have at least 1 question" },
+      directions: { hasError: false, msg: "This field is required." },
+      questions: {
+         hasError: false,
+         msg: "Exam must have at least 1 question.",
+      },
    });
 
    function handleFormChange(event) {
@@ -164,9 +169,6 @@ export default function CreateExam(props) {
       tempErrors.time_limit.hasError = formData.time_limit ? false : true;
       tempErrors.questions.hasError = questions.length === 0 ? true : false;
 
-      console.log(tempErrors.date_from.hasError);
-      console.log(tempErrors.date_to.hasError);
-
       if (tempErrors.title.hasError) {
          //set default error message to title
          //its value can change because the message can be changed when there is no
@@ -204,15 +206,16 @@ export default function CreateExam(props) {
       if (validateForm()) {
          //if created while editing unfinished exam
          if (exam_id) {
-            console.log("put");
+            //PUBLISH A SAVED EXAM
             await axios({
-               method: "PUT",
-               baseURL: `http://localhost:5000/exam/${exam_id}`,
+               method: "PATCH",
+               baseURL: `http://localhost:5000/exams/${exam_id}`,
                headers: {
-                  token: localStorage.getItem("token"),
+                  Authorization: localStorage.getItem("token"),
                },
                data: {
-                  exam: formData,
+                  isPublishing: true,
+                  examData: formData,
                   questions: questions.map(
                      ({ localId, ...keepAttrs }) => keepAttrs //this will remove the "localId" property and keep the rest
                   ),
@@ -229,11 +232,12 @@ export default function CreateExam(props) {
          } else {
             await axios({
                method: "POST",
-               baseURL: "http://localhost:5000/exam/create",
+               baseURL: "http://localhost:5000/exams",
                headers: {
-                  token: localStorage.getItem("token"),
+                  Authorization: localStorage.getItem("token"),
                },
                data: {
+                  isPublishing: true,
                   exam: formData,
                   questions: questions.map(
                      ({ localId, ...keepAttrs }) => keepAttrs //this will remove the "localId" property and keep the rest
@@ -270,17 +274,16 @@ export default function CreateExam(props) {
 
       if (!tempErrors.title.hasError && !tempErrors.time_limit.hasError) {
          //if exam_id exists, then the user is editing
-         //so the request method will be PUT
-         //the method is not PATCH because PATCH is only for updating values partially
-         //we use PUT to update the whole document to replace the whole value
+         //The request method will be PATCH because the values updated may be the whole exam data OR PARTIALLY
          if (exam_id) {
             await axios({
-               method: "PUT",
-               baseURL: `http://localhost:5000/exam/update/${exam_id}`,
+               method: "PATCH",
+               baseURL: `http://localhost:5000/exams/${exam_id}`,
                headers: {
-                  token: localStorage.getItem("token"),
+                  Authorization: localStorage.getItem("token"),
                },
                data: {
+                  isPublishing: false,
                   examData: formData,
                   questions: questions.map(
                      ({ localId, ...keepAttrs }) => keepAttrs //this will remove the "localId" property and keep the rest
@@ -288,7 +291,6 @@ export default function CreateExam(props) {
                },
             })
                .then((data) => {
-                  console.log(data);
                   navigate("/");
                })
                .catch((err) => {
@@ -300,17 +302,19 @@ export default function CreateExam(props) {
             //so that the user can make changes, and post it later on
             await axios({
                method: "POST",
-               baseURL: "http://localhost:5000/exam/save",
+               baseURL: "http://localhost:5000/exams",
+               headers: {
+                  Authorization: localStorage.getItem("token"),
+               },
                data: {
+                  isPublishing: false,
                   exam: formData,
                   questions: questions.map(
                      ({ localId, ...keepAttrs }) => keepAttrs //this will remove the "localId" property and keep the rest
                   ),
-                  user: localStorage.getItem("token"),
                },
             })
                .then((data) => {
-                  console.log(data);
                   navigate("/");
                })
                .catch((err) => {
@@ -394,7 +398,7 @@ export default function CreateExam(props) {
       //delete the exam in db
       await axios({
          method: "DELETE",
-         baseURL: `http://www.localhost:5000/exam/${exam_id}`,
+         baseURL: `http://www.localhost:5000/exams/${exam_id}`,
          headers: {
             Authorization: localStorage.getItem("token"),
          },
@@ -518,25 +522,24 @@ export default function CreateExam(props) {
 
    async function getExamData() {
       return await axios({
-         method: "POST",
-         baseURL: "http://www.localhost:5000/exam",
-         data: {
-            user: localStorage.getItem("token"),
-            examId: exam_id,
+         method: "GET",
+         baseURL: `http://www.localhost:5000/exams/${exam_id}`,
+         headers: {
+            Authorization: localStorage.getItem("token"),
          },
       })
          .then((res) => {
             let examData = res.data.exam;
 
             //prevents from editing the exam when the exam is already published
-            if (examData.status === "posted" || examData.status === "open") {
+            if (examData.status === "posted" || examData.status === "opened") {
                navigate("/");
             } else {
                setFormData({
                   title: examData.title,
-                  date_from: examData.date_from, //set default time to current timestamp
-                  date_to: examData.date_to, //set default time to current timestamp + 1 minute
-                  time_limit: examData.time_limit, //1 minute is the default and minimum time limit
+                  date_from: examData.date_from,
+                  date_to: examData.date_to,
+                  time_limit: examData.time_limit,
                   directions: examData.directions,
                });
 
@@ -584,7 +587,6 @@ export default function CreateExam(props) {
    React.useEffect(() => {
       //this if block finds the first field that has an error
       //if found, then scroll to that element
-      console.log(hasError);
       if (hasError) {
          let element = "";
          for (let key in errors) {
@@ -633,9 +635,9 @@ export default function CreateExam(props) {
                animate={{ opacity: 1 }}
                transition={{ duration: 0.2 }}>
                <FacultyNavbar username={user ? user.username : ""} />
-               {/* show AddExamQuestion component when adding questions */}
+               {/* show AddQuestion component when adding questions */}
                {isAddingQuestion ? (
-                  <AddExamQuestion
+                  <AddQuestion
                      setisAddingQuestion={setisAddingQuestion}
                      currentQuestion={currentQuestion}
                      setCurrentQuestion={setCurrentQuestion}
@@ -643,7 +645,7 @@ export default function CreateExam(props) {
                   />
                ) : (
                   <div className="container">
-                     <h1 className="mt-4">
+                     <h1 className="mt-5">
                         {exam_id ? "Edit Exam" : "Create Exam"}
                      </h1>
                      <form onSubmit={openCreateConfirmModal}>
@@ -826,7 +828,7 @@ export default function CreateExam(props) {
                         </div>
 
                         {/* QUESTIONS SECTION */}
-                        <ExamQuestionList
+                        <QuestionList
                            setisAddingQuestion={setisAddingQuestion}
                            removeQuestionError={removeQuestionError}
                            currentQuestion={currentQuestion}
@@ -862,7 +864,7 @@ export default function CreateExam(props) {
                            <button
                               type="submit"
                               className="btn btn-success mb-5 px-4 py-2">
-                              Create
+                              Publish
                            </button>
                         </div>
                      </form>
@@ -948,12 +950,12 @@ export default function CreateExam(props) {
                   </Modal.Header>
                   <Modal.Body className={css.modal_body}>
                      <div className={`${css.body_container}`}>
-                        <div class={css.tooltip}>
+                        <div className={css.tooltip}>
                            <button
                               onClick={copyExamCode}
                               onMouseLeave={onMouseOutTooltip}
                               className={`${css.copy_button}`}>
-                              <span class={css.tooltiptext} id="tooltip">
+                              <span className={css.tooltiptext} id="tooltip">
                                  Copy to clipboard
                               </span>
                               <MdContentCopy />

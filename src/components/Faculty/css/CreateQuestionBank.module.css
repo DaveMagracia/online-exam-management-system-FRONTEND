@@ -1,0 +1,12 @@
+.createBank_loading {
+   height: 100vh;
+}
+
+.title_input {
+   font-size: 2rem !important;
+   height: 5rem !important;
+}
+
+.char_counter_title {
+   transform: translate(-10px, -75px);
+}

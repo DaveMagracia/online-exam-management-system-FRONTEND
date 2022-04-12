@@ -1,0 +1,10 @@
+.examDetails_loading {
+   height: 100vh;
+}
+
+.student_image {
+   width: 40px;
+   height: 40px;
+   background-color: gray;
+   border-radius: 50%;
+}

@@ -37,15 +37,19 @@ export default function ExamList() {
 
    async function getExams() {
       await axios({
-         method: "POST",
-         baseURL: "http://localhost:5000/exam/getAll",
-         data: {
-            user: localStorage.getItem("token"),
+         method: "GET",
+         baseURL: "http://localhost:5000/exams",
+         headers: {
+            Authorization: localStorage.getItem("token"),
          },
-      }).then((data) => {
-         //pass the array of exams
-         setExamList(data.data.exams);
-      });
+      })
+         .then((data) => {
+            //pass the array of exams
+            setExamList(data.data.exams);
+         })
+         .catch((err) => {
+            console.log(err);
+         });
    }
 
    React.useEffect(() => {
@@ -56,21 +60,22 @@ export default function ExamList() {
    return (
       <>
          <div>
-            <h3 className="d-inline">Exams</h3>
-            <button
-               className="btn btn-primary float-end"
-               onClick={goToCreateExam}>
-               Create Exam
-            </button>
+            <div>
+               <h3 className="d-inline">Exams</h3>
+               <button
+                  className="btn btn-primary float-end"
+                  onClick={goToCreateExam}>
+                  Create Exam
+               </button>
+            </div>
             {examsList.length !== 0 ? (
                <div
                   className="row 
-               row-cols-1 
-               row-cols-sm-2 
-               row-cols-md-3 
-               row-cols-xl-4 
-               g-3
-               mt-3">
+                  row-cols-1 
+                  row-cols-md-2 
+                  row-cols-xl-3 
+                  g-3
+                  mt-3">
                   {examsList}
                </div>
             ) : (

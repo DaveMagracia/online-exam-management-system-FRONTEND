@@ -22,7 +22,7 @@ export default function Main() {
       await axios({
          method: "GET",
          headers: {
-            token: localStorage.getItem("token"),
+            Authorization: localStorage.getItem("token"),
          },
          baseURL: "http://localhost:5000/user/info",
       })

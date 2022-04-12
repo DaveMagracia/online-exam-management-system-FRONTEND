@@ -1,5 +1,9 @@
 .question_box {
    /* width: 420px; */
    height: auto;
+   min-height: 150px;
+}
+
+.action_button {
    cursor: pointer;
 }

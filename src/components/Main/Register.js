@@ -147,7 +147,7 @@ export default function Register() {
          //d - delete
          await axios({
             method: "POST",
-            url: "http://localhost:5000/user/register",
+            url: "http://www.localhost:5000/user/register",
             data: formData,
          })
             .then((data) => {
