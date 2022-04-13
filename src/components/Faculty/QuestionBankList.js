@@ -39,7 +39,7 @@ export default function QuestionBankList() {
          method: "GET",
          baseURL: "http://localhost:5000/question-banks",
          headers: {
-            Authorization: localStorage.getItem("token"),
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
          },
       })
          .then((data) => {

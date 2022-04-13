@@ -171,8 +171,8 @@ export default function Register() {
 
    React.useEffect(() => {
       //if user accesses this page while logged in, log the user out
-      const token = localStorage.getItem("token");
-      if (token) localStorage.removeItem("token");
+      localStorage.removeItem("token");
+      localStorage.removeItem("isLoaded");
    });
 
    return (

@@ -36,7 +36,7 @@ export default function QuestionBankListBox(props) {
          method: "DELETE",
          baseURL: `http://www.localhost:5000/question-banks/${activeDeleteId}`,
          headers: {
-            Authorization: localStorage.getItem("token"),
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
          },
       })
          .then(() => {

@@ -12,6 +12,7 @@ import { DateTimePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import { Modal, Button } from "react-bootstrap";
 import { v1 as createId } from "uuid";
 import PuffLoader from "react-spinners/PuffLoader";
+import jwt_decode from "jwt-decode";
 import { motion, AnimatePresence } from "framer-motion";
 import { MdContentCopy } from "react-icons/md";
 
@@ -211,7 +212,7 @@ export default function CreateExam(props) {
                method: "PATCH",
                baseURL: `http://localhost:5000/exams/${exam_id}`,
                headers: {
-                  Authorization: localStorage.getItem("token"),
+                  Authorization: `Bearer ${localStorage.getItem("token")}`,
                },
                data: {
                   isPublishing: true,
@@ -234,7 +235,7 @@ export default function CreateExam(props) {
                method: "POST",
                baseURL: "http://localhost:5000/exams",
                headers: {
-                  Authorization: localStorage.getItem("token"),
+                  Authorization: `Bearer ${localStorage.getItem("token")}`,
                },
                data: {
                   isPublishing: true,
@@ -280,7 +281,7 @@ export default function CreateExam(props) {
                method: "PATCH",
                baseURL: `http://localhost:5000/exams/${exam_id}`,
                headers: {
-                  Authorization: localStorage.getItem("token"),
+                  Authorization: `Bearer ${localStorage.getItem("token")}`,
                },
                data: {
                   isPublishing: false,
@@ -304,7 +305,7 @@ export default function CreateExam(props) {
                method: "POST",
                baseURL: "http://localhost:5000/exams",
                headers: {
-                  Authorization: localStorage.getItem("token"),
+                  Authorization: `Bearer ${localStorage.getItem("token")}`,
                },
                data: {
                   isPublishing: false,
@@ -400,7 +401,7 @@ export default function CreateExam(props) {
          method: "DELETE",
          baseURL: `http://www.localhost:5000/exams/${exam_id}`,
          headers: {
-            Authorization: localStorage.getItem("token"),
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
          },
       }).then(() => {
          navigate("/");
@@ -525,7 +526,7 @@ export default function CreateExam(props) {
          method: "GET",
          baseURL: `http://www.localhost:5000/exams/${exam_id}`,
          headers: {
-            Authorization: localStorage.getItem("token"),
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
          },
       })
          .then((res) => {
@@ -558,6 +559,7 @@ export default function CreateExam(props) {
             }
          })
          .catch((err) => {
+            navigate("/");
             console.log(err);
          });
    }
@@ -565,23 +567,28 @@ export default function CreateExam(props) {
    //the useEffects are used for setting the user context.
    //this fixes the problem where the user context is lost for everytime the page is reloaded
    React.useEffect(() => {
-      //if exam_id exists, it means the user is editing an exam, ELSE the user is creating
-      if (exam_id) {
-         getExamData();
+      //if user token does not exist, redirect to login
+      if (!localStorage.getItem("token")) {
+         navigate("/login");
       } else {
-         // these dates will be used to compare if the dates have changed
-         // from the time this component was mounted
-         // (SEE backToDashboard())
-         setInitDateVals({
-            date_from: formData.date_from,
-            date_to: formData.date_to,
-         });
-         setIsLoading(false);
-      }
+         //if exam_id exists, it means the user is editing an exam, ELSE the user is creating
+         if (exam_id) {
+            getExamData();
+         } else {
+            // these dates will be used to compare if the dates have changed
+            // from the time this component was mounted
+            // (SEE backToDashboard())
+            setInitDateVals({
+               date_from: formData.date_from,
+               date_to: formData.date_to,
+            });
+            setIsLoading(false);
+         }
 
-      //if userData is already on local storage, then there is no need to fetch user data from server
-      const userData = localStorage.getItem("userData");
-      if (userData) setUser(JSON.parse(userData));
+         const token = localStorage.getItem("token");
+         const userTokenDecoded = jwt_decode(token);
+         setUser(userTokenDecoded);
+      }
    }, []);
 
    React.useEffect(() => {
@@ -605,8 +612,6 @@ export default function CreateExam(props) {
             });
          }
       }
-
-      localStorage.setItem("userData", JSON.stringify(user));
    });
 
    return (
@@ -872,7 +877,7 @@ export default function CreateExam(props) {
                )}
 
                {/* MODAL FROM REACT-BOOTSTRAP LIBRARY */}
-               {/* modal for deleting question */}
+
                <Modal
                   show={isShownQuestionModal}
                   onHide={handleQuestionModalClose}>
@@ -939,7 +944,7 @@ export default function CreateExam(props) {
                   </Modal.Footer>
                </Modal>
 
-               {/* modal for exam code */}
+               {/* MODAL FOR EXAM CODE */}
                <Modal
                   show={isShownExamCodeModal}
                   onHide={handleCodeModalClose}

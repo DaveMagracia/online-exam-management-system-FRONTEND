@@ -40,7 +40,7 @@ export default function ExamListBox(props) {
          method: "DELETE",
          baseURL: `http://www.localhost:5000/exams/${activeDeleteId}`,
          headers: {
-            Authorization: localStorage.getItem("token"),
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
          },
       })
          .then(() => {

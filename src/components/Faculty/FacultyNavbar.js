@@ -1,14 +1,25 @@
 import React from "react";
 import css from "./css/FacultyNavbar.module.css";
 import { useNavigate } from "react-router-dom";
+import { Modal, Button } from "react-bootstrap";
 
 export default function FacultyNavbar(props) {
    const navigate = useNavigate();
+   const [isShownLogoutModal, setIsShownLogoutModal] = React.useState(false);
+
+   function handleLogoutModalClose() {
+      setIsShownLogoutModal(false);
+   }
+
+   function openLogoutModal() {
+      setIsShownLogoutModal(true);
+   }
 
    async function logout() {
       //remove data from local storage
       await localStorage.removeItem("token");
-      await localStorage.removeItem("userData");
+      await localStorage.removeItem("isLoaded");
+      // await localStorage.removeItem("userData");
       navigate("/", { replace: true }); //dont store the current page in history
    }
 
@@ -69,8 +80,7 @@ export default function FacultyNavbar(props) {
                            </li>
                            <li
                               className="cursor-pointer"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal">
+                              onClick={openLogoutModal}>
                               <p
                                  className={`${css.logout_btn} dropdown-item m-0`}>
                                  Logout
@@ -81,6 +91,21 @@ export default function FacultyNavbar(props) {
                   </ul>
                </div>
             </div>
+
+            <Modal show={isShownLogoutModal} onHide={handleLogoutModalClose}>
+               <Modal.Header closeButton>
+                  <Modal.Title>Logout</Modal.Title>
+               </Modal.Header>
+               <Modal.Body>Are you sure you want to logout?</Modal.Body>
+               <Modal.Footer>
+                  <Button variant="secondary" onClick={handleLogoutModalClose}>
+                     Cancel
+                  </Button>
+                  <Button variant="primary" onClick={logout}>
+                     Continue
+                  </Button>
+               </Modal.Footer>
+            </Modal>
 
             <div
                className="modal fade"

@@ -4,6 +4,7 @@ import { UserContext } from "../../UserContext";
 import { FaArrowCircleLeft } from "react-icons/fa";
 import { MdWarning } from "react-icons/md";
 import { Modal, Button } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 //library to create unique ids for the questions
 //NOTE: the uuid generated is only stored locally, it is different from the id on the database
 //its purpose is to identify if the question already exists since
@@ -13,6 +14,7 @@ import { v1 as createId } from "uuid";
 
 //NOTE: this addQuestion component is used in adding an exam question and a question bank question
 export default function AddQuestion(props) {
+   const navigate = useNavigate();
    const { user, setUser } = useContext(UserContext);
 
    const [formData, setFormData] = React.useState({
@@ -188,24 +190,24 @@ export default function AddQuestion(props) {
    //the useEffects are used for setting the user context.
    //this fixes the problem where the user context is lost for everytime the page is reloaded
    React.useEffect(() => {
-      let currentQuestion = props.currentQuestion;
-      if (props.currentQuestion) {
-         setFormData({
-            question: currentQuestion.question,
-            choice1: currentQuestion.choice1,
-            choice2: currentQuestion.choice2,
-            choice3: currentQuestion.choice3,
-            choice4: currentQuestion.choice4,
-            answer: currentQuestion.answer,
-            cpd: currentQuestion.cpd,
-            kd: currentQuestion.kd,
-            points: currentQuestion.points,
-         });
+      if (!localStorage.getItem("token")) {
+         navigate("/login");
+      } else {
+         let currentQuestion = props.currentQuestion;
+         if (props.currentQuestion) {
+            setFormData({
+               question: currentQuestion.question,
+               choice1: currentQuestion.choice1,
+               choice2: currentQuestion.choice2,
+               choice3: currentQuestion.choice3,
+               choice4: currentQuestion.choice4,
+               answer: currentQuestion.answer,
+               cpd: currentQuestion.cpd,
+               kd: currentQuestion.kd,
+               points: currentQuestion.points,
+            });
+         }
       }
-
-      //if userData is already on local storage, then there is no need to fetch user data from server
-      const userData = localStorage.getItem("userData");
-      if (userData) setUser(JSON.parse(userData));
    }, []);
 
    React.useEffect(() => {
@@ -230,8 +232,6 @@ export default function AddQuestion(props) {
             });
          }
       }
-
-      localStorage.setItem("userData", JSON.stringify(user));
    });
 
    return (

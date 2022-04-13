@@ -17,62 +17,69 @@ export default function Main() {
    const [isLoading, setLoading] = React.useState(true); //if the user is already set in the context, don't show loading
    const navigate = useNavigate();
 
+   //REMOVED
+   //reason: the jwt token can already be decoded in the frontend. there is no reason to make a request to get the user info again
    // gets the user info based on the token
-   const getUserInfo = async () => {
-      await axios({
-         method: "GET",
-         headers: {
-            Authorization: localStorage.getItem("token"),
-         },
-         baseURL: "http://localhost:5000/user/info",
-      })
-         .then((response) => {
-            setTimeout(() => {
-               setUser({
-                  email: response.data.email,
-                  username: response.data.username,
-                  userType: response.data.userType,
-               });
+   // async function getUserInfo() {
+   //    await axios({
+   //       method: "GET",
+   //       headers: {
+   //          Authorization: `Bearer ${localStorage.getItem("token")}`,
+   //       },
+   //       baseURL: "http://localhost:5000/user/info",
+   //    })
+   //       .then((response) => {
+   //          setTimeout(() => {
+   //             setUser({
+   //                email: response.data.email,
+   //                username: response.data.username,
+   //                userType: response.data.userType,
+   //             });
 
-               setLoading(false);
-            }, 2000);
-         })
-         .catch((err) => {
-            console.log(err);
-            setLoading(false);
-         });
-   };
+   //             setLoading(false);
+   //          }, 2000);
+   //       })
+   //       .catch((err) => {
+   //          console.log(err);
+   //          setLoading(false);
+   //       });
+   // }
 
    //runs after the component mounts
    React.useEffect(() => {
-      //if userData is already on local storage, then there is no need to fetch user data from server
-      const userData = localStorage.getItem("userData");
-      if (userData) {
+      const token = localStorage.getItem("token");
+      const isLoaded = localStorage.getItem("isLoaded");
+
+      //initially, upon logging in, this will be false because it is not yet set
+      //if true, skip the loading animation whenever the user navigates to the dashboard
+      if (isLoaded) {
+         const userTokenDecoded = jwt_decode(token);
+         setUser(userTokenDecoded);
          setLoading(false);
-         setUser(JSON.parse(userData));
       } else {
-         const token = localStorage.getItem("token"); //get token from local storage; run 'localStorage' in console to see the token
          if (token) {
-            let user = jwt_decode(token); //decode the received token
-            if (!user) {
+            const userTokenDecoded = jwt_decode(token);
+            if (!userTokenDecoded) {
                setLoading(false);
                localStorage.removeItem("token");
+               localStorage.removeItem("isLoaded");
                navigate("/login"); //redirect to login page if something went wrong
             } else {
-               //if user exists, get their info
-               getUserInfo();
+               setTimeout(() => {
+                  setUser(userTokenDecoded);
+                  setLoading(false);
+               }, 2000);
             }
          } else {
-            //if user tries to access dashboard while not logged in, redirect to login page
-            navigate("/login");
+            console.log("2");
+            navigate("/login"); //if user tries to access dashboard while not logged in, redirect to login page
          }
       }
    }, []); // empty array as the second agument means this effect will only run once after the component mounts
 
    React.useEffect(() => {
-      //put userData on local storage; data only contains email, username, and usertype
-      //This is for the browser to remember the user, to prevent from fetching user data everytime the page is reloaded
-      localStorage.setItem("userData", JSON.stringify(user));
+      //this will allow the page to reload. if this is set, the loading animation will cancel
+      if (localStorage.getItem("token")) localStorage.setItem("isLoaded", true);
    });
 
    return (

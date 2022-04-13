@@ -7,8 +7,8 @@ export default function Landing() {
    const navigate = useNavigate();
 
    React.useEffect(() => {
-      const userData = localStorage.getItem("userData");
-      if (userData) navigate("/dashboard");
+      const token = localStorage.getItem("token");
+      if (token) navigate("/dashboard");
    }, []);
 
    return (

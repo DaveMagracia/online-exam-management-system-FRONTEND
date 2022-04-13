@@ -11,6 +11,7 @@ import { UserContext } from "../../UserContext";
 import PuffLoader from "react-spinners/PuffLoader";
 import { motion, AnimatePresence } from "framer-motion";
 import { v1 as createId } from "uuid";
+import jwt_decode from "jwt-decode";
 
 export default function CreateQuestionBank(props) {
    const navigate = useNavigate();
@@ -81,7 +82,7 @@ export default function CreateQuestionBank(props) {
                method: "PATCH",
                baseURL: `http://localhost:5000/question-banks/${bank_id}`,
                headers: {
-                  Authorization: localStorage.getItem("token"),
+                  Authorization: `Bearer ${localStorage.getItem("token")}`,
                },
                data: {
                   formData: formData,
@@ -99,7 +100,7 @@ export default function CreateQuestionBank(props) {
                method: "POST",
                baseURL: "http://www.localhost:5000/question-banks",
                headers: {
-                  Authorization: localStorage.getItem("token"),
+                  Authorization: `Bearer ${localStorage.getItem("token")}`,
                },
                data: {
                   formData: formData,
@@ -179,7 +180,7 @@ export default function CreateQuestionBank(props) {
          method: "DELETE",
          baseURL: `http://www.localhost:5000/question-banks/${bank_id}`,
          headers: {
-            Authorization: localStorage.getItem("token"),
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
          },
       })
          .then(() => {
@@ -195,7 +196,7 @@ export default function CreateQuestionBank(props) {
          method: "GET",
          baseURL: `http://www.localhost:5000/question-banks/${bank_id}`,
          headers: {
-            Authorization: localStorage.getItem("token"),
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
          },
       })
          .then((res) => {
@@ -216,20 +217,25 @@ export default function CreateQuestionBank(props) {
             }, 1000);
          })
          .catch((err) => {
+            navigate("/");
             console.log(err);
          });
    }
 
    React.useEffect(() => {
-      if (bank_id) {
-         getQuestionBankData();
+      if (!localStorage.getItem("token")) {
+         navigate("/login");
       } else {
-         setIsLoading(false);
-      }
+         if (bank_id) {
+            getQuestionBankData();
+         } else {
+            setIsLoading(false);
+         }
 
-      //if userData is already on local storage, then there is no need to fetch user data from server
-      const userData = localStorage.getItem("userData");
-      if (userData) setUser(JSON.parse(userData));
+         const token = localStorage.getItem("token");
+         const userTokenDecoded = jwt_decode(token);
+         setUser(userTokenDecoded);
+      }
    }, []);
 
    React.useEffect(() => {
@@ -253,8 +259,6 @@ export default function CreateQuestionBank(props) {
             });
          }
       }
-
-      localStorage.setItem("userData", JSON.stringify(user));
    });
 
    return (

@@ -30,7 +30,7 @@ export default function ExamDetails() {
          method: "GET",
          baseURL: `http://www.localhost:5000/exams/${exam_id}`,
          headers: {
-            Authorization: localStorage.getItem("token"),
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
          },
       })
          .then((res) => {
@@ -58,6 +58,7 @@ export default function ExamDetails() {
             }
          })
          .catch((err) => {
+            navigate("/");
             console.log(err);
          });
    }
@@ -123,7 +124,11 @@ export default function ExamDetails() {
    }
 
    React.useEffect(() => {
-      getExamData(exam_id);
+      if (!localStorage.getItem("token")) {
+         navigate("/login");
+      } else {
+         getExamData(exam_id);
+      }
    }, []);
 
    return (
@@ -191,37 +196,37 @@ export default function ExamDetails() {
 
                      {/* INFO CARDS */}
                      <div className="row row-cols-xl-3 g-4">
-                        <div class="col">
+                        <div className="col">
                            <div className="card p-4">
                               <p className="m-0">Students Joined</p>
                               <h1>20</h1>
                            </div>
                         </div>
-                        <div class="col">
+                        <div className="col">
                            <div className="card p-4">
                               <p className="m-0">Students Joined</p>
                               <h1>20</h1>
                            </div>
                         </div>
-                        <div class="col">
+                        <div className="col">
                            <div className="card p-4">
                               <p className="m-0">Students Joined</p>
                               <h1>20</h1>
                            </div>
                         </div>
-                        <div class="col">
+                        <div className="col">
                            <div className="card p-4">
                               <p className="m-0">Students Joined</p>
                               <h1>20</h1>
                            </div>
                         </div>
-                        <div class="col">
+                        <div className="col">
                            <div className="card p-4">
                               <p className="m-0">Students Joined</p>
                               <h1>20</h1>
                            </div>
                         </div>
-                        <div class="col">
+                        <div className="col">
                            <div className="card p-4">
                               <p className="m-0">Students Joined</p>
                               <h1>20</h1>
@@ -236,31 +241,31 @@ export default function ExamDetails() {
                      <hr />
 
                      <div className="mt-2 p-2 border d-flex align-items-center">
-                        <div class={css.student_image}></div>
+                        <div className={css.student_image}></div>
                         <span className="ms-3">Student Name</span>
                      </div>
                      <div className="mt-2 p-2 border d-flex align-items-center">
-                        <div class={css.student_image}></div>
+                        <div className={css.student_image}></div>
                         <span className="ms-3">Student Name</span>
                      </div>
                      <div className="mt-2 p-2 border d-flex align-items-center">
-                        <div class={css.student_image}></div>
+                        <div className={css.student_image}></div>
                         <span className="ms-3">Student Name</span>
                      </div>
                      <div className="mt-2 p-2 border d-flex align-items-center">
-                        <div class={css.student_image}></div>
+                        <div className={css.student_image}></div>
                         <span className="ms-3">Student Name</span>
                      </div>
                      <div className="mt-2 p-2 border d-flex align-items-center">
-                        <div class={css.student_image}></div>
+                        <div className={css.student_image}></div>
                         <span className="ms-3">Student Name</span>
                      </div>
                      <div className="mt-2 p-2 border d-flex align-items-center">
-                        <div class={css.student_image}></div>
+                        <div className={css.student_image}></div>
                         <span className="ms-3">Student Name</span>
                      </div>
                      <div className="mt-2 p-2 border d-flex align-items-center">
-                        <div class={css.student_image}></div>
+                        <div className={css.student_image}></div>
                         <span className="ms-3">Student Name</span>
                      </div>
                   </div>

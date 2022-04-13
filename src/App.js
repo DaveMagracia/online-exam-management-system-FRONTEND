@@ -39,7 +39,6 @@ export default function App() {
                   path="/edit-question-bank/:bank_id"
                   element={<CreateQuestionBank />}
                />
-               <Route path="/add-question" element={<AddQuestion />} />
                {/* /f url has no match, display 404 page*/}
                <Route path="*" element={<PageNotFound404 />} />
             </Routes>

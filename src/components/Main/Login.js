@@ -57,9 +57,6 @@ export default function Login() {
    }
 
    React.useEffect(() => {
-      //remove userData when this page is accessed
-      localStorage.removeItem("userData");
-      //if user accesses this page while logged in, log the user out
       const token = localStorage.getItem("token");
       if (token) navigate("/dashboard");
    });

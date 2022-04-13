@@ -3,14 +3,25 @@ import css from "./css/QuestionList.module.css";
 import { MdWarning } from "react-icons/md";
 import { Modal, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 export default function QuestionList(props) {
    const navigate = useNavigate();
    const [isShownModal, setisShownModal] = React.useState(false);
+   const [isShownBankModal, setIsShownBankModal] = React.useState(false);
+   const [questionBankList, setQuestionBankList] = React.useState(false);
    const [activeDeleteId, setActiveDeleteId] = React.useState(null);
 
    function handleModalClose() {
       setisShownModal(false);
+   }
+   function handleBankModalClose() {
+      setIsShownBankModal(false);
+   }
+
+   function openBankModal() {
+      setIsShownBankModal(true);
    }
 
    function editQuestion(questionData) {
@@ -118,6 +129,38 @@ export default function QuestionList(props) {
       );
    }
 
+   function setBankOptions() {
+      return questionBankList.map((bank) => {
+         return (
+            <option>
+               {bank.title} ({bank.totalQuestions}
+               {bank.totalQuestions === 1 ? " question" : " questions"})
+            </option>
+         );
+      });
+   }
+
+   async function getQuestionBanks() {
+      await axios({
+         method: "GET",
+         baseURL: "http://localhost:5000/question-banks",
+         headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+         },
+      })
+         .then((data) => {
+            //pass the array of banks
+            setQuestionBankList(data.data.questionBanks);
+         })
+         .catch((err) => {
+            console.log(err);
+         });
+   }
+
+   React.useEffect(() => {
+      getQuestionBanks();
+   }, []);
+
    return (
       <>
          <div className="mt-5 d-flex align-items-center justify-content-between">
@@ -133,9 +176,7 @@ export default function QuestionList(props) {
                   <button
                      type="button"
                      className="btn btn-primary ms-3"
-                     data-bs-toggle="modal"
-                     data-bs-target="#addQuestionBankModal"
-                     data-bs-whatever="@mdo">
+                     onClick={openBankModal}>
                      Add Questions from Bank
                   </button>
                )}
@@ -145,77 +186,49 @@ export default function QuestionList(props) {
          {questionList()}
 
          {/* MODAL FOR ADD QUESTION BANK */}
-         <div
-            className="modal fade"
-            id="addQuestionBankModal"
-            tabIndex="-1"
-            aria-labelledby="exampleModalLabel"
-            aria-hidden="true">
-            <div className="modal-dialog modal-dialog-centered">
-               <div className="modal-content">
-                  <div className="modal-header">
-                     <h5 className="modal-title" id="exampleModalLabel">
-                        Add question from question bank
-                     </h5>
-                     <button
-                        type="button"
-                        className="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                  </div>
-                  <div className="modal-body">
-                     <div className="mb-3">
-                        <label
-                           htmlFor="question_bank"
-                           className="mb-2  d-block">
-                           Correct Answer:
-                        </label>
-                        <select
-                           id="question_bank"
-                           className="form-select"
-                           value={1}
-                           name="bank">
-                           <option value="none" disabled hidden>
-                              Select an option
-                           </option>
-                           <option value={1}>Choice 1</option>
-                           <option value={2}>Choice 2</option>
-                           <option value={3}>Choice 3</option>
-                           <option value={4}>Choice 4</option>
-                        </select>
-                     </div>
-                     <div className="mb-3">
-                        <label
-                           htmlFor="number_field"
-                           className="mb-2 mt-3 d-block">
-                           Number of questions to pull:
-                        </label>
-                        <div className="input-group">
-                           <input
-                              id="number_field"
-                              type="text"
-                              className="form-control"
-                              name="points"
-                              // value={formData.points}
-                              // onChange={handleTimeLimitInput}
-                           />
-                        </div>
-                     </div>
-                  </div>
-                  <div className="modal-footer">
-                     <button
-                        type="button"
-                        className="btn btn-secondary"
-                        data-bs-dismiss="modal">
-                        Close
-                     </button>
-                     <button type="button" className="btn btn-primary">
-                        Add
-                     </button>
+         <Modal show={isShownBankModal} onHide={handleBankModalClose} centered>
+            <Modal.Header closeButton>
+               <Modal.Title>Add question from question bank</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+               <div className="mb-3">
+                  <label htmlFor="question_bank" className="mb-2  d-block">
+                     Correct Answer:
+                  </label>
+                  <select
+                     id="question_bank"
+                     className="form-select"
+                     value={1}
+                     name="bank">
+                     <option value="none" disabled hidden>
+                        Select an option
+                     </option>
+                     {/* {setBankOptions()} */}
+                  </select>
+               </div>
+               <div className="mb-3">
+                  <label htmlFor="number_field" className="mb-2 mt-3 d-block">
+                     Number of questions to pull:
+                  </label>
+                  <div className="input-group">
+                     <input
+                        id="number_field"
+                        type="text"
+                        className="form-control"
+                        name="points"
+                     />
                   </div>
                </div>
-            </div>
-         </div>
+            </Modal.Body>
+            <Modal.Footer>
+               <Button variant="secondary" onClick={handleModalClose}>
+                  Close
+               </Button>
+               <Button variant="primary" onClick={deleteQuestion}>
+                  Add
+               </Button>
+            </Modal.Footer>
+         </Modal>
 
          {/* MODAL FROM REACT-BOOTSTRAP LIBRARY */}
          {/* MODAL FOR DELETE CONFIRMATION */}
