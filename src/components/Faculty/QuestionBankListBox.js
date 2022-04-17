@@ -15,6 +15,8 @@ export default function QuestionBankListBox(props) {
    const questionBankData = props.questionBankData;
 
    const [isShownModal, setisShownModal] = React.useState(false);
+   const [isShownCantDeleteModal, setIsShownCantDeleteModal] =
+      React.useState(false);
    const [activeDeleteId, setActiveDeleteId] = React.useState(null);
 
    function openDeleteModal(examId) {
@@ -31,16 +33,33 @@ export default function QuestionBankListBox(props) {
    }
 
    async function deleteQuestionBank() {
-      //delete the exam in db
+      //check first if the bank is currently in use by an exam
       await axios({
-         method: "DELETE",
-         baseURL: `http://www.localhost:5000/question-banks/${activeDeleteId}`,
+         method: "GET",
+         baseURL: `http://www.localhost:5000/question-banks/check/${activeDeleteId}`,
          headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
          },
       })
-         .then(() => {
-            props.getQuestionBanks(); //getQuestionBanks again to refresh the list
+         .then(async (res) => {
+            //make another request. delete the bank if the bank is not in use
+            if (res.data.isUsed) {
+               setIsShownCantDeleteModal(true);
+            } else {
+               await axios({
+                  method: "DELETE",
+                  baseURL: `http://www.localhost:5000/question-banks/${activeDeleteId}`,
+                  headers: {
+                     Authorization: `Bearer ${localStorage.getItem("token")}`,
+                  },
+               })
+                  .then(() => {
+                     props.getQuestionBanks(); //getQuestionBanks again to refresh the list
+                  })
+                  .catch((err) => {
+                     console.log(err);
+                  });
+            }
          })
          .catch((err) => {
             console.log(err);
@@ -50,6 +69,9 @@ export default function QuestionBankListBox(props) {
       handleModalClose();
    }
 
+   function handleCantDeleteModalClose() {
+      setIsShownCantDeleteModal(false);
+   }
    return (
       <>
          <div className={`${css.question_box} card p-4 m-0`}>
@@ -75,6 +97,25 @@ export default function QuestionBankListBox(props) {
          </div>
 
          {/* MODAL FROM REACT-BOOTSTRAP LIBRARY */}
+
+         <Modal
+            show={isShownCantDeleteModal}
+            onHide={handleCantDeleteModalClose}>
+            <Modal.Header closeButton>
+               <Modal.Title>Hold up!</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+               You cannot delete this bank at the moment. This bank is currently
+               in use by an exam.
+            </Modal.Body>
+            <Modal.Footer>
+               <Button variant="primary" onClick={handleCantDeleteModalClose}>
+                  Okay
+               </Button>
+            </Modal.Footer>
+         </Modal>
+
+         {/* MODAL FOR DELETING THE QUESTION BANK */}
          <Modal show={isShownModal} onHide={handleModalClose}>
             <Modal.Header closeButton>
                <Modal.Title>Delete question bank</Modal.Title>

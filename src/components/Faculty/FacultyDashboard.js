@@ -2,6 +2,7 @@ import React from "react";
 import css from "./css/FacultyDashboard.module.css";
 import FacultyNavbar from "./FacultyNavbar";
 import ExamList from "./ExamList";
+import SubjectList from "./SubjectList";
 import QuestionBankList from "./QuestionBankList";
 
 export default function FacultyDashboard(props) {
@@ -13,7 +14,8 @@ export default function FacultyDashboard(props) {
                <h1 className="display-1 m-0">Faculty Dashboard</h1>
                <hr />
 
-               <ExamList />
+               {/* <ExamList /> */}
+               <SubjectList />
                <hr className="mt-5" />
 
                <QuestionBankList />

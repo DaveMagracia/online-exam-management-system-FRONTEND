@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-export default function ExamList() {
+export default function ExamList(props) {
    const navigate = useNavigate();
    const [examsList, setExamsList] = React.useState([]); //will contain the list of exams made by the user
 
@@ -36,20 +36,39 @@ export default function ExamList() {
    }
 
    async function getExams() {
-      await axios({
-         method: "GET",
-         baseURL: "http://localhost:5000/exams",
-         headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-         },
-      })
-         .then((data) => {
-            //pass the array of exams
-            setExamList(data.data.exams);
+      //if this props is present, get the exams for that specific subject
+      if (props.subjectName) {
+         await axios({
+            method: "GET",
+            baseURL: `http://localhost:5000/exams/subjects/${props.subjectName}`,
+            headers: {
+               Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
          })
-         .catch((err) => {
-            console.log(err);
-         });
+            .then((data) => {
+               //pass the array of exams
+               setExamList(data.data.exams);
+            })
+            .catch((err) => {
+               console.log(err);
+            });
+      } else {
+         //else get all subjects
+         await axios({
+            method: "GET",
+            baseURL: "http://localhost:5000/exams",
+            headers: {
+               Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+         })
+            .then((data) => {
+               //pass the array of exams
+               setExamList(data.data.exams);
+            })
+            .catch((err) => {
+               console.log(err);
+            });
+      }
    }
 
    React.useEffect(() => {

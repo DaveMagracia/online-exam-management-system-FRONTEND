@@ -15,6 +15,14 @@ export default function FacultyNavbar(props) {
       setIsShownLogoutModal(true);
    }
 
+   function UpdateProfile() {
+      navigate("/update-profile");
+   }
+
+   function ChangePassword() {
+      navigate("/change-password");
+   }
+
    async function logout() {
       //remove data from local storage
       await localStorage.removeItem("token");
@@ -47,7 +55,7 @@ export default function FacultyNavbar(props) {
                   <ul className="navbar-nav ms-auto">
                      <li className="nav-item me-2">
                         <a
-                           className="nav-link active"
+                           className="nav-link"
                            aria-current="page"
                            href="/dashboard">
                            Dashboard
@@ -73,16 +81,21 @@ export default function FacultyNavbar(props) {
                         <ul
                            className="dropdown-menu"
                            aria-labelledby="navbarDarkDropdownMenuLink">
-                           <li>
-                              <a className="dropdown-item" href="/">
-                                 My Profile
-                              </a>
+                           <li
+                              className={`${css.nav_link} dropdown-item`}
+                              onClick={UpdateProfile}>
+                              My Profile
+                           </li>
+                           <li
+                              className={`${css.nav_link} dropdown-item`}
+                              onClick={ChangePassword}>
+                              Change Password
                            </li>
                            <li
                               className="cursor-pointer"
                               onClick={openLogoutModal}>
                               <p
-                                 className={`${css.logout_btn} dropdown-item m-0`}>
+                                 className={`${css.nav_link} dropdown-item m-0`}>
                                  Logout
                               </p>
                            </li>

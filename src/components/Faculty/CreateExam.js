@@ -38,12 +38,14 @@ export default function CreateExam(props) {
       exam_id ? "Exam Title" : "Enter Exam Title..."
    );
    const [questions, setQuestions] = React.useState([]); //initially, questions are empty
+   const [questionBanks, setQuestionBanks] = React.useState([]);
    const [initDateVals, setInitDateVals] = React.useState({});
    const [hasError, setHasError] = React.useState(false);
    const [currentQuestion, setCurrentQuestion] = React.useState();
 
    const [formData, setFormData] = React.useState({
       title: "",
+      subject: "",
       date_from: new Date().getTime(), //set default time to current timestamp
       date_to: new Date().setMinutes(new Date().getMinutes() + 1), //set default time to current timestamp + 1 minute
       time_limit: 1, //1 minute is the default and minimum time limit
@@ -52,6 +54,10 @@ export default function CreateExam(props) {
 
    const [errors, setErrors] = React.useState({
       title: { hasError: false, msg: "This field is required." },
+      subject: {
+         hasError: false,
+         msg: "This field is required.",
+      },
       date_from: {
          hasError: false,
          msg: "Date should not be before the current time.",
@@ -84,10 +90,17 @@ export default function CreateExam(props) {
          //remove error if user types again on title
          setErrors((prevVal) => ({
             ...prevVal,
-            title: { hasError: false, msg: "This field is required" },
+            title: { hasError: false, msg: "This field is required." },
          }));
       } else {
          setcharCountDesc(value.length); //increment charCount on directions
+      }
+
+      if (name === "subject") {
+         setErrors((prevVal) => ({
+            ...prevVal,
+            subject: { hasError: false, msg: "This field is required." },
+         }));
       }
 
       setFormData((prevVal) => ({
@@ -160,6 +173,7 @@ export default function CreateExam(props) {
    function validateForm() {
       let tempErrors = { ...errors };
       tempErrors.title.hasError = formData.title ? false : true;
+      tempErrors.subject.hasError = formData.subject ? false : true;
       tempErrors.date_from.hasError =
          new Date(formData.date_from).getTime() < new Date().getTime(); //check if time is less than current time
       tempErrors.date_to.hasError =
@@ -327,17 +341,19 @@ export default function CreateExam(props) {
 
    function backToDashboard() {
       //checks if there are changes made. If there are changes, show dialog first
-      let isTitleEmpty = formData.title ? false : true;
-      let isDirEmpty = formData.directions ? false : true;
-      let hasNoQuestions = questions.length === 0 ? true : false;
-      let isFromDateChanged = initDateVals.date_from !== formData.date_from;
-      let isToDateChanged = initDateVals.date_to !== formData.date_to;
-      let isLimitChanged = formData.time_limit !== 1;
+      const isTitleEmpty = formData.title ? false : true;
+      const isSubjectEmpty = formData.subject ? false : true;
+      const isDirEmpty = formData.directions ? false : true;
+      const hasNoQuestions = questions.length === 0 ? true : false;
+      const isFromDateChanged = initDateVals.date_from !== formData.date_from;
+      const isToDateChanged = initDateVals.date_to !== formData.date_to;
+      const isLimitChanged = formData.time_limit !== 1;
 
       //NOTE: dates and time limit will not be checked because they have their default value
 
       if (
          !isTitleEmpty ||
+         !isSubjectEmpty ||
          !isDirEmpty ||
          !hasNoQuestions ||
          isFromDateChanged ||
@@ -521,8 +537,52 @@ export default function CreateExam(props) {
       clearInterval(timer.current);
    }
 
+   async function getBankTitles(response) {
+      axios({
+         method: "POST",
+         baseURL: `http://www.localhost:5000/question-banks/getTitles`,
+         headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+         },
+         data: {
+            //send IDs to get titles
+            questionBankIds: response.data.questionBank.questionBanks.map(
+               (obj) => obj.questionBank
+            ),
+         },
+      })
+         .then((res) => {
+            setQuestions((prevVal) => [
+               ...prevVal,
+               ...response.data.questionBank.questionBanks.map((obj, i) => {
+                  //find title first because the names in the response sent is not in order
+                  const title = res.data.questionBankTitles.find(
+                     (val) => val._id === obj.questionBank
+                  ).title;
+                  return {
+                     questionBankTitle: title,
+                     questionBankId: obj.questionBank,
+                     numOfItems: obj.noOfQuestions,
+                     isQuestionBank: true,
+                  };
+               }),
+               ...response.data.questionBank.questions.map((obj) => ({
+                  ...obj,
+                  localId: createId(),
+               })),
+            ]);
+
+            setTimeout(() => {
+               setIsLoading(false);
+            }, 1000);
+         })
+         .catch((err) => {
+            console.log(err);
+         });
+   }
+
    async function getExamData() {
-      return await axios({
+      await axios({
          method: "GET",
          baseURL: `http://www.localhost:5000/exams/${exam_id}`,
          headers: {
@@ -538,6 +598,7 @@ export default function CreateExam(props) {
             } else {
                setFormData({
                   title: examData.title,
+                  subject: examData.subject,
                   date_from: examData.date_from,
                   date_to: examData.date_to,
                   time_limit: examData.time_limit,
@@ -546,16 +607,25 @@ export default function CreateExam(props) {
 
                setcharCountTitle(examData.title.length);
                setcharCountDesc(examData.directions.length);
-               setQuestions(
-                  res.data.questionBank.questions.map((obj) => ({
-                     ...obj,
-                     localId: createId(),
-                  }))
-               );
 
-               setTimeout(() => {
-                  setIsLoading(false);
-               }, 1000);
+               //if a reference to another questionBank is present
+               if (res.data.questionBank.questionBanks.length > 0) {
+                  //Make a request to get the names by the array of IDs received
+                  //(the response from the server doesnt contain the titles of the banks. That is why another request is needed to get the bank names)
+                  return getBankTitles(res);
+               } else {
+                  setQuestions((prevVal) => [
+                     ...prevVal,
+                     ...res.data.questionBank.questions.map((obj) => ({
+                        ...obj,
+                        localId: createId(),
+                     })),
+                  ]);
+
+                  setTimeout(() => {
+                     setIsLoading(false);
+                  }, 1000);
+               }
             }
          })
          .catch((err) => {
@@ -655,7 +725,6 @@ export default function CreateExam(props) {
                      </h1>
                      <form onSubmit={openCreateConfirmModal}>
                         {/* TITLE INPUT */}
-
                         <div className="form-floating mt-4">
                            <input
                               id="titleInput"
@@ -687,9 +756,34 @@ export default function CreateExam(props) {
                            </small>
                         )}
 
+                        {/* SUBJECT INPUT */}
+                        <div className="w-100 mt-4">
+                           <label htmlFor="subject" className="me-3 mb-1">
+                              Subject:
+                           </label>
+                           <div className="input-group">
+                              <input
+                                 id="subject"
+                                 type="text"
+                                 value={formData.subject}
+                                 name="subject"
+                                 onChange={handleFormChange}
+                                 className={`form-control  ${
+                                    errors.subject.hasError && "border-danger"
+                                 }`}
+                                 placeholder="Enter subject title..."
+                              />
+                           </div>
+                        </div>
+                        {errors.subject.hasError && (
+                           <small className="text-danger">
+                              {errors.subject.msg}
+                           </small>
+                        )}
+
                         {/* DATE AND TIME INPUT */}
                         <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                           <h4 className="mt-4">Date of availability</h4>
+                           <h4 className="mt-5">Date of availability</h4>
                            <div className="d-flex flex-column ms-4">
                               <div className="d-flex align-items-center">
                                  <span className={`${css.label} me-2`}>

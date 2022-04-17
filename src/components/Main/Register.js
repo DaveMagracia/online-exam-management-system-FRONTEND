@@ -108,7 +108,7 @@ export default function Register() {
          let email = formData.email.trim();
          tempErrors.email.hasError = !email.match(emailRegex);
 
-         let usernameRegex = /^[a-zA-Z0-9]+\w{3,20}$/;
+         let usernameRegex = /^[a-zA-Z0-9]{4,20}$/;
          let username = formData.username.trim();
          tempErrors.username.hasError = !username.match(usernameRegex);
 
@@ -250,14 +250,14 @@ export default function Register() {
                               />
                               <label htmlFor="InputUsername">Username *</label>
                            </div>
-                           {errors.username.hasError && (
-                              <p className="text-danger mb-4 small">
-                                 {errors.username.msg}
-                              </p>
-                           )}
                            {emptyErrors.username && (
                               <p className="text-danger mb-4 small">
                                  This field is required
+                              </p>
+                           )}
+                           {errors.username.hasError && (
+                              <p className="text-danger mb-4 small">
+                                 {errors.username.msg}
                               </p>
                            )}
 
@@ -267,26 +267,50 @@ export default function Register() {
                                  id="InputPassword"
                                  type="password"
                                  className={`form-control ${
-                                    errors.pass.hasError || emptyErrors.pass
-                                       ? "border border-danger"
-                                       : "mb-4"
+                                    (errors.pass.hasError ||
+                                       emptyErrors.pass) &&
+                                    "border border-danger"
                                  }`}
                                  name="pass"
                                  onChange={handleOnChange}
                                  value={formData.pass}
                               />
                               <label htmlFor="InputPassword">Password *</label>
+
+                              {emptyErrors.pass && (
+                                 <p className="text-danger m-0 small">
+                                    This field is required
+                                 </p>
+                              )}
+
+                              <div
+                                 className={`form-text mb-4 ${
+                                    errors.pass.hasError
+                                       ? "text-danger"
+                                       : "text-muted"
+                                 }`}>
+                                 A password must:
+                                 <ul>
+                                    <li>Have a minimum of 8 characters</li>
+                                    <li>
+                                       Contain at least 1 uppercase letter (A-Z)
+                                    </li>
+                                    <li>
+                                       Contain at least 1 lowercase letter (a-z)
+                                    </li>
+                                    <li>Contain at least 1 number (0-9)</li>
+                                    <li>
+                                       Contain at least 1 special character
+                                       (!@#$%^&*)
+                                    </li>
+                                 </ul>
+                              </div>
                            </div>
-                           {errors.pass.hasError && (
+                           {/* {errors.pass.hasError && (
                               <p className="text-danger mb-4 small">
                                  {errors.pass.msg}
                               </p>
-                           )}
-                           {emptyErrors.pass && (
-                              <p className="text-danger mb-4 small">
-                                 This field is required
-                              </p>
-                           )}
+                           )} */}
 
                            {/* confirm pass field */}
                            <div className="form-floating">

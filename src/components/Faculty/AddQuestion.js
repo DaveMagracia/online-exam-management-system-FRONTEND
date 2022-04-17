@@ -151,7 +151,7 @@ export default function AddQuestion(props) {
             return upsert(prevVal, {
                localId: props.currentQuestion
                   ? props.currentQuestion.localId
-                  : createId(),
+                  : createId(), // add local ID to prevent duplicates
                question: formData.question,
                choice1: formData.choice1,
                choice2: formData.choice2,

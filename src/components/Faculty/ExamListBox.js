@@ -130,6 +130,7 @@ export default function ExamListBox(props) {
       let formattedDate = `${
          months[date.getMonth()]
       } ${date.getDate()}, ${date.getFullYear()} at ${hour12HrFormat}:${minutes} ${ampm}`;
+
       return formattedDate;
    }
 

@@ -57,6 +57,7 @@ export default function Login() {
    }
 
    React.useEffect(() => {
+      //if user tries to access this page while logged in, navigate to dashboard
       const token = localStorage.getItem("token");
       if (token) navigate("/dashboard");
    });

@@ -71,7 +71,6 @@ export default function Main() {
                }, 2000);
             }
          } else {
-            console.log("2");
             navigate("/login"); //if user tries to access dashboard while not logged in, redirect to login page
          }
       }
