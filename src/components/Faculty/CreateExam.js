@@ -593,7 +593,7 @@ export default function CreateExam(props) {
             let examData = res.data.exam;
 
             //prevents from editing the exam when the exam is already published
-            if (examData.status === "posted" || examData.status === "opened") {
+            if (examData.status === "posted" || examData.status === "open") {
                navigate("/");
             } else {
                setFormData({

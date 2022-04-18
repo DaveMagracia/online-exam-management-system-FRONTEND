@@ -2,6 +2,7 @@
    /* width: 420px; */
    height: auto;
    min-height: 240px;
+   cursor: pointer;
 }
 
 .action_button {
@@ -90,4 +91,8 @@
 .tooltip:hover .tooltiptext {
    visibility: visible;
    opacity: 1;
+}
+
+.exam_title:hover {
+   text-decoration: underline;
 }

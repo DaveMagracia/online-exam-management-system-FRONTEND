@@ -1,13 +1,18 @@
-import React from "react";
+import React, { useContext } from "react";
 import ExamListBox from "./ExamListBox";
 import css from "./css/ExamList.module.css";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { UserContext } from "../../UserContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import jwt_decode from "jwt-decode";
+import BarLoader from "react-spinners/BarLoader";
 
 export default function ExamList(props) {
    const navigate = useNavigate();
+   const { user, setUser } = useContext(UserContext);
    const [examsList, setExamsList] = React.useState([]); //will contain the list of exams made by the user
+   const [isLoading, setIsLoading] = React.useState(true); //loading initially set to true
 
    function setExamList(examArray) {
       //populate the examsList with elements of each exam
@@ -47,10 +52,16 @@ export default function ExamList(props) {
          })
             .then((data) => {
                //pass the array of exams
-               setExamList(data.data.exams);
+               setTimeout(() => {
+                  setExamList(data.data.exams);
+                  setIsLoading(false);
+               }, 200);
             })
             .catch((err) => {
-               console.log(err);
+               setTimeout(() => {
+                  console.log(err);
+                  setIsLoading(false);
+               }, 200);
             });
       } else {
          //else get all subjects
@@ -72,40 +83,65 @@ export default function ExamList(props) {
    }
 
    React.useEffect(() => {
+      const token = localStorage.getItem("token");
+      const userTokenDecoded = jwt_decode(token);
+      setUser(userTokenDecoded);
+
       //GET ALL LIST OF EXAMS CREATED BY THE USER
       getExams();
    }, []);
 
    return (
       <>
-         <div>
+         {isLoading ? (
+            <AnimatePresence>
+               {isLoading && (
+                  <motion.div
+                     initial={{ opacity: 1 }}
+                     exit={{ opacity: 0 }}
+                     transition={{ duration: 0.2 }}
+                     className={`${css.loading_root} d-flex flex-column align-items-center `}>
+                     <BarLoader
+                        loading={isLoading}
+                        color="#9c2a22"
+                        size={80}
+                        width={"100%"}
+                     />
+                  </motion.div>
+               )}
+            </AnimatePresence>
+         ) : (
             <div>
-               <h3 className="d-inline">Exams</h3>
-               <button
-                  className="btn btn-primary float-end"
-                  onClick={goToCreateExam}>
-                  Create Exam
-               </button>
-            </div>
-            {examsList.length !== 0 ? (
-               <div
-                  className="row 
+               <div className="pt-3">
+                  <h3 className="d-inline">Exams</h3>
+                  {user && user.userType === "teacher" && (
+                     <button
+                        className="btn btn-primary float-end"
+                        onClick={goToCreateExam}>
+                        Create Exam
+                     </button>
+                  )}
+               </div>
+               {examsList.length !== 0 ? (
+                  <div
+                     className="row 
                   row-cols-1 
                   row-cols-md-2 
                   row-cols-xl-3 
                   g-3
                   mt-3">
-                  {examsList}
-               </div>
-            ) : (
-               <div className={`${css.no_exams_container}`}>
-                  <p className="text-muted text-center">
-                     You have not created an exam yet. Exams you have created
-                     will appear here.
-                  </p>
-               </div>
-            )}
-         </div>
+                     {examsList}
+                  </div>
+               ) : (
+                  <div className={`${css.no_exams_container}`}>
+                     <p className="text-muted text-center">
+                        You have not created an exam yet. Exams you have created
+                        will appear here.
+                     </p>
+                  </div>
+               )}
+            </div>
+         )}
       </>
    );
 }

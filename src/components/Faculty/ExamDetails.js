@@ -7,6 +7,7 @@ import { UserContext } from "../../UserContext";
 import { useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import PuffLoader from "react-spinners/PuffLoader";
+import jwt_decode from "jwt-decode";
 
 export default function ExamDetails() {
    const { exam_id } = useParams();
@@ -24,6 +25,8 @@ export default function ExamDetails() {
       totalItems: 0,
       totalPoints: 0,
    });
+   const [students, setStudents] = React.useState([]);
+   const [facultyName, setFacultyName] = React.useState("");
 
    async function getExamData() {
       await axios({
@@ -51,6 +54,8 @@ export default function ExamDetails() {
                   totalItems: examData_.totalItems,
                   totalPoints: examData_.totalPoints,
                });
+               setStudents(res.data.students);
+               setFacultyName(res.data.faculty.username);
 
                setTimeout(() => {
                   setIsLoading(false);
@@ -58,7 +63,7 @@ export default function ExamDetails() {
             }
          })
          .catch((err) => {
-            navigate("/");
+            // navigate("/");
             console.log(err);
          });
    }
@@ -70,7 +75,7 @@ export default function ExamDetails() {
                Posted
             </span>
          );
-      } else if (status === "opened") {
+      } else if (status === "open") {
          return (
             <span className="badge rounded-pill bg-warning d-inline mt-2">
                Open
@@ -127,6 +132,9 @@ export default function ExamDetails() {
       if (!localStorage.getItem("token")) {
          navigate("/login");
       } else {
+         const token = localStorage.getItem("token");
+         const userTokenDecoded = jwt_decode(token);
+         setUser(userTokenDecoded);
          getExamData(exam_id);
       }
    }, []);
@@ -161,8 +169,8 @@ export default function ExamDetails() {
                   <h1 className="display-5 mt-4">Exam Details</h1>
 
                   {/* TOP SECTION */}
-                  <div className="border py-4 px-5 mt-4">
-                     <div className="d-flex align-items-center justify-content-between mb-4">
+                  <div className="border py-4 px-4 mt-4">
+                     <div className="d-flex align-items-center justify-content-between">
                         <div className="d-flex flex-column">
                            {/* title and status div*/}
                            <div className="d-flex align-items-center">
@@ -171,9 +179,17 @@ export default function ExamDetails() {
                               </h1>
                               {getExamStatus(examData.status)}
                            </div>
-                           <small className="text-muted mb-2">
-                              Exam Code: {examData.examCode}
-                           </small>
+
+                           {user && user.userType === "teacher" ? (
+                              <small className="text-muted mb-2">
+                                 Exam Code: {examData.examCode}
+                              </small>
+                           ) : (
+                              <small className="text-muted mb-2">
+                                 {facultyName}
+                              </small>
+                           )}
+
                            <p className="d-inline">
                               {examData.totalItems}{" "}
                               {examData.totalItems === 1 ? "item" : "items"} -{" "}
@@ -182,9 +198,21 @@ export default function ExamDetails() {
                            </p>
                         </div>
                         <div className="d-flex flex-column align-items-end">
-                           <button className="btn btn-primary">
-                              Generate Instance
-                           </button>
+                           {user && user.userType === "teacher" && (
+                              <button className="btn btn-primary">
+                                 Generate Instance
+                              </button>
+                           )}
+                           {user && user.userType === "student" && (
+                              <button
+                                 className="btn btn-primary"
+                                 disabled={
+                                    // enable button only when exam is in open state
+                                    examData.status !== "open" ? true : false
+                                 }>
+                                 Take Exam
+                              </button>
+                           )}
                            <p className="m-0 mt-1 text-muted">
                               Available from: {formatDate(examData.date_from)}
                            </p>
@@ -195,79 +223,78 @@ export default function ExamDetails() {
                      </div>
 
                      {/* INFO CARDS */}
-                     <div className="row row-cols-xl-3 g-4">
-                        <div className="col">
-                           <div className="card p-4">
-                              <p className="m-0">Students Joined</p>
-                              <h1>20</h1>
+                     {user && user.userType === "teacher" && (
+                        <div className="row row-cols-xl-3 g-4">
+                           <div className="col">
+                              <div className="card p-4">
+                                 <p className="m-0">Students Joined</p>
+                                 <h1>20</h1>
+                              </div>
+                           </div>
+                           <div className="col">
+                              <div className="card p-4">
+                                 <p className="m-0">Students Joined</p>
+                                 <h1>20</h1>
+                              </div>
+                           </div>
+                           <div className="col">
+                              <div className="card p-4">
+                                 <p className="m-0">Students Joined</p>
+                                 <h1>20</h1>
+                              </div>
+                           </div>
+                           <div className="col">
+                              <div className="card p-4">
+                                 <p className="m-0">Students Joined</p>
+                                 <h1>20</h1>
+                              </div>
+                           </div>
+                           <div className="col">
+                              <div className="card p-4">
+                                 <p className="m-0">Students Joined</p>
+                                 <h1>20</h1>
+                              </div>
+                           </div>
+                           <div className="col">
+                              <div className="card p-4">
+                                 <p className="m-0">Students Joined</p>
+                                 <h1>20</h1>
+                              </div>
                            </div>
                         </div>
-                        <div className="col">
-                           <div className="card p-4">
-                              <p className="m-0">Students Joined</p>
-                              <h1>20</h1>
-                           </div>
-                        </div>
-                        <div className="col">
-                           <div className="card p-4">
-                              <p className="m-0">Students Joined</p>
-                              <h1>20</h1>
-                           </div>
-                        </div>
-                        <div className="col">
-                           <div className="card p-4">
-                              <p className="m-0">Students Joined</p>
-                              <h1>20</h1>
-                           </div>
-                        </div>
-                        <div className="col">
-                           <div className="card p-4">
-                              <p className="m-0">Students Joined</p>
-                              <h1>20</h1>
-                           </div>
-                        </div>
-                        <div className="col">
-                           <div className="card p-4">
-                              <p className="m-0">Students Joined</p>
-                              <h1>20</h1>
-                           </div>
-                        </div>
-                     </div>
+                     )}
                   </div>
 
                   {/* LIST SECTION */}
                   <div className="border py-4 px-5 my-5">
-                     <h1 className="m-0 me-2 d-inline">Students</h1>
+                     <h5 className="mb-4">
+                        Students{" "}
+                        <small className="text-muted">
+                           ({students.length})
+                        </small>
+                     </h5>
                      <hr />
-
-                     <div className="mt-2 p-2 border d-flex align-items-center">
-                        <div className={css.student_image}></div>
-                        <span className="ms-3">Student Name</span>
-                     </div>
-                     <div className="mt-2 p-2 border d-flex align-items-center">
-                        <div className={css.student_image}></div>
-                        <span className="ms-3">Student Name</span>
-                     </div>
-                     <div className="mt-2 p-2 border d-flex align-items-center">
-                        <div className={css.student_image}></div>
-                        <span className="ms-3">Student Name</span>
-                     </div>
-                     <div className="mt-2 p-2 border d-flex align-items-center">
-                        <div className={css.student_image}></div>
-                        <span className="ms-3">Student Name</span>
-                     </div>
-                     <div className="mt-2 p-2 border d-flex align-items-center">
-                        <div className={css.student_image}></div>
-                        <span className="ms-3">Student Name</span>
-                     </div>
-                     <div className="mt-2 p-2 border d-flex align-items-center">
-                        <div className={css.student_image}></div>
-                        <span className="ms-3">Student Name</span>
-                     </div>
-                     <div className="mt-2 p-2 border d-flex align-items-center">
-                        <div className={css.student_image}></div>
-                        <span className="ms-3">Student Name</span>
-                     </div>
+                     {students.length <= 0 ? (
+                        <>
+                           <p className="text-center text-muted my-5">
+                              No students registered
+                           </p>
+                        </>
+                     ) : (
+                        <>
+                           {students.map((student, i) => (
+                              <div
+                                 className={`mt-2 p-2  d-flex align-items-center ${
+                                    i + 1 !== students.length && "border-bottom"
+                                 }`}>
+                                 <div className={css.student_image}></div>
+                                 <span className="ms-3">
+                                    {student.username}
+                                 </span>
+                              </div>
+                           ))}
+                        </>
+                     )}
                   </div>
                </div>
             </motion.div>

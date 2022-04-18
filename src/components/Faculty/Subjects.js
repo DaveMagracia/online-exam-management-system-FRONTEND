@@ -5,8 +5,10 @@ import { UserContext } from "../../UserContext";
 import jwt_decode from "jwt-decode";
 
 import FacultyNavbar from "./FacultyNavbar";
+import StudentNavbar from "../Student/StudentNavbar";
 import ExamList from "./ExamList";
 import axios from "axios";
+import { v1 as createId } from "uuid";
 
 export default function Subjects(props) {
    const navigate = useNavigate();
@@ -32,26 +34,40 @@ export default function Subjects(props) {
          },
       })
          .then((data) => {
-            console.log(data.data.subjectNames);
-            setSubjectNameList(
-               data.data.subjectNames.map((val) => (
-                  <>
+            const subjectNames = data.data.subjectNames;
+
+            if (!subjectNames.includes(subject_name)) {
+               navigate("/");
+            } else {
+               setSubjectNameList(
+                  subjectNames.map((val, i) => (
                      <li
-                        class={`${css.link} dropdown-item`}
+                        key={createId()}
+                        className={`${css.link} dropdown-item`}
                         onClick={() => goToSubject(val)}>
                         {val}
                      </li>
-                  </>
-               ))
-            );
+                  ))
+               );
+            }
          })
          .catch((err) => {
             console.log(err);
          });
    }
 
+   function getNavbar() {
+      // identifies what type of navbar to be displayed
+      if (user) {
+         if (user.userType === "student") {
+            return <StudentNavbar username={user.username} />;
+         } else if (user.userType === "teacher") {
+            return <FacultyNavbar username={user.username} />;
+         }
+      }
+   }
+
    React.useEffect(() => {
-      //get user details from token to set the initial values of the form
       const token = localStorage.getItem("token");
       const userTokenDecoded = jwt_decode(token);
       setUser(userTokenDecoded);
@@ -60,9 +76,9 @@ export default function Subjects(props) {
 
    return (
       <>
-         <FacultyNavbar username={user ? user.username : ""} />
+         {getNavbar()}
          <div className="container">
-            <div class="dropdown mt-5">
+            <div className="dropdown mt-5">
                <a
                   className="dropdown-toggle text-black text-decoration-none"
                   href="#"
@@ -73,11 +89,12 @@ export default function Subjects(props) {
                   <h2 className="mt-5 d-inline">{subject_name}</h2>
                </a>
 
-               <ul class="dropdown-menu" aria-labelledby="subjectsDropdown">
+               {/* dropdown list of subjects */}
+               <ul className="dropdown-menu" aria-labelledby="subjectsDropdown">
                   {subjectNameList}
                </ul>
             </div>
-            <hr />
+            <hr className="mt-2 mb-0" />
             <ExamList subjectName={subject_name} />
          </div>
       </>

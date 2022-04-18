@@ -133,6 +133,7 @@ export default function UpdateProfile(props) {
                }, 2000);
             })
             .catch((err) => {
+               console.log(err.response);
                setTimeout(() => {
                   setLoading(false);
                   setGenError({

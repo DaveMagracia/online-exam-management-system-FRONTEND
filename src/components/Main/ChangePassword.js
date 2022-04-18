@@ -145,7 +145,6 @@ export default function ChangePassword(props) {
    }
 
    React.useEffect(() => {
-      //get user details from token to set the initial values of the form
       const token = localStorage.getItem("token");
       const userTokenDecoded = jwt_decode(token);
       setUser(userTokenDecoded);

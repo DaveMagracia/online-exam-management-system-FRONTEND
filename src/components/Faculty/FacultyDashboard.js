@@ -2,7 +2,7 @@ import React from "react";
 import css from "./css/FacultyDashboard.module.css";
 import FacultyNavbar from "./FacultyNavbar";
 import ExamList from "./ExamList";
-import SubjectList from "./SubjectList";
+import SubjectList from "../Main/SubjectList";
 import QuestionBankList from "./QuestionBankList";
 
 export default function FacultyDashboard(props) {
@@ -12,7 +12,7 @@ export default function FacultyDashboard(props) {
          <div className={`${css.fact_dashboard_root} p-3`}>
             <div className="d-flex flex-column container">
                <h1 className="display-1 m-0">Faculty Dashboard</h1>
-               <hr />
+               <hr className="m-0" />
 
                {/* <ExamList /> */}
                <SubjectList />

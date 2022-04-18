@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useContext } from "react";
 import css from "./css/ExamListBox.module.css";
 import { useNavigate } from "react-router-dom";
+import jwt_decode from "jwt-decode";
+import { UserContext } from "../../UserContext";
 import {
    MdModeEdit,
    MdDelete,
@@ -13,6 +15,7 @@ import { Modal, Button } from "react-bootstrap";
 export default function ExamListBox(props) {
    const navigate = useNavigate();
    const examData = props.examData;
+   const { user, setUser } = useContext(UserContext);
    const [isShownModal, setisShownModal] = React.useState(false);
    const [activeDeleteId, setActiveDeleteId] = React.useState(null);
    const [isShownCodeModal, setIsShownCodeModal] = React.useState(false);
@@ -69,7 +72,7 @@ export default function ExamListBox(props) {
    function getExamStatus(status) {
       if (status === "posted") {
          return <span className="badge rounded-pill bg-success">Posted</span>;
-      } else if (status === "opened") {
+      } else if (status === "open") {
          return <span className="badge rounded-pill bg-warning">Open</span>;
       } else if (status === "closed") {
          return <span className="badge rounded-pill bg-danger">Closed</span>;
@@ -153,42 +156,64 @@ export default function ExamListBox(props) {
       return `${items} ⸱ ${points}`;
    }
 
+   React.useEffect(() => {
+      const token = localStorage.getItem("token");
+      const userTokenDecoded = jwt_decode(token);
+      setUser(userTokenDecoded);
+   }, []);
+
    return (
       <>
          <div className={`${css.exam_box} card p-4`}>
             <div className="d-flex flex-row justify-content-between">
                <div>
-                  <h4 className="m-0">{examData.title}</h4>
+                  {/* exam title is only clickable on student side */}
+                  {user && user.userType === "teacher" ? (
+                     <h4 className="m-0">{examData.title}</h4>
+                  ) : (
+                     <h4
+                        className={`${css.exam_title} m-0`}
+                        onClick={() => goToExamDetails(examData._id)}>
+                        {examData.title}
+                     </h4>
+                  )}
                   <span className="mt-1">{getExamStatus(examData.status)}</span>
                </div>
-               {examData.status !== "unposted" && (
-                  <>
-                     <MdOutlineMoreVert
-                        type="button"
-                        id="defaultDropdown"
-                        data-bs-toggle="dropdown"
-                        data-bs-auto-close="true"
-                        aria-expanded="false"
-                        className={`${css.action_button}`}
-                        size={"28px"}
-                        color="#787878"
-                     />
-                     <ul
-                        className="dropdown-menu"
-                        aria-labelledby="defaultDropdown">
-                        <li
-                           className={`${css.action_button} dropdown-item`}
-                           onClick={() => goToExamDetails(examData._id)}>
-                           Details
-                        </li>
-                        <li
-                           className={`${css.action_button} dropdown-item`}
-                           onClick={() => openExamCodeModal(examData.examCode)}>
-                           Get exam code
-                        </li>
-                     </ul>
-                  </>
-               )}
+
+               {/* show this menu only on faculty side */}
+               {user &&
+                  user.userType === "teacher" &&
+                  examData.status !== "unposted" && (
+                     <>
+                        <MdOutlineMoreVert
+                           type="button"
+                           id="defaultDropdown"
+                           data-bs-toggle="dropdown"
+                           data-bs-auto-close="true"
+                           aria-expanded="false"
+                           className={`${css.action_button}`}
+                           size={"28px"}
+                           color="#787878"
+                        />
+                        <ul
+                           className="dropdown-menu"
+                           aria-labelledby="defaultDropdown">
+                           <li
+                              className={`${css.action_button} dropdown-item`}
+                              onClick={() => goToExamDetails(examData._id)}>
+                              Details
+                           </li>
+
+                           <li
+                              className={`${css.action_button} dropdown-item`}
+                              onClick={() =>
+                                 openExamCodeModal(examData.examCode)
+                              }>
+                              Get exam code
+                           </li>
+                        </ul>
+                     </>
+                  )}
             </div>
 
             {examData.status !== "unposted" && (
@@ -211,22 +236,28 @@ export default function ExamListBox(props) {
             {/* ACTION BUTTONS */}
             <div className="d-flex flex-row justify-content-end mt-4 mt-auto">
                {/* //show edit button only when exam is not posted/published */}
-               {examData.status === "unposted" && (
-                  <MdModeEdit
-                     size={"28px"}
-                     className={`${css.action_button} me-2`}
-                     color="#787878"
-                     onClick={goToEditExam}
-                  />
-               )}
-               {examData.status !== "closed" && (
-                  <MdDelete
-                     className={`${css.action_button}`}
-                     size={"28px"}
-                     color="#787878"
-                     onClick={() => openDeleteModal(examData._id)}
-                  />
-               )}
+
+               {/* ONLY SHOW BUTTONS WHEN USER IS A FACULTY */}
+               {user &&
+                  user.userType === "teacher" &&
+                  examData.status === "unposted" && (
+                     <MdModeEdit
+                        size={"28px"}
+                        className={`${css.action_button} me-2`}
+                        color="#787878"
+                        onClick={goToEditExam}
+                     />
+                  )}
+               {user &&
+                  user.userType === "teacher" &&
+                  examData.status !== "closed" && (
+                     <MdDelete
+                        className={`${css.action_button}`}
+                        size={"28px"}
+                        color="#787878"
+                        onClick={() => openDeleteModal(examData._id)}
+                     />
+                  )}
             </div>
          </div>
 
