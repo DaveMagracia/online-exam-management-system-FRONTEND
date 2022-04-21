@@ -10,8 +10,7 @@ export default function StudentNavbar(props) {
 
    const { user, setUser } = useContext(UserContext);
 
-   const [isShownExamCodeModal, setIsShownExamCodeModal] =
-      React.useState(false);
+   const [isShownExamCodeModal, setIsShownExamCodeModal] = React.useState(false);
    const [isRegistering, setIsRegistering] = React.useState(false);
 
    const [formDataCode, setFormData] = React.useState({
@@ -126,8 +125,7 @@ export default function StudentNavbar(props) {
                setTimeout(() => {
                   //set errors only when modal is shown
                   if (isShownExamCodeModal) {
-                     if (err.response.status !== 409)
-                        setFormData({ examCode: "" });
+                     if (err.response.status !== 409) setFormData({ examCode: "" });
 
                      setGenError({
                         hasGenError: true,
@@ -167,8 +165,7 @@ export default function StudentNavbar(props) {
    }
    return (
       <>
-         <nav
-            className={`${css.stud_navbar_root} navbar navbar-expand-lg navbar-light`}>
+         <nav className={`${css.stud_navbar_root} navbar navbar-expand-lg navbar-light`}>
             <div className="container">
                <a className="navbar-brand" href="/">
                   Online Exam
@@ -192,14 +189,11 @@ export default function StudentNavbar(props) {
                            type="button"
                            className={`${css.code_btn} btn btn-outline-dark`}
                            onClick={openCodeModal}>
-                           Enter Exam Code
+                           Enter Exam Code +
                         </button>
                      </li>
-                     <li className="nav-item me-2">
-                        <a
-                           className="nav-link active"
-                           aria-current="page"
-                           href="/dashboard">
+                     {/* <li className="nav-item me-2">
+                        <a className="nav-link active" aria-current="page" href="/dashboard">
                            Dashboard
                         </a>
                      </li>
@@ -207,7 +201,7 @@ export default function StudentNavbar(props) {
                         <a className="nav-link" href="/">
                            History
                         </a>
-                     </li>
+                     </li> */}
                      {/* my profile dropdown */}
                      <li className="nav-item dropdown">
                         <a
@@ -219,22 +213,14 @@ export default function StudentNavbar(props) {
                            aria-expanded="false">
                            {props.username}&nbsp;
                         </a>
-                        <ul
-                           className="dropdown-menu"
-                           aria-labelledby="navbarDarkDropdownMenuLink">
-                           <li
-                              className={`${css.nav_link} dropdown-item`}
-                              onClick={UpdateProfile}>
+                        <ul className="dropdown-menu" aria-labelledby="navbarDarkDropdownMenuLink">
+                           <li className={`${css.nav_link} dropdown-item`} onClick={UpdateProfile}>
                               My Profile
                            </li>
-                           <li
-                              className={`${css.nav_link} dropdown-item`}
-                              onClick={ChangePassword}>
+                           <li className={`${css.nav_link} dropdown-item`} onClick={ChangePassword}>
                               Change Password
                            </li>
-                           <li
-                              className={`${css.nav_link} dropdown-item`}
-                              onClick={logout}>
+                           <li className={`${css.nav_link} dropdown-item`} onClick={logout}>
                               Logout
                            </li>
                         </ul>
@@ -258,9 +244,7 @@ export default function StudentNavbar(props) {
                         id="InputExamCode"
                         type="text"
                         className={`form-control ${
-                           invalidError || emptyError
-                              ? "border border-danger"
-                              : "mb-4"
+                           invalidError || emptyError ? "border border-danger" : "mb-4"
                         }`}
                         name="examCode"
                         placeholder="Enter exam code"
@@ -271,14 +255,8 @@ export default function StudentNavbar(props) {
                   </div>
 
                   {/* FIELD ERRORS */}
-                  {invalidError && (
-                     <small className="text-danger mb-4">Invalid Code</small>
-                  )}
-                  {emptyError && (
-                     <small className="text-danger mb-4">
-                        This field is required
-                     </small>
-                  )}
+                  {invalidError && <small className="text-danger mb-4">Invalid Code</small>}
+                  {emptyError && <small className="text-danger mb-4">This field is required</small>}
                </form>
             </Modal.Body>
             <Modal.Footer>

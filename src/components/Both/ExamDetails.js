@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
-import FacultyNavbar from "./FacultyNavbar";
+import FacultyNavbar from "../Faculty/FacultyNavbar";
+import StudentNavbar from "../Student/StudentNavbar";
 import css from "./css/ExamDetails.module.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -8,12 +9,15 @@ import { useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import PuffLoader from "react-spinners/PuffLoader";
 import jwt_decode from "jwt-decode";
+import { Modal, Button } from "react-bootstrap";
+import { v1 as createId } from "uuid";
 
 export default function ExamDetails() {
    const { exam_id } = useParams();
    const navigate = useNavigate();
    const { user, setUser } = useContext(UserContext);
    const [isLoading, setIsLoading] = React.useState(true);
+   const [isShownExamModal, setIsShownExamModal] = React.useState(false);
    const [examData, setExamData] = React.useState({
       title: "",
       date_from: "",
@@ -55,7 +59,10 @@ export default function ExamDetails() {
                   totalPoints: examData_.totalPoints,
                });
                setStudents(res.data.students);
-               setFacultyName(res.data.faculty.username);
+               if (user && user.userType === "student") {
+                  //this state is only available for student users
+                  setFacultyName(res.data.faculty.username);
+               }
 
                setTimeout(() => {
                   setIsLoading(false);
@@ -70,28 +77,14 @@ export default function ExamDetails() {
 
    function getExamStatus(status) {
       if (status === "posted") {
-         return (
-            <span className="badge rounded-pill bg-success d-inline mt-2">
-               Posted
-            </span>
-         );
+         return <span className="badge rounded-pill bg-success d-inline mt-2">Posted</span>;
       } else if (status === "open") {
-         return (
-            <span className="badge rounded-pill bg-warning d-inline mt-2">
-               Open
-            </span>
-         );
+         return <span className="badge rounded-pill bg-warning d-inline mt-2">Open</span>;
       } else if (status === "closed") {
-         return (
-            <span className="badge rounded-pill bg-danger d-inline mt-2">
-               Closed
-            </span>
-         );
+         return <span className="badge rounded-pill bg-danger d-inline mt-2">Closed</span>;
       } else {
          // return <small className="text-muted">Unposted</small>;
-         return (
-            <span className="badge rounded-pill bg-secondary">Unposted</span>
-         );
+         return <span className="badge rounded-pill bg-secondary">Unposted</span>;
       }
    }
 
@@ -128,6 +121,25 @@ export default function ExamDetails() {
       return formattedDate;
    }
 
+   function closeTakeExamModal() {
+      setIsShownExamModal(false);
+   }
+
+   function takeExam() {
+      navigate("/take-exam", { state: { examId: exam_id } });
+   }
+
+   function getNavbar() {
+      // identifies what type of navbar to be displayed
+      if (user) {
+         if (user.userType === "student") {
+            return <StudentNavbar username={user.username} />;
+         } else if (user.userType === "teacher") {
+            return <FacultyNavbar username={user.username} />;
+         }
+      }
+   }
+
    React.useEffect(() => {
       if (!localStorage.getItem("token")) {
          navigate("/login");
@@ -150,11 +162,7 @@ export default function ExamDetails() {
                      exit={{ opacity: 0 }}
                      transition={{ duration: 0.2 }}
                      className={`${css.examDetails_loading} d-flex flex-column align-items-center justify-content-center`}>
-                     <PuffLoader
-                        loading={isLoading}
-                        color="#9c2a22"
-                        size={80}
-                     />
+                     <PuffLoader loading={isLoading} color="#9c2a22" size={80} />
                      <p className="lead mt-3">&nbsp;Loading...</p>
                   </motion.div>
                )}
@@ -164,7 +172,7 @@ export default function ExamDetails() {
                initial={{ opacity: 0 }}
                animate={{ opacity: 1 }}
                transition={{ duration: 0.2 }}>
-               <FacultyNavbar username={user.username} />
+               {getNavbar()}
                <div className="container">
                   <h1 className="display-5 mt-4">Exam Details</h1>
 
@@ -174,9 +182,7 @@ export default function ExamDetails() {
                         <div className="d-flex flex-column">
                            {/* title and status div*/}
                            <div className="d-flex align-items-center">
-                              <h1 className="m-0 me-2 d-inline">
-                                 {examData.title}
-                              </h1>
+                              <h1 className="m-0 me-2 d-inline">{examData.title}</h1>
                               {getExamStatus(examData.status)}
                            </div>
 
@@ -185,27 +191,23 @@ export default function ExamDetails() {
                                  Exam Code: {examData.examCode}
                               </small>
                            ) : (
-                              <small className="text-muted mb-2">
-                                 {facultyName}
-                              </small>
+                              <small className="text-muted mb-2">{facultyName}</small>
                            )}
 
                            <p className="d-inline">
-                              {examData.totalItems}{" "}
-                              {examData.totalItems === 1 ? "item" : "items"} -{" "}
+                              {examData.totalItems} {examData.totalItems === 1 ? "item" : "items"} -{" "}
                               {examData.totalPoints}{" "}
                               {examData.totalPoints === 1 ? "point" : "points"}
                            </p>
                         </div>
                         <div className="d-flex flex-column align-items-end">
                            {user && user.userType === "teacher" && (
-                              <button className="btn btn-primary">
-                                 Generate Instance
-                              </button>
+                              <button className="btn btn-primary">Generate Instance</button>
                            )}
                            {user && user.userType === "student" && (
                               <button
                                  className="btn btn-primary"
+                                 onClick={() => setIsShownExamModal(true)}
                                  disabled={
                                     // enable button only when exam is in open state
                                     examData.status !== "open" ? true : false
@@ -216,9 +218,7 @@ export default function ExamDetails() {
                            <p className="m-0 mt-1 text-muted">
                               Available from: {formatDate(examData.date_from)}
                            </p>
-                           <p className="m-0 text-muted">
-                              Until: {formatDate(examData.date_to)}
-                           </p>
+                           <p className="m-0 text-muted">Until: {formatDate(examData.date_to)}</p>
                         </div>
                      </div>
 
@@ -228,7 +228,7 @@ export default function ExamDetails() {
                            <div className="col">
                               <div className="card p-4">
                                  <p className="m-0">Students Joined</p>
-                                 <h1>20</h1>
+                                 <h1>{students.length}</h1>
                               </div>
                            </div>
                            <div className="col">
@@ -268,35 +268,46 @@ export default function ExamDetails() {
                   {/* LIST SECTION */}
                   <div className="border py-4 px-5 my-5">
                      <h5 className="mb-4">
-                        Students{" "}
-                        <small className="text-muted">
-                           ({students.length})
-                        </small>
+                        Students <small className="text-muted">({students.length})</small>
                      </h5>
                      <hr />
                      {students.length <= 0 ? (
                         <>
-                           <p className="text-center text-muted my-5">
-                              No students registered
-                           </p>
+                           <p className="text-center text-muted my-5">No students registered</p>
                         </>
                      ) : (
                         <>
                            {students.map((student, i) => (
                               <div
+                                 key={createId()}
                                  className={`mt-2 p-2  d-flex align-items-center ${
                                     i + 1 !== students.length && "border-bottom"
                                  }`}>
                                  <div className={css.student_image}></div>
-                                 <span className="ms-3">
-                                    {student.username}
-                                 </span>
+                                 <span className="ms-3">{student.username}</span>
                               </div>
                            ))}
                         </>
                      )}
                   </div>
                </div>
+
+               <Modal show={isShownExamModal} onHide={closeTakeExamModal}>
+                  <Modal.Header closeButton>
+                     <Modal.Title>Take Exam</Modal.Title>
+                  </Modal.Header>
+                  <Modal.Body>
+                     Are you sure you want to start taking this exam? You only have 1 attempt.
+                  </Modal.Body>
+                  <Modal.Footer>
+                     <Button variant="secondary" onClick={closeTakeExamModal}>
+                        Cancel
+                     </Button>
+                     <Button variant="primary" onClick={takeExam}>
+                        Continue
+                     </Button>
+                  </Modal.Footer>
+               </Modal>
             </motion.div>
          )}
       </>

@@ -71,9 +71,7 @@ export default function UpdateProfile(props) {
       setEmptyErrors(tempEmptyErrors);
 
       // "hasEmptyField" will be true if one of the key in the emptyErrors obj has a value of true
-      var hasEmptyFields = Object.keys(tempEmptyErrors).some(
-         (k) => tempEmptyErrors[k] === true
-      );
+      var hasEmptyFields = Object.keys(tempEmptyErrors).some((k) => tempEmptyErrors[k] === true);
 
       //if there are no empty fields, proceed to validation
       if (!hasEmptyFields) {
@@ -82,8 +80,7 @@ export default function UpdateProfile(props) {
          let tempErrors = { ...errors };
 
          //validate inputs
-         let emailRegex =
-            /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+         let emailRegex = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
          let email = formData.email.trim();
          tempErrors.email.hasError = !email.match(emailRegex);
 
@@ -103,9 +100,7 @@ export default function UpdateProfile(props) {
 
          //the return statements will return a boolean. If true, it means the form inputs are valid, invalid otherwise
          //if there are no errors in the tempErrors, return true
-         return !Object.keys(tempErrors).some(
-            (k) => tempErrors[k].hasError === true
-         );
+         return !Object.keys(tempErrors).some((k) => tempErrors[k].hasError === true);
       }
       return false;
    }
@@ -205,14 +200,10 @@ export default function UpdateProfile(props) {
                            <label htmlFor="InputEmail">Email Address</label>
                         </div>
                         {errors.email.hasError && (
-                           <p className="text-danger mb-4 small">
-                              {errors.email.msg}
-                           </p>
+                           <p className="text-danger mb-4 small">{errors.email.msg}</p>
                         )}
                         {emptyErrors.email && (
-                           <p className="text-danger mb-4 small">
-                              This field is required
-                           </p>
+                           <p className="text-danger mb-4 small">This field is required</p>
                         )}
 
                         <div className="form-floating">
@@ -220,8 +211,7 @@ export default function UpdateProfile(props) {
                               id="InputUsername"
                               type="text"
                               className={`form-control ${
-                                 (errors.username.hasError ||
-                                    emptyErrors.username) &&
+                                 (errors.username.hasError || emptyErrors.username) &&
                                  "border border-danger"
                               }`}
                               name="username"
@@ -230,16 +220,12 @@ export default function UpdateProfile(props) {
                            />
                            <label htmlFor="InputUsername">Username</label>
                            {emptyErrors.username && (
-                              <p className="text-danger m-0 small">
-                                 This field is required
-                              </p>
+                              <p className="text-danger m-0 small">This field is required</p>
                            )}
 
                            <div
                               className={`form-text mb-4 ${
-                                 errors.username.hasError
-                                    ? "text-danger"
-                                    : "text-muted"
+                                 errors.username.hasError ? "text-danger" : "text-muted"
                               }`}>
                               Username must:
                               <ul>
@@ -276,9 +262,7 @@ export default function UpdateProfile(props) {
                               This field is required
                            </p>
                         )} */}
-                        <button
-                           type="submit"
-                           className={`${css.reg_btn} btn btn-primary`}>
+                        <button type="submit" className={`${css.reg_btn} btn btn-primary`}>
                            Update Profile
                         </button>
                      </form>

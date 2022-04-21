@@ -1,8 +1,8 @@
 import React from "react";
 import css from "./css/FacultyDashboard.module.css";
 import FacultyNavbar from "./FacultyNavbar";
-import ExamList from "./ExamList";
-import SubjectList from "../Main/SubjectList";
+import ExamList from "../Both/ExamList";
+import SubjectList from "../Both/SubjectList";
 import QuestionBankList from "./QuestionBankList";
 
 export default function FacultyDashboard(props) {

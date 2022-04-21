@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../../UserContext";
 import jwt_decode from "jwt-decode";
 
-import FacultyNavbar from "./FacultyNavbar";
+import FacultyNavbar from "../Faculty/FacultyNavbar";
 import StudentNavbar from "../Student/StudentNavbar";
 import ExamList from "./ExamList";
 import axios from "axios";
@@ -15,10 +15,6 @@ export default function Subjects(props) {
    const { subject_name } = useParams();
    const { user, setUser } = useContext(UserContext);
    const [subjectNameList, setSubjectNameList] = React.useState([]);
-
-   function goToExamDetails(examId) {
-      navigate(`/exam-details/${examId}`);
-   }
 
    function goToSubject(subjectName) {
       navigate(`/subjects/${subjectName}`);
@@ -36,9 +32,7 @@ export default function Subjects(props) {
          .then((data) => {
             const subjectNames = data.data.subjectNames;
 
-            if (!subjectNames.includes(subject_name)) {
-               navigate("/");
-            } else {
+            if (subjectNames.includes(subject_name) || subject_name.toLowerCase() === "all") {
                setSubjectNameList(
                   subjectNames.map((val, i) => (
                      <li
@@ -49,6 +43,9 @@ export default function Subjects(props) {
                      </li>
                   ))
                );
+            } else {
+               //if the url param does not exist in the list of subjects, return to dashboard
+               navigate("/");
             }
          })
          .catch((err) => {
@@ -91,6 +88,12 @@ export default function Subjects(props) {
 
                {/* dropdown list of subjects */}
                <ul className="dropdown-menu" aria-labelledby="subjectsDropdown">
+                  <li
+                     key={createId()}
+                     className={`${css.link} dropdown-item`}
+                     onClick={() => goToSubject("All")}>
+                     All subjects
+                  </li>
                   {subjectNameList}
                </ul>
             </div>

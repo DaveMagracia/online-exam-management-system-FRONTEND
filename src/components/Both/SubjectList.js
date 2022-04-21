@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
 import BarLoader from "react-spinners/BarLoader";
+import { v1 as createId } from "uuid";
 
 export default function SubjectList() {
    const navigate = useNavigate();
@@ -21,7 +22,7 @@ export default function SubjectList() {
             return (
                <motion.div
                   className="col"
-                  key={i}
+                  key={createId()}
                   initial={{ opacity: 0, translateY: 10 }}
                   animate={{ opacity: 1, translateY: 0 }}
                   transition={{ duration: 0.3, delay: i * 0.05 }}>
@@ -83,12 +84,7 @@ export default function SubjectList() {
                      exit={{ opacity: 0 }}
                      transition={{ duration: 0.2 }}
                      className={`${css.loading_root} d-flex flex-column align-items-center `}>
-                     <BarLoader
-                        loading={isLoading}
-                        color="#9c2a22"
-                        size={80}
-                        width={"100%"}
-                     />
+                     <BarLoader loading={isLoading} color="#9c2a22" size={80} width={"100%"} />
                   </motion.div>
                )}
             </AnimatePresence>
@@ -97,9 +93,7 @@ export default function SubjectList() {
                <div className="pt-3">
                   <h3 className="d-inline">Subjects</h3>
                   {user && user.userType === "teacher" && (
-                     <button
-                        className="btn btn-primary float-end"
-                        onClick={goToCreateExam}>
+                     <button className="btn btn-primary float-end" onClick={goToCreateExam}>
                         Create Exam
                      </button>
                   )}
@@ -118,13 +112,13 @@ export default function SubjectList() {
                   <div className={`${css.no_subjects_container}`}>
                      {user && user.userType === "teacher" ? (
                         <p className="text-muted text-center">
-                           You have not created an exam yet. Subjects on exams
-                           you created will appear here.
+                           You have not created an exam yet. Subjects on exams you created will
+                           appear here.
                         </p>
                      ) : (
                         <p className="text-muted text-center">
-                           You are not registered to an exam yet. Exams you have
-                           registered to will appear here.
+                           You are not registered to an exam yet. Exams you have registered to will
+                           appear here.
                         </p>
                      )}
                   </div>

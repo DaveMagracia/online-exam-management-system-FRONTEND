@@ -1,12 +1,7 @@
 import React from "react";
 import css from "./css/QuestionBankListBox.module.css";
 import { useNavigate } from "react-router-dom";
-import {
-   MdModeEdit,
-   MdDelete,
-   MdOutlineMoreVert,
-   MdContentCopy,
-} from "react-icons/md";
+import { MdModeEdit, MdDelete, MdOutlineMoreVert, MdContentCopy } from "react-icons/md";
 import axios from "axios";
 import { Modal, Button } from "react-bootstrap";
 
@@ -15,8 +10,7 @@ export default function QuestionBankListBox(props) {
    const questionBankData = props.questionBankData;
 
    const [isShownModal, setisShownModal] = React.useState(false);
-   const [isShownCantDeleteModal, setIsShownCantDeleteModal] =
-      React.useState(false);
+   const [isShownCantDeleteModal, setIsShownCantDeleteModal] = React.useState(false);
    const [activeDeleteId, setActiveDeleteId] = React.useState(null);
 
    function openDeleteModal(examId) {
@@ -76,9 +70,7 @@ export default function QuestionBankListBox(props) {
       <>
          <div className={`${css.question_box} card p-4 m-0`}>
             <h4>{questionBankData.title}</h4>
-            <p className="text-muted m-0">
-               {questionBankData.totalQuestions} Questions
-            </p>
+            <p className="text-muted m-0">{questionBankData.totalQuestions} Questions</p>
 
             <div className="d-flex flex-row justify-content-end mt-4 mt-auto">
                <MdModeEdit
@@ -98,15 +90,12 @@ export default function QuestionBankListBox(props) {
 
          {/* MODAL FROM REACT-BOOTSTRAP LIBRARY */}
 
-         <Modal
-            show={isShownCantDeleteModal}
-            onHide={handleCantDeleteModalClose}>
+         <Modal show={isShownCantDeleteModal} onHide={handleCantDeleteModalClose}>
             <Modal.Header closeButton>
                <Modal.Title>Hold up!</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-               You cannot delete this bank at the moment. This bank is currently
-               in use by an exam.
+               You cannot delete this bank at the moment. This bank is currently in use by an exam.
             </Modal.Body>
             <Modal.Footer>
                <Button variant="primary" onClick={handleCantDeleteModalClose}>
@@ -121,8 +110,8 @@ export default function QuestionBankListBox(props) {
                <Modal.Title>Delete question bank</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-               Are you sure you want to delete this Question Bank? You won't be
-               able to undo this action.
+               Are you sure you want to delete this Question Bank? You won't be able to undo this
+               action.
             </Modal.Body>
             <Modal.Footer>
                <Button variant="secondary" onClick={handleModalClose}>

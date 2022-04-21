@@ -1,20 +1,26 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+//PUBLIC COMPONENTS
 import Login from "./components/Main/Login";
 import Register from "./components/Main/Register";
 import Landing from "./components/Main/Landing";
-import Main from "./components/Main/Main";
+
+//BOTH COMPONENTS
+import Main from "./components/Both/Main";
 import PageNotFound404 from "./components/Main/PageNotFound404";
-import UpdateProfile from "./components/Main/UpdateProfile";
-import ChangePassword from "./components/Main/ChangePassword";
-import Subjects from "./components/Faculty/Subjects";
+import UpdateProfile from "./components/Both/UpdateProfile";
+import ChangePassword from "./components/Both/ChangePassword";
+import Subjects from "./components/Both/Subjects";
+import ExamDetails from "./components/Both/ExamDetails";
 
 //FACULTY COMPONENTS
-import ExamDetails from "./components/Faculty/ExamDetails";
 import QuestionBankDetails from "./components/Faculty/QuestionBankDetails";
 import CreateQuestionBank from "./components/Faculty/CreateQuestionBank";
-import AddQuestion from "./components/Faculty/AddQuestion";
 import CreateExam from "./components/Faculty/CreateExam";
+
+//STUDENT COMPONETS
+import TakeExam from "./components/Student/TakeExam";
+import ExamResults from "./components/Student/ExamResults";
 
 import { UserContext } from "./UserContext";
 
@@ -27,28 +33,28 @@ export default function App() {
       <UserContext.Provider value={{ user, setUser }}>
          <Router>
             <Routes>
+               {/* PUBLIC ROUTES */}
                <Route path="/" element={<Landing />} />
                <Route path="/login" element={<Login />} />
                <Route path="/register" element={<Register />} />
-               <Route path="/dashboard" element={<Main />} />
-               {/* editing and creating exams have the same UI, the reason why the
-               same component is used */}
+
+               {/* FACULTY ROUTES */}
                <Route path="/create-exam" element={<CreateExam />} />
                <Route path="/edit-exam/:exam_id" element={<CreateExam />} />
-               <Route path="/subjects/:subject_name" element={<Subjects />} />
-               <Route path="/exam-details/:exam_id" element={<ExamDetails />} />
-               <Route
-                  path="/question-bank/:bank_id"
-                  element={<QuestionBankDetails />}
-               />
                <Route path="/create-bank" element={<CreateQuestionBank />} />
-               <Route
-                  path="/edit-question-bank/:bank_id"
-                  element={<CreateQuestionBank />}
-               />
+               <Route path="/edit-question-bank/:bank_id" element={<CreateQuestionBank />} />
+               <Route path="/question-bank/:bank_id" element={<QuestionBankDetails />} />
 
+               {/* STUDENT ROUTES */}
+               <Route path="/take-exam" element={<TakeExam />} />
+               <Route path="/take-exam/results" element={<ExamResults />} />
+
+               {/* BOTH ROUTES */}
+               <Route path="/dashboard" element={<Main />} />
                <Route path="/update-profile" element={<UpdateProfile />} />
                <Route path="/change-password" element={<ChangePassword />} />
+               <Route path="/exam-details/:exam_id" element={<ExamDetails />} />
+               <Route path="/subjects/:subject_name" element={<Subjects />} />
 
                {/* /f url has no match, display 404 page*/}
                <Route path="*" element={<PageNotFound404 />} />

@@ -33,8 +33,7 @@ export default function FacultyNavbar(props) {
 
    return (
       <>
-         <nav
-            className={`${css.fact_navbar_root} navbar navbar-expand-lg navbar-light`}>
+         <nav className={`${css.fact_navbar_root} navbar navbar-expand-lg navbar-light`}>
             <div className="container">
                <a className="navbar-brand" href="/">
                   Online Exam
@@ -54,10 +53,7 @@ export default function FacultyNavbar(props) {
                <div className="collapse navbar-collapse" id="navbarNav">
                   <ul className="navbar-nav ms-auto">
                      <li className="nav-item me-2">
-                        <a
-                           className="nav-link"
-                           aria-current="page"
-                           href="/dashboard">
+                        <a className="nav-link" aria-current="page" href="/dashboard">
                            Dashboard
                         </a>
                      </li>
@@ -78,26 +74,15 @@ export default function FacultyNavbar(props) {
                            {props.username}
                            &nbsp;
                         </a>
-                        <ul
-                           className="dropdown-menu"
-                           aria-labelledby="navbarDarkDropdownMenuLink">
-                           <li
-                              className={`${css.nav_link} dropdown-item`}
-                              onClick={UpdateProfile}>
+                        <ul className="dropdown-menu" aria-labelledby="navbarDarkDropdownMenuLink">
+                           <li className={`${css.nav_link} dropdown-item`} onClick={UpdateProfile}>
                               My Profile
                            </li>
-                           <li
-                              className={`${css.nav_link} dropdown-item`}
-                              onClick={ChangePassword}>
+                           <li className={`${css.nav_link} dropdown-item`} onClick={ChangePassword}>
                               Change Password
                            </li>
-                           <li
-                              className="cursor-pointer"
-                              onClick={openLogoutModal}>
-                              <p
-                                 className={`${css.nav_link} dropdown-item m-0`}>
-                                 Logout
-                              </p>
+                           <li className="cursor-pointer" onClick={openLogoutModal}>
+                              <p className={`${css.nav_link} dropdown-item m-0`}>Logout</p>
                            </li>
                         </ul>
                      </li>
@@ -140,16 +125,10 @@ export default function FacultyNavbar(props) {
                      </div>
                      <div className="modal-body">...</div>
                      <div className="modal-footer">
-                        <button
-                           type="button"
-                           className="btn btn-secondary"
-                           data-bs-dismiss="modal">
+                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">
                            Close
                         </button>
-                        <button
-                           type="button"
-                           className="btn btn-primary"
-                           onClick={logout}>
+                        <button type="button" className="btn btn-primary" onClick={logout}>
                            Save changes
                         </button>
                      </div>

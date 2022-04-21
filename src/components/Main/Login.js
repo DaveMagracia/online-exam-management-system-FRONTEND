@@ -49,9 +49,7 @@ export default function Login() {
       setEmptyErrors(tempEmptyErrors);
 
       // "hasEmptyField" will be true if one of the key in the emptyErrors obj has a value of true
-      var hasEmptyFields = Object.keys(tempEmptyErrors).some(
-         (k) => tempEmptyErrors[k] === true
-      );
+      var hasEmptyFields = Object.keys(tempEmptyErrors).some((k) => tempEmptyErrors[k] === true);
 
       return !hasEmptyFields;
    }
@@ -90,8 +88,7 @@ export default function Login() {
    return (
       <div>
          <Navbar />
-         <div
-            className={`${css.login_root} d-flex align-items-center justify-content-center`}>
+         <div className={`${css.login_root} d-flex align-items-center justify-content-center`}>
             <div className={`${css.form_container} container`}>
                <h1 className="mb-4">Login</h1>
                <form onSubmit={loginUser}>
@@ -107,11 +104,7 @@ export default function Login() {
                         id="InputEmailUsername"
                         type="text"
                         className={`form-control 
-                        ${
-                           emptyErrors.email_username
-                              ? "border border-danger"
-                              : "mb-4"
-                        }`}
+                        ${emptyErrors.email_username ? "border border-danger" : "mb-4"}`}
                         name="email_username"
                         onChange={handleOnChange}
                         value={formData.email_username}
@@ -119,9 +112,7 @@ export default function Login() {
                      <label htmlFor="InputEmailUsername">email/username</label>
                   </div>
                   {emptyErrors.email_username && (
-                     <p className="text-danger mb-4 small">
-                        This field is required
-                     </p>
+                     <p className="text-danger mb-4 small">This field is required</p>
                   )}
 
                   {/* PASSWORD FIELD */}
@@ -139,9 +130,7 @@ export default function Login() {
                      <label htmlFor="InputEmailUsername">password</label>
                   </div>
                   {emptyErrors.pass && (
-                     <p className="text-danger mb-4 small">
-                        This field is required
-                     </p>
+                     <p className="text-danger mb-4 small">This field is required</p>
                   )}
 
                   <button type="submit" className={`btn btn-primary w-100`}>

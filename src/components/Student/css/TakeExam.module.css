@@ -1,0 +1,101 @@
+.exam_container {
+   width: 980px;
+   min-width: 470px;
+   max-width: 980px;
+}
+
+.minimize_btn {
+   border: 1px solid rgb(194, 194, 194);
+   color: black;
+   background-color: white;
+   border-radius: 4px;
+   float: right;
+}
+
+.expand_button {
+   /* cursor: pointer;
+   position: fixed;
+   right: -1px;
+   margin-top: 200px;
+   width: 50px;
+   height: 50px;
+   color: white;
+   z-index: 10;
+   border-radius: 4px 0 0 4px; */
+   /* transition: all 0.3s ease-out, background-color 0.3s linear 0.2s, color 0.0001s; */
+   /* transition: all 1s; */
+
+   cursor: pointer;
+   position: fixed;
+   right: -1px;
+   margin-top: 80px;
+   width: 50px;
+   height: 50px;
+   color: white;
+   z-index: 10;
+   border-radius: 4px 0 0 4px;
+   transition: all 0.25s ease-in, transform 0.2s;
+}
+
+.collapsible {
+   /* position: fixed;
+   right: -1px;
+   margin: 50px 20px;
+   width: 400px;
+   height: 400px;
+   border-radius: 4px;
+   background-color: white;
+   z-index: 10; */
+   /* transition: all 0.25s, background-color 0.0001s, color 0.0001s; */
+   /* transition: all 1s; */
+
+   position: fixed;
+   right: -1px;
+   margin: 50px 20px;
+   width: 400px;
+   height: 400px;
+   opacity: 0;
+   visibility: hidden;
+   border-radius: 4px;
+   transform: translateX(100px);
+   background-color: white;
+   z-index: 10;
+   transition: all 0.25s ease-out;
+}
+
+.content ul {
+   overflow-y: auto;
+   max-height: 230px;
+}
+
+.content ul li {
+   cursor: pointer;
+}
+
+/* dont apply to "active" items */
+.content ul li:not(.active_):hover {
+   background-color: rgb(245, 245, 245);
+}
+
+.expand_icon {
+   transition: all 0.2s;
+}
+
+.expand_button:hover .expand_icon {
+   transform: translateX(-5px);
+}
+
+.expand_button:hover {
+   width: 60px;
+}
+
+/* SUBMITTED STYLES */
+.submitted_root {
+   min-height: calc(100vh - 60px);
+}
+
+.submitted_container {
+   min-width: 800px;
+   max-width: 500px;
+   height: 250px;
+}

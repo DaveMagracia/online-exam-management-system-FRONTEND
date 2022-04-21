@@ -116,9 +116,7 @@ export default function AddQuestion(props) {
       tempErrors.cpd = formData.cpd === "none";
       tempErrors.kd = formData.kd === "none";
 
-      let hasError_ = Object.keys(tempErrors).some(
-         (k) => tempErrors[k] === true
-      );
+      let hasError_ = Object.keys(tempErrors).some((k) => tempErrors[k] === true);
 
       setErrors(tempErrors);
       setHasError(hasError_);
@@ -149,9 +147,7 @@ export default function AddQuestion(props) {
          props.setQuestions((prevVal) => {
             //note: see upsert function
             return upsert(prevVal, {
-               localId: props.currentQuestion
-                  ? props.currentQuestion.localId
-                  : createId(), // add local ID to prevent duplicates
+               localId: props.currentQuestion ? props.currentQuestion.localId : createId(), // add local ID to prevent duplicates
                question: formData.question,
                choice1: formData.choice1,
                choice2: formData.choice2,
@@ -255,16 +251,12 @@ export default function AddQuestion(props) {
                         id="questionTextArea"
                         name="question"
                         maxLength={1000}
-                        className={`form-control ${
-                           errors.question && "border-danger"
-                        }`}
+                        className={`form-control ${errors.question && "border-danger"}`}
                         placeholder="Question"
                         onChange={handleFormChange}
                         defaultValue={formData.question}
                         style={{ height: "100px" }}></textarea>
-                     <label
-                        htmlFor="questionTextArea"
-                        style={{ color: "gray" }}>
+                     <label htmlFor="questionTextArea" style={{ color: "gray" }}>
                         Question
                      </label>
                   </div>
@@ -281,9 +273,7 @@ export default function AddQuestion(props) {
                         value={formData.choice1}
                         name="choice1"
                         onChange={handleFormChange}
-                        className={`form-control ${
-                           errors.choice1 && "border-danger"
-                        }`}
+                        className={`form-control ${errors.choice1 && "border-danger"}`}
                         id="choice1"
                         placeholder="Enter choice value"
                      />
@@ -301,9 +291,7 @@ export default function AddQuestion(props) {
                         value={formData.choice2}
                         name="choice2"
                         onChange={handleFormChange}
-                        className={`form-control ${
-                           errors.choice2 && "border-danger"
-                        }`}
+                        className={`form-control ${errors.choice2 && "border-danger"}`}
                         id="choice2"
                         placeholder="Enter choice value"
                      />
@@ -318,9 +306,7 @@ export default function AddQuestion(props) {
                   <div className="input-group">
                      <input
                         type="text"
-                        className={`form-control ${
-                           errors.choice3 && "border-danger"
-                        }`}
+                        className={`form-control ${errors.choice3 && "border-danger"}`}
                         value={formData.choice3}
                         name="choice3"
                         onChange={handleFormChange}
@@ -338,9 +324,7 @@ export default function AddQuestion(props) {
                   <div className="input-group">
                      <input
                         type="text"
-                        className={`form-control ${
-                           errors.choice4 && "border-danger"
-                        }`}
+                        className={`form-control ${errors.choice4 && "border-danger"}`}
                         value={formData.choice4}
                         name="choice4"
                         onChange={handleFormChange}
@@ -357,9 +341,7 @@ export default function AddQuestion(props) {
                   </label>
                   <select
                      id="correct_answer"
-                     className={`form-select ${
-                        errors.answer && "border-danger"
-                     }`}
+                     className={`form-select ${errors.answer && "border-danger"}`}
                      value={formData.answer}
                      name="answer"
                      onChange={handleFormChange}>
@@ -447,9 +429,7 @@ export default function AddQuestion(props) {
                         className="btn btn-primary me-3 px-4 py-2">
                         Cancel
                      </button>
-                     <button
-                        className="btn btn-primary px-4 py-2"
-                        type="submit">
+                     <button className="btn btn-primary px-4 py-2" type="submit">
                         Submit
                      </button>
                   </div>
@@ -461,9 +441,7 @@ export default function AddQuestion(props) {
                <Modal.Header closeButton>
                   <Modal.Title>Discard changes?</Modal.Title>
                </Modal.Header>
-               <Modal.Body>
-                  Changes you made will not be saved once you leave this page.
-               </Modal.Body>
+               <Modal.Body>Changes you made will not be saved once you leave this page.</Modal.Body>
                <Modal.Footer>
                   <Button variant="secondary" onClick={handleModalClose}>
                      Cancel

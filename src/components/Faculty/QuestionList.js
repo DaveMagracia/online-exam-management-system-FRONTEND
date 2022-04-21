@@ -167,22 +167,16 @@ export default function QuestionList(props) {
             return (
                <div className={`${css.no_questions_container}`}>
                   <p className="text-muted text-center">
-                     No questions yet. Click on "Add a Question" button to add a
-                     question.
+                     No questions yet. Click on "Add a Question" button to add a question.
                   </p>
                </div>
             );
          } else {
             return (
-               <div
-                  className={`${css.no_questions_container2}`}
-                  name="questions">
-                  <div
-                     className={`alert alert-danger ${css.no_questions_alert}`}
-                     role="alert">
+               <div className={`${css.no_questions_container2}`} name="questions">
+                  <div className={`alert alert-danger ${css.no_questions_alert}`} role="alert">
                      <MdWarning size={"40px"} className="me-2" />
-                     You must have at least 1 question. Add a question first to
-                     proceed.
+                     You must have at least 1 question. Add a question first to proceed.
                   </div>
                </div>
             );
@@ -211,10 +205,7 @@ export default function QuestionList(props) {
                                  {val.questionBankTitle + " "}
                                  <small className="text-muted ms-2">
                                     ({val.numOfItems}
-                                    {val.numOfItems === 1
-                                       ? " question"
-                                       : " questions"}
-                                    )
+                                    {val.numOfItems === 1 ? " question" : " questions"})
                                  </small>
                               </p>
                               <div className="">
@@ -361,10 +352,7 @@ export default function QuestionList(props) {
                   Add a Question
                </button>
                {!props.isFromBank && (
-                  <button
-                     type="button"
-                     className="btn btn-primary ms-3"
-                     onClick={openBankModal}>
+                  <button type="button" className="btn btn-primary ms-3" onClick={openBankModal}>
                      Add Questions from Bank
                   </button>
                )}
@@ -377,9 +365,7 @@ export default function QuestionList(props) {
          <Modal show={isShownBankModal} onHide={handleBankModalClose} centered>
             <Modal.Header closeButton>
                <Modal.Title>
-                  {isEditingBank
-                     ? "Edit question bank"
-                     : "Add question from question bank"}
+                  {isEditingBank ? "Edit question bank" : "Add question from question bank"}
                </Modal.Title>
             </Modal.Header>
             <Modal.Body>
@@ -393,9 +379,7 @@ export default function QuestionList(props) {
                ) : (
                   <div>
                      <div className="mb-3">
-                        <label
-                           htmlFor="question_bank"
-                           className="mb-2  d-block">
+                        <label htmlFor="question_bank" className="mb-2  d-block">
                            Select question bank:
                         </label>
                         <select
@@ -412,9 +396,7 @@ export default function QuestionList(props) {
                         </select>
                      </div>
                      <div className="mb-3">
-                        <label
-                           htmlFor="number_field"
-                           className="mb-2 mt-3 d-block">
+                        <label htmlFor="number_field" className="mb-2 mt-3 d-block">
                            Number of questions to pull:
                         </label>
                         <div className="input-group">
@@ -425,9 +407,7 @@ export default function QuestionList(props) {
                               // onChange={handleBankFormChange}
                               onChange={handlePullNumberInput}
                               onKeyUp={handlePullNumberType}
-                              className={`form-control ${
-                                 addBankError && "border-danger"
-                              }`}
+                              className={`form-control ${addBankError && "border-danger"}`}
                               name="numberToPull"
                            />
                         </div>
@@ -458,9 +438,7 @@ export default function QuestionList(props) {
             <Modal.Header closeButton>
                <Modal.Title>Delete Question</Modal.Title>
             </Modal.Header>
-            <Modal.Body>
-               Are you sure you want to delete this question?
-            </Modal.Body>
+            <Modal.Body>Are you sure you want to delete this question?</Modal.Body>
             <Modal.Footer>
                <Button variant="secondary" onClick={handleModalClose}>
                   Cancel

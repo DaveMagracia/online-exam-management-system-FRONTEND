@@ -41,8 +41,8 @@ export default function ExamList(props) {
    }
 
    async function getExams() {
-      //if this props is present, get the exams for that specific subject
-      if (props.subjectName) {
+      //if this props is not equal to "all", get the exams for that specific subject
+      if (props.subjectName.toLowerCase() !== "all") {
          await axios({
             method: "GET",
             baseURL: `http://localhost:5000/exams/subjects/${props.subjectName}`,
@@ -75,9 +75,11 @@ export default function ExamList(props) {
             .then((data) => {
                //pass the array of exams
                setExamList(data.data.exams);
+               setIsLoading(false);
             })
             .catch((err) => {
                console.log(err);
+               setIsLoading(false);
             });
       }
    }
@@ -87,7 +89,7 @@ export default function ExamList(props) {
       const userTokenDecoded = jwt_decode(token);
       setUser(userTokenDecoded);
 
-      //GET ALL LIST OF EXAMS CREATED BY THE USER
+      //GET ALL LIST OF EXAMS CREATED/REGISTERED BY THE USER
       getExams();
    }, []);
 
@@ -101,12 +103,7 @@ export default function ExamList(props) {
                      exit={{ opacity: 0 }}
                      transition={{ duration: 0.2 }}
                      className={`${css.loading_root} d-flex flex-column align-items-center `}>
-                     <BarLoader
-                        loading={isLoading}
-                        color="#9c2a22"
-                        size={80}
-                        width={"100%"}
-                     />
+                     <BarLoader loading={isLoading} color="#9c2a22" size={80} width={"100%"} />
                   </motion.div>
                )}
             </AnimatePresence>
@@ -115,9 +112,7 @@ export default function ExamList(props) {
                <div className="pt-3">
                   <h3 className="d-inline">Exams</h3>
                   {user && user.userType === "teacher" && (
-                     <button
-                        className="btn btn-primary float-end"
-                        onClick={goToCreateExam}>
+                     <button className="btn btn-primary float-end" onClick={goToCreateExam}>
                         Create Exam
                      </button>
                   )}
@@ -135,8 +130,7 @@ export default function ExamList(props) {
                ) : (
                   <div className={`${css.no_exams_container}`}>
                      <p className="text-muted text-center">
-                        You have not created an exam yet. Exams you have created
-                        will appear here.
+                        You have not created an exam yet. Exams you have created will appear here.
                      </p>
                   </div>
                )}

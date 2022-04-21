@@ -26,12 +26,10 @@ export default function CreateExam(props) {
    const [charCountTitle, setcharCountTitle] = React.useState(0);
    const [charCountDesc, setcharCountDesc] = React.useState(0);
    const [isAddingQuestion, setisAddingQuestion] = React.useState(false);
-   const [isShownQuestionModal, setisShownQuestionModal] =
-      React.useState(false);
+   const [isShownQuestionModal, setisShownQuestionModal] = React.useState(false);
    const [isShownExamModal, setisShownExamModal] = React.useState(false);
    const [isShownCreateModal, setIsShownCreateModal] = React.useState(false);
-   const [isShownExamCodeModal, setIsShownExamCodeModal] =
-      React.useState(false);
+   const [isShownExamCodeModal, setIsShownExamCodeModal] = React.useState(false);
 
    const [examCode, setExamCode] = React.useState("");
    const [titleInput, setTitleInput] = React.useState(
@@ -174,11 +172,9 @@ export default function CreateExam(props) {
       let tempErrors = { ...errors };
       tempErrors.title.hasError = formData.title ? false : true;
       tempErrors.subject.hasError = formData.subject ? false : true;
-      tempErrors.date_from.hasError =
-         new Date(formData.date_from).getTime() < new Date().getTime(); //check if time is less than current time
+      tempErrors.date_from.hasError = new Date(formData.date_from).getTime() < new Date().getTime(); //check if time is less than current time
       tempErrors.date_to.hasError =
-         new Date(formData.date_to).getTime() <
-         new Date().setMinutes(new Date().getMinutes() + 1)
+         new Date(formData.date_to).getTime() < new Date().setMinutes(new Date().getMinutes() + 1)
             ? true
             : false;
       tempErrors.time_limit.hasError = formData.time_limit ? false : true;
@@ -192,9 +188,7 @@ export default function CreateExam(props) {
          tempErrors.title.msg = "This field is required";
       }
 
-      var hasError_ = Object.keys(tempErrors).some(
-         (k) => tempErrors[k].hasError === true
-      );
+      var hasError_ = Object.keys(tempErrors).some((k) => tempErrors[k].hasError === true);
 
       setErrors(tempErrors);
       setHasError(hasError_);
@@ -280,8 +274,7 @@ export default function CreateExam(props) {
       tempErrors.time_limit.hasError = formData.time_limit ? false : true;
 
       if (tempErrors.title.hasError) {
-         tempErrors.title.msg =
-            "You should at least provide a title before saving the exam.";
+         tempErrors.title.msg = "You should at least provide a title before saving the exam.";
       }
 
       setErrors(tempErrors);
@@ -443,9 +436,7 @@ export default function CreateExam(props) {
       setFormData((prevVal) => {
          let finalTimeLimit = 1;
          let timeDifference =
-            (new Date(formData.date_to).getTime() -
-               new Date(formData.date_from).getTime()) /
-            60000;
+            (new Date(formData.date_to).getTime() - new Date(formData.date_from).getTime()) / 60000;
 
          if (value >= timeDifference || value === "-") {
             //set value of the field to the maximum limit allowed if input is greater than difference
@@ -514,9 +505,7 @@ export default function CreateExam(props) {
             //prevents the time limit (in minutes) from being set higher than the minute difference of date_from and date_to
             if (
                prevVal.time_limit >=
-               (new Date(prevVal.date_to).getTime() -
-                  new Date(prevVal.date_from).getTime()) /
-                  60000
+               (new Date(prevVal.date_to).getTime() - new Date(prevVal.date_from).getTime()) / 60000
             ) {
                //stop incrementing when the input is higher than the difference of date_from and date_to
                finalTimeLimit = prevVal.time_limit;
@@ -695,11 +684,7 @@ export default function CreateExam(props) {
                      exit={{ opacity: 0 }}
                      transition={{ duration: 0.2 }}
                      className={`${css.createExam_root} d-flex flex-column align-items-center justify-content-center`}>
-                     <PuffLoader
-                        loading={isLoading}
-                        color="#9c2a22"
-                        size={80}
-                     />
+                     <PuffLoader loading={isLoading} color="#9c2a22" size={80} />
                      <p className="lead mt-3">&nbsp;Loading...</p>
                   </motion.div>
                )}
@@ -720,9 +705,7 @@ export default function CreateExam(props) {
                   />
                ) : (
                   <div className="container">
-                     <h1 className="mt-5">
-                        {exam_id ? "Edit Exam" : "Create Exam"}
-                     </h1>
+                     <h1 className="mt-5">{exam_id ? "Edit Exam" : "Create Exam"}</h1>
                      <form onSubmit={openCreateConfirmModal}>
                         {/* TITLE INPUT */}
                         <div className="form-floating mt-4">
@@ -740,20 +723,15 @@ export default function CreateExam(props) {
                               onFocus={onFocusExamTitle}
                               onBlur={onBlurExamTitle}
                            />
-                           <small
-                              className={`${css.char_counter_title} float-end text-muted`}>
+                           <small className={`${css.char_counter_title} float-end text-muted`}>
                               {charCountTitle}/50
                            </small>
-                           <label
-                              htmlFor="titleInput"
-                              style={{ color: "gray" }}>
+                           <label htmlFor="titleInput" style={{ color: "gray" }}>
                               {titleInput}
                            </label>
                         </div>
                         {errors.title.hasError && (
-                           <small className="text-danger">
-                              {errors.title.msg}
-                           </small>
+                           <small className="text-danger">{errors.title.msg}</small>
                         )}
 
                         {/* SUBJECT INPUT */}
@@ -776,9 +754,7 @@ export default function CreateExam(props) {
                            </div>
                         </div>
                         {errors.subject.hasError && (
-                           <small className="text-danger">
-                              {errors.subject.msg}
-                           </small>
+                           <small className="text-danger">{errors.subject.msg}</small>
                         )}
 
                         {/* DATE AND TIME INPUT */}
@@ -786,9 +762,7 @@ export default function CreateExam(props) {
                            <h4 className="mt-5">Date of availability</h4>
                            <div className="d-flex flex-column ms-4">
                               <div className="d-flex align-items-center">
-                                 <span className={`${css.label} me-2`}>
-                                    Available From:
-                                 </span>
+                                 <span className={`${css.label} me-2`}>Available From:</span>
                                  <div className="d-flex flex-column">
                                     <DateTimePicker
                                        id="date-picker-from"
@@ -806,17 +780,14 @@ export default function CreateExam(props) {
                                        onChange={handleFromDateChange}
                                     />
                                     {errors.date_from.hasError && (
-                                       <small
-                                          className={`text-danger ${css.date_error}`}>
+                                       <small className={`text-danger ${css.date_error}`}>
                                           {errors.date_from.msg}
                                        </small>
                                     )}
                                  </div>
                               </div>
                               <div className="d-flex align-items-center">
-                                 <span className={`${css.label} me-2`}>
-                                    Until:
-                                 </span>
+                                 <span className={`${css.label} me-2`}>Until:</span>
                                  <div className="d-flex flex-column">
                                     <DateTimePicker
                                        id="date-picker-to"
@@ -835,8 +806,7 @@ export default function CreateExam(props) {
                                        onChange={handleToDateChange}
                                     />
                                     {errors.date_to.hasError && (
-                                       <small
-                                          className={`text-danger ${css.date_error}`}>
+                                       <small className={`text-danger ${css.date_error}`}>
                                           {errors.date_to.msg}
                                        </small>
                                     )}
@@ -845,14 +815,9 @@ export default function CreateExam(props) {
 
                               {/* TIME LIMIT FIELD */}
                               <div className="d-flex align-items-center mt-3">
-                                 <div
-                                    className={`${css.label} d-flex flex-column me-2`}>
-                                    <span className="me-2">
-                                       Time Limit (Minutes):{" "}
-                                    </span>
-                                    <small className="me-2 text-muted">
-                                       1 minute minimum
-                                    </small>
+                                 <div className={`${css.label} d-flex flex-column me-2`}>
+                                    <span className="me-2">Time Limit (Minutes): </span>
+                                    <small className="me-2 text-muted">1 minute minimum</small>
                                  </div>
                                  <div className="d-flex flex-column ">
                                     <div className="d-flex flex-row ">
@@ -871,11 +836,8 @@ export default function CreateExam(props) {
                                           value={formData.time_limit}
                                           onChange={handleTimeLimitInput}
                                           onKeyUp={handleTimeLimitType}
-                                          className={`${
-                                             css.time_limit_input
-                                          } mx-1 form-control ${
-                                             errors.time_limit.hasError &&
-                                             "border-danger"
+                                          className={`${css.time_limit_input} mx-1 form-control ${
+                                             errors.time_limit.hasError && "border-danger"
                                           }`}
                                        />
                                        <button
@@ -899,12 +861,9 @@ export default function CreateExam(props) {
                         <br />
 
                         {/* DIRECTIONS INPUT */}
-                        <label
-                           htmlFor="directionsTextArea"
-                           className="form-label mt-4">
-                           Enter your general directions. This will be shown on
-                           the topmost part of the exam before the actual
-                           questions.
+                        <label htmlFor="directionsTextArea" className="form-label mt-4">
+                           Enter your general directions. This will be shown on the topmost part of
+                           the exam before the actual questions.
                         </label>
                         <div className="form-floating">
                            <textarea
@@ -919,9 +878,7 @@ export default function CreateExam(props) {
                            <small className={`${css.char_counter} float-end`}>
                               {charCountDesc}/1000
                            </small>
-                           <label
-                              htmlFor="directionsTextArea"
-                              style={{ color: "gray" }}>
+                           <label htmlFor="directionsTextArea" style={{ color: "gray" }}>
                               General Directions (optional)
                            </label>
                         </div>
@@ -960,9 +917,7 @@ export default function CreateExam(props) {
                               onClick={saveChanges}>
                               Save Changes
                            </button>
-                           <button
-                              type="submit"
-                              className="btn btn-success mb-5 px-4 py-2">
+                           <button type="submit" className="btn btn-success mb-5 px-4 py-2">
                               Publish
                            </button>
                         </div>
@@ -972,20 +927,15 @@ export default function CreateExam(props) {
 
                {/* MODAL FROM REACT-BOOTSTRAP LIBRARY */}
 
-               <Modal
-                  show={isShownQuestionModal}
-                  onHide={handleQuestionModalClose}>
+               <Modal show={isShownQuestionModal} onHide={handleQuestionModalClose}>
                   <Modal.Header closeButton>
                      <Modal.Title>Discard Changes</Modal.Title>
                   </Modal.Header>
                   <Modal.Body>
-                     Changes you made will not be saved once you leave this
-                     page.
+                     Changes you made will not be saved once you leave this page.
                   </Modal.Body>
                   <Modal.Footer>
-                     <Button
-                        variant="secondary"
-                        onClick={handleQuestionModalClose}>
+                     <Button variant="secondary" onClick={handleQuestionModalClose}>
                         Cancel
                      </Button>
                      <Button
@@ -1004,8 +954,8 @@ export default function CreateExam(props) {
                      <Modal.Title>Delete Exam</Modal.Title>
                   </Modal.Header>
                   <Modal.Body>
-                     Are you sure you want to delete this exam? You won't be
-                     able to undo this action.
+                     Are you sure you want to delete this exam? You won't be able to undo this
+                     action.
                   </Modal.Body>
                   <Modal.Footer>
                      <Button variant="secondary" onClick={handleExamModalClose}>
@@ -1023,13 +973,11 @@ export default function CreateExam(props) {
                      <Modal.Title>Publish Exam</Modal.Title>
                   </Modal.Header>
                   <Modal.Body>
-                     Are you sure you want to publish this exam? You won't be
-                     able to make changes once the exam is published.
+                     Are you sure you want to publish this exam? You won't be able to make changes
+                     once the exam is published.
                   </Modal.Body>
                   <Modal.Footer>
-                     <Button
-                        variant="secondary"
-                        onClick={handleCreateModalClose}>
+                     <Button variant="secondary" onClick={handleCreateModalClose}>
                         Cancel
                      </Button>
                      <Button variant="primary" onClick={submitForm}>

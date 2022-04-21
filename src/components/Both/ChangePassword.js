@@ -70,9 +70,7 @@ export default function ChangePassword(props) {
       setEmptyErrors(tempEmptyErrors);
 
       // "hasEmptyField" will be true if one of the key in the emptyErrors obj has a value of true
-      var hasEmptyFields = Object.keys(tempEmptyErrors).some(
-         (k) => tempEmptyErrors[k] === true
-      );
+      var hasEmptyFields = Object.keys(tempEmptyErrors).some((k) => tempEmptyErrors[k] === true);
 
       //if there are no empty fields, proceed to validation
       if (!hasEmptyFields) {
@@ -82,8 +80,7 @@ export default function ChangePassword(props) {
 
          //validate inputs
 
-         let passRegex =
-            /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+         let passRegex = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
          let password = formData.pass.trim();
          let cpassword = formData.cpass.trim();
          let newpassword = formData.newpass.trim();
@@ -95,9 +92,7 @@ export default function ChangePassword(props) {
 
          //the return statements will return a boolean. If true, it means the form inputs are valid, invalid otherwise
          //if there are no errors in the tempErrors, return true
-         return !Object.keys(tempErrors).some(
-            (k) => tempErrors[k].hasError === true
-         );
+         return !Object.keys(tempErrors).some((k) => tempErrors[k].hasError === true);
       }
       return false;
    }
@@ -185,19 +180,13 @@ export default function ChangePassword(props) {
                               onChange={handleOnChange}
                               value={formData.pass}
                            />
-                           <label htmlFor="InputOldPassword">
-                              Old Password
-                           </label>
+                           <label htmlFor="InputOldPassword">Old Password</label>
                         </div>
                         {errors.pass.hasError && (
-                           <p className="text-danger mb-4 small">
-                              {errors.pass.msg}
-                           </p>
+                           <p className="text-danger mb-4 small">{errors.pass.msg}</p>
                         )}
                         {emptyErrors.pass && (
-                           <p className="text-danger mb-4 small">
-                              This field is required
-                           </p>
+                           <p className="text-danger mb-4 small">This field is required</p>
                         )}
 
                         {/* newpassword field */}
@@ -206,8 +195,7 @@ export default function ChangePassword(props) {
                               id="InputNewPassword"
                               type="password"
                               className={`form-control ${
-                                 (errors.newpass.hasError ||
-                                    emptyErrors.newpass) &&
+                                 (errors.newpass.hasError || emptyErrors.newpass) &&
                                  "border border-danger"
                               }`}
                               name="newpass"
@@ -218,30 +206,19 @@ export default function ChangePassword(props) {
                               New Password
                            </label>
                            {emptyErrors.newpass && (
-                              <p className="text-danger small m-0">
-                                 This field is required
-                              </p>
+                              <p className="text-danger small m-0">This field is required</p>
                            )}
                            <div
                               className={`form-text mb-4 ${
-                                 errors.newpass.hasError
-                                    ? "text-danger"
-                                    : "text-muted"
+                                 errors.newpass.hasError ? "text-danger" : "text-muted"
                               }`}>
                               A password must:
                               <ul>
                                  <li>Have a minimum of 8 characters</li>
-                                 <li>
-                                    Contain at least 1 uppercase letter (A-Z)
-                                 </li>
-                                 <li>
-                                    Contain at least 1 lowercase letter (a-z)
-                                 </li>
+                                 <li>Contain at least 1 uppercase letter (A-Z)</li>
+                                 <li>Contain at least 1 lowercase letter (a-z)</li>
                                  <li>Contain at least 1 number (0-9)</li>
-                                 <li>
-                                    Contain at least 1 special character
-                                    (!@#$%^&*)
-                                 </li>
+                                 <li>Contain at least 1 special character (!@#$%^&*)</li>
                               </ul>
                            </div>
                         </div>
@@ -260,19 +237,13 @@ export default function ChangePassword(props) {
                               onChange={handleOnChange}
                               value={formData.cpass}
                            />
-                           <label htmlFor="InputCPassword">
-                              Confirm New Password
-                           </label>
+                           <label htmlFor="InputCPassword">Confirm New Password</label>
                         </div>
                         {errors.cpass.hasError && (
-                           <p className="text-danger mb-4 small">
-                              {errors.cpass.msg}
-                           </p>
+                           <p className="text-danger mb-4 small">{errors.cpass.msg}</p>
                         )}
                         {emptyErrors.cpass && (
-                           <p className="text-danger mb-4 small">
-                              This field is required
-                           </p>
+                           <p className="text-danger mb-4 small">This field is required</p>
                         )}
 
                         {/* submit button */}

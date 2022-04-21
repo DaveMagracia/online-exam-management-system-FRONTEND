@@ -61,9 +61,7 @@ export default function QuestionBankList() {
          <div>
             <div className="d-flex justify-content-between mb-2">
                <h3>Question Banks</h3>
-               <button
-                  className="btn btn-primary float-end"
-                  onClick={goToCreateQuestionBank}>
+               <button className="btn btn-primary float-end" onClick={goToCreateQuestionBank}>
                   Create Question Bank
                </button>
             </div>
@@ -81,8 +79,8 @@ export default function QuestionBankList() {
             ) : (
                <div className={`${css.no_banks_container} mb-5`}>
                   <p className="text-muted text-center">
-                     You have not created a question bank yet. Banks you have
-                     created will appear here.
+                     You have not created a question bank yet. Banks you have created will appear
+                     here.
                   </p>
                </div>
             )}

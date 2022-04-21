@@ -1,6 +1,7 @@
 import React from "react";
 import css from "./css/SubjectListBox.module.css";
 import { useNavigate } from "react-router-dom";
+import { v1 as createId } from "uuid";
 
 export default function SubjectListBox(props) {
    const navigate = useNavigate();
@@ -44,6 +45,7 @@ export default function SubjectListBox(props) {
                            if (i < 2)
                               return (
                                  <small
+                                    key={createId()}
                                     className={`${css.link} m-0 d-block`}
                                     onClick={() => goToExamDetails(val.id)}>
                                     {val.title}
@@ -51,9 +53,8 @@ export default function SubjectListBox(props) {
                               );
                            else if (i < 3)
                               return (
-                                 <small className="m-0">
-                                    {subjectData.upcomingExams.length - 2} more
-                                    item...
+                                 <small key={createId()} className="m-0">
+                                    {subjectData.upcomingExams.length - 2} more item...
                                  </small>
                               );
                         })}

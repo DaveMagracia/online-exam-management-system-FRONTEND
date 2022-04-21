@@ -4,8 +4,7 @@ import css from "./css/Navbar.module.css";
 export default function Navbar() {
    return (
       <>
-         <nav
-            className={`${css.navbar_root} navbar navbar-expand-lg navbar-light`}>
+         <nav className={`${css.navbar_root} navbar navbar-expand-lg navbar-light`}>
             <div className="container">
                <a className="navbar-brand" href="/">
                   Online Exam
@@ -25,10 +24,7 @@ export default function Navbar() {
                <div className="collapse navbar-collapse" id="navbarNav">
                   <ul className="navbar-nav ms-auto">
                      <li className="nav-item me-2">
-                        <a
-                           className="nav-link active"
-                           aria-current="page"
-                           href="/">
+                        <a className="nav-link active" aria-current="page" href="/">
                            Home
                         </a>
                      </li>

@@ -92,9 +92,7 @@ export default function Register() {
       setEmptyErrors(tempEmptyErrors);
 
       // "hasEmptyField" will be true if one of the key in the emptyErrors obj has a value of true
-      var hasEmptyFields = Object.keys(tempEmptyErrors).some(
-         (k) => tempEmptyErrors[k] === true
-      );
+      var hasEmptyFields = Object.keys(tempEmptyErrors).some((k) => tempEmptyErrors[k] === true);
 
       //if there are no empty fields, proceed to validation
       if (!hasEmptyFields) {
@@ -103,8 +101,7 @@ export default function Register() {
          let tempErrors = { ...errors };
 
          //validate inputs
-         let emailRegex =
-            /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+         let emailRegex = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
          let email = formData.email.trim();
          tempErrors.email.hasError = !email.match(emailRegex);
 
@@ -112,8 +109,7 @@ export default function Register() {
          let username = formData.username.trim();
          tempErrors.username.hasError = !username.match(usernameRegex);
 
-         let passRegex =
-            /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+         let passRegex = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
          let password = formData.pass.trim();
          let cpassword = formData.cpass.trim();
 
@@ -127,9 +123,7 @@ export default function Register() {
 
          //the return statements will return a boolean. If true, it means the form inputs are valid, invalid otherwise
          //if there are no errors in the tempErrors, return true
-         return !Object.keys(tempErrors).some(
-            (k) => tempErrors[k].hasError === true
-         );
+         return !Object.keys(tempErrors).some((k) => tempErrors[k].hasError === true);
       }
       return false;
    }
@@ -218,19 +212,13 @@ export default function Register() {
                                  onChange={handleOnChange}
                                  value={formData.email}
                               />
-                              <label htmlFor="InputEmail">
-                                 Email address *
-                              </label>
+                              <label htmlFor="InputEmail">Email address *</label>
                            </div>
                            {errors.email.hasError && (
-                              <p className="text-danger mb-4 small">
-                                 {errors.email.msg}
-                              </p>
+                              <p className="text-danger mb-4 small">{errors.email.msg}</p>
                            )}
                            {emptyErrors.email && (
-                              <p className="text-danger mb-4 small">
-                                 This field is required
-                              </p>
+                              <p className="text-danger mb-4 small">This field is required</p>
                            )}
 
                            {/* username field */}
@@ -239,8 +227,7 @@ export default function Register() {
                                  id="InputUsername"
                                  type="text"
                                  className={`form-control ${
-                                    errors.username.hasError ||
-                                    emptyErrors.username
+                                    errors.username.hasError || emptyErrors.username
                                        ? "border border-danger"
                                        : "mb-4"
                                  }`}
@@ -251,14 +238,10 @@ export default function Register() {
                               <label htmlFor="InputUsername">Username *</label>
                            </div>
                            {emptyErrors.username && (
-                              <p className="text-danger mb-4 small">
-                                 This field is required
-                              </p>
+                              <p className="text-danger mb-4 small">This field is required</p>
                            )}
                            {errors.username.hasError && (
-                              <p className="text-danger mb-4 small">
-                                 {errors.username.msg}
-                              </p>
+                              <p className="text-danger mb-4 small">{errors.username.msg}</p>
                            )}
 
                            {/* password field */}
@@ -267,8 +250,7 @@ export default function Register() {
                                  id="InputPassword"
                                  type="password"
                                  className={`form-control ${
-                                    (errors.pass.hasError ||
-                                       emptyErrors.pass) &&
+                                    (errors.pass.hasError || emptyErrors.pass) &&
                                     "border border-danger"
                                  }`}
                                  name="pass"
@@ -278,31 +260,20 @@ export default function Register() {
                               <label htmlFor="InputPassword">Password *</label>
 
                               {emptyErrors.pass && (
-                                 <p className="text-danger m-0 small">
-                                    This field is required
-                                 </p>
+                                 <p className="text-danger m-0 small">This field is required</p>
                               )}
 
                               <div
                                  className={`form-text mb-4 ${
-                                    errors.pass.hasError
-                                       ? "text-danger"
-                                       : "text-muted"
+                                    errors.pass.hasError ? "text-danger" : "text-muted"
                                  }`}>
                                  A password must:
                                  <ul>
                                     <li>Have a minimum of 8 characters</li>
-                                    <li>
-                                       Contain at least 1 uppercase letter (A-Z)
-                                    </li>
-                                    <li>
-                                       Contain at least 1 lowercase letter (a-z)
-                                    </li>
+                                    <li>Contain at least 1 uppercase letter (A-Z)</li>
+                                    <li>Contain at least 1 lowercase letter (a-z)</li>
                                     <li>Contain at least 1 number (0-9)</li>
-                                    <li>
-                                       Contain at least 1 special character
-                                       (!@#$%^&*)
-                                    </li>
+                                    <li>Contain at least 1 special character (!@#$%^&*)</li>
                                  </ul>
                               </div>
                            </div>
@@ -326,19 +297,13 @@ export default function Register() {
                                  onChange={handleOnChange}
                                  value={formData.cpass}
                               />
-                              <label htmlFor="InputCPassword">
-                                 Confirm Password *
-                              </label>
+                              <label htmlFor="InputCPassword">Confirm Password *</label>
                            </div>
                            {errors.cpass.hasError && (
-                              <p className="text-danger mb-4 small">
-                                 {errors.cpass.msg}
-                              </p>
+                              <p className="text-danger mb-4 small">{errors.cpass.msg}</p>
                            )}
                            {emptyErrors.cpass && (
-                              <p className="text-danger mb-4 small">
-                                 This field is required
-                              </p>
+                              <p className="text-danger mb-4 small">This field is required</p>
                            )}
 
                            {/* select option field */}
@@ -346,8 +311,7 @@ export default function Register() {
                               <select
                                  id="floatingSelect"
                                  className={`form-control ${
-                                    errors.userType.hasError ||
-                                    emptyErrors.userType
+                                    errors.userType.hasError || emptyErrors.userType
                                        ? "border border-danger"
                                        : "mb-4"
                                  }`}
@@ -360,19 +324,13 @@ export default function Register() {
                                  <option value="student">Student</option>
                                  <option value="teacher">Teacher</option>
                               </select>
-                              <label htmlFor="floatingSelect">
-                                 Select User Type *
-                              </label>
+                              <label htmlFor="floatingSelect">Select User Type *</label>
                            </div>
                            {errors.userType.hasError && (
-                              <p className="text-danger mb-4 small">
-                                 {errors.userType.msg}
-                              </p>
+                              <p className="text-danger mb-4 small">{errors.userType.msg}</p>
                            )}
                            {emptyErrors.userType && (
-                              <p className="text-danger mb-4 small">
-                                 This field is required
-                              </p>
+                              <p className="text-danger mb-4 small">This field is required</p>
                            )}
 
                            {/* terms and conds checkbox */}
@@ -385,9 +343,7 @@ export default function Register() {
                                  onChange={handleOnChange}
                                  checked={formData.checked}
                               />
-                              <p
-                                 className="form-check-label text-muted"
-                                 htmlFor="tacCheckBox">
+                              <p className="form-check-label text-muted" htmlFor="tacCheckBox">
                                  By creating an account you agree to the&#160;
                                  <span
                                     className={`text-primary ${css.tac}`}
@@ -414,18 +370,14 @@ export default function Register() {
                               </p>
                            </div>
                            {/* submit button */}
-                           <button
-                              type="submit"
-                              className={`${css.reg_btn} btn btn-primary`}>
+                           <button type="submit" className={`${css.reg_btn} btn btn-primary`}>
                               Register
                            </button>
 
                            <p className="text-center mt-4 text-muted">
                               Already have an account?
                               <span className="text-primary">
-                                 <a
-                                    href="/login"
-                                    className="text-decoration-none">
+                                 <a href="/login" className="text-decoration-none">
                                     {" "}
                                     Sign In
                                  </a>

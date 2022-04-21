@@ -31,15 +31,12 @@ export default function Landing() {
                      <div className="row justify-content-center mb-5">
                         <div className="col-xl-6 col-lg-7">
                            <div className="section_title text-center mb-30">
-                              <h1
-                                 className="mb-25  wow fadeInUp"
-                                 data-wow-delay=".2s">
+                              <h1 className="mb-25  wow fadeInUp" data-wow-delay=".2s">
                                  Awsome <span> Features</span>
                               </h1>
                               <p className="wow fadeInUp" data-wow-delay=".4s">
-                                 Lorem ipsum dolor sit amet consectetur
-                                 adipisicing elit. Veritatis error enim
-                                 perspiciatis iste dignissimos tempore?
+                                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis
+                                 error enim perspiciatis iste dignissimos tempore?
                               </p>
                            </div>
                         </div>
@@ -56,9 +53,8 @@ export default function Landing() {
                               <div className="content">
                                  <h3>Easy To Use</h3>
                                  <p>
-                                    Lorem ipsum dolor, sit amet consectetur
-                                    adipisicing elit. Minus sequi pariatur qui
-                                    ut dolore excepturi!
+                                    Lorem ipsum dolor, sit amet consectetur adipisicing elit. Minus
+                                    sequi pariatur qui ut dolore excepturi!
                                  </p>
                               </div>
                            </div>
@@ -72,9 +68,8 @@ export default function Landing() {
                               <div className="content">
                                  <h3>Save Your Mony</h3>
                                  <p>
-                                    Lorem ipsum dolor, sit amet consectetur
-                                    adipisicing elit. Minus sequi pariatur qui
-                                    ut dolore excepturi!
+                                    Lorem ipsum dolor, sit amet consectetur adipisicing elit. Minus
+                                    sequi pariatur qui ut dolore excepturi!
                                  </p>
                               </div>
                            </div>
@@ -90,9 +85,8 @@ export default function Landing() {
                               <div className="content">
                                  <h3>Fully Responsive</h3>
                                  <p>
-                                    Lorem ipsum dolor, sit amet consectetur
-                                    adipisicing elit. Minus sequi pariatur qui
-                                    ut dolore excepturi!
+                                    Lorem ipsum dolor, sit amet consectetur adipisicing elit. Minus
+                                    sequi pariatur qui ut dolore excepturi!
                                  </p>
                               </div>
                            </div>
@@ -127,8 +121,8 @@ export default function Landing() {
                         </div>
                         <div className="mt-4">
                            <p>
-                              Lorem ipsum dolor sit amet, consectetur adipiscing
-                              elit. Nulla quam velit
+                              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quam
+                              velit
                            </p>
                            <p>vulputate eu pharetra nec, mattis ac neque</p>
                         </div>
