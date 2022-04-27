@@ -1,0 +1,81 @@
+.sidebar {
+   background: rgb(34, 34, 34);
+   color: white;
+   min-height: calc(100vh - 60px);
+}
+
+.top_Section {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+}
+
+.routes {
+   color: white;
+}
+
+.logo {
+   font-size: 18px;
+}
+
+.link {
+   display: flex;
+   color: white;
+   gap: 20px;
+   padding: 10px 15px;
+   text-decoration: none;
+}
+
+.bars {
+   padding: 15px;
+   font-size: 20px;
+   transform: translateY(-2px);
+}
+
+.link:hover {
+   border-right: 4px solid rgb(45, 171, 255);
+   transition: 0.2s cubic-bezier(0.6, -0.28, 0.735, 0.045);
+   background: #293a5f;
+   color: rgb(255, 255, 255);
+   cursor: pointer;
+}
+
+.active_link,
+.active_link_closed {
+   border-right: 4px solid rgb(45, 171, 255);
+   transition: 0.2s cubic-bezier(0.6, -0.28, 0.735, 0.045);
+   background: #293a5f;
+   color: rgb(61, 184, 255);
+}
+
+.active_link_closed {
+   color: rgb(255, 255, 255);
+}
+
+.link_text {
+   white-space: nowrap;
+   font-size: 15px;
+   text-decoration: none;
+   transform: translateY(5px);
+}
+
+.logout_btn {
+   font-size: 30px;
+}
+
+.toggleButton {
+   cursor: pointer;
+}
+
+.icon {
+   font-size: 20px;
+}
+
+.main_Container {
+   display: flex;
+   min-height: calc(100vh - 60px);
+}
+
+.main {
+   width: 100%;
+}

@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 //THIS IS A REACT SPINNER
 //source: https://www.npmjs.com/package/react-spinners (see demo)
 import PuffLoader from "react-spinners/PuffLoader";
+import { FaExclamation, FaCheck } from "react-icons/fa";
 
 export default function Register() {
    let navigate = useNavigate();
@@ -13,6 +14,7 @@ export default function Register() {
 
    //initialize state default values (for FORM FIELDS)
    const [formData, setFormData] = React.useState({
+      fullname: "",
       email: "",
       username: "",
       pass: "",
@@ -27,8 +29,16 @@ export default function Register() {
       msg: "",
    });
 
+   const [good, setnotgood] = React.useState(true);
+   const [good1, setnotgood1] = React.useState(true);
+   const [good2, setnotgood2] = React.useState(true);
+   const [good3, setnotgood3] = React.useState(true);
+   const [good4, setnotgood4] = React.useState(true);
+   const [Focuss, setFocuss] = React.useState(false);
+
    //errors for validation; false value means no error
    const [errors, setErrors] = React.useState({
+      fullname: { hasError: false, msg: "Invalid Name" },
       email: { hasError: false, msg: "Invalid Email" },
       username: { hasError: false, msg: "Invalid Username" },
       pass: { hasError: false, msg: "Invalid Password" },
@@ -42,6 +52,7 @@ export default function Register() {
 
    //errors for empty fields; false value means field is not empty
    const [emptyErrors, setEmptyErrors] = React.useState({
+      fullname: false,
       email: false,
       username: false,
       pass: false,
@@ -84,6 +95,7 @@ export default function Register() {
       let tempEmptyErrors = { ...emptyErrors };
 
       //NOTE: in JS, if formData.email has a value, it is considered true
+      tempEmptyErrors.fullname = formData.fullname ? false : true;
       tempEmptyErrors.email = formData.email ? false : true;
       tempEmptyErrors.username = formData.username ? false : true;
       tempEmptyErrors.pass = formData.pass ? false : true;
@@ -128,6 +140,66 @@ export default function Register() {
       return false;
    }
 
+   function handleOnChangePassword(event) {
+      const { name, value, type, checked } = event.target;
+      setEmptyErrors((prevValue) => ({
+         ...prevValue,
+         [name]: false,
+      }));
+
+      const is_lenght = /^.{8,35}$/.test(value);
+      if (!is_lenght) {
+         setnotgood(true);
+      } else {
+         setnotgood(false);
+      }
+
+      const is_Upper = /(?=.*[A-Z])/.test(value);
+      if (!is_Upper) {
+         setnotgood1(true);
+      } else {
+         setnotgood1(false);
+      }
+      const is_lower = /(?=.*[a-z])/.test(value);
+      if (!is_lower) {
+         setnotgood2(true);
+      } else {
+         setnotgood2(false);
+      }
+      const is_upper = /(?=.*[0-9])/.test(value);
+      if (!is_upper) {
+         setnotgood3(true);
+      } else {
+         setnotgood3(false);
+      }
+
+      const is_Special = /(?=.*[!@#$%^&*])/.test(value);
+      if (!is_Special) {
+         setnotgood4(true);
+      } else {
+         setnotgood4(false);
+      }
+
+      if (value === "") {
+         setnotgood(true);
+         setnotgood1(true);
+         setnotgood2(true);
+         setnotgood3(true);
+         setnotgood4(true);
+      }
+
+      setFormData((prevFormData) => {
+         return {
+            ...prevFormData,
+            [name]: type === "checkbox" ? checked : value,
+         };
+      });
+   }
+
+   function onFocus(event) {
+      setFocuss(true);
+   }
+
    //makes the call to the api, and send a post request for the server to process and write to DB
    async function registerUser(event) {
       event.preventDefault();
@@ -154,6 +226,7 @@ export default function Register() {
             .catch((err) => {
                setTimeout(() => {
                   setLoading(false);
+                  console.log(err.response);
                   setGenError({
                      hasGenError: true,
                      msg: err.response.data.msg,
@@ -198,6 +271,29 @@ export default function Register() {
                            </div>
                         )}
                         <form onSubmit={registerUser}>
+                           {/* full name field */}
+                           <div className="form-floating">
+                              <input
+                                 id="Inputfullname"
+                                 type="text"
+                                 className={`form-control ${
+                                    errors.fullname.hasError || emptyErrors.fullname
+                                       ? "border border-danger"
+                                       : "mb-4"
+                                 }`}
+                                 name="fullname"
+                                 onChange={handleOnChange}
+                                 value={formData.fullname}
+                              />
+                              <label htmlFor="Inputfullname">Full Name *</label>
+                           </div>
+                           {errors.email.hasError && (
+                              <p className="text-danger mb-4 small">{errors.fullname.msg}</p>
+                           )}
+                           {emptyErrors.fullname && (
+                              <p className="text-danger mb-4 small">This field is required</p>
+                           )}
+
                            {/* email field */}
                            <div className="form-floating">
                               <input
@@ -254,7 +350,8 @@ export default function Register() {
                                     "border border-danger"
                                  }`}
                                  name="pass"
-                                 onChange={handleOnChange}
+                                 onChange={handleOnChangePassword}
+                                 onFocus={onFocus}
                                  value={formData.pass}
                               />
                               <label htmlFor="InputPassword">Password *</label>
@@ -263,7 +360,39 @@ export default function Register() {
                                  <p className="text-danger m-0 small">This field is required</p>
                               )}
 
-                              <div
+                              {Focuss ? (
+                                 <div
+                                    className={`form-text mb-4 ${
+                                       errors.pass.hasError ? "text-danger" : "text-muted"
+                                    }`}>
+                                    A password must:
+                                    <ul>
+                                       <li className={good ? null : "text-success"}>
+                                          {good ? <FaExclamation /> : <FaCheck />}&nbsp;&nbsp;Have a
+                                          minimum of 8 characters
+                                       </li>
+                                       <li className={good1 ? null : "text-success"}>
+                                          {good1 ? <FaExclamation /> : <FaCheck />}
+                                          &nbsp;&nbsp;Contain at least 1 uppercase letter (A-Z)
+                                       </li>
+                                       <li className={good2 ? null : "text-success"}>
+                                          {good2 ? <FaExclamation /> : <FaCheck />}
+                                          &nbsp;&nbsp;Contain at least 1 lowercase letter (a-z)
+                                       </li>
+                                       <li className={good3 ? null : "text-success"}>
+                                          {good3 ? <FaExclamation /> : <FaCheck />}
+                                          &nbsp;&nbsp;Contain at least 1 number (0-9)
+                                       </li>
+                                       <li className={good4 ? null : "text-success"}>
+                                          {good4 ? <FaExclamation /> : <FaCheck />}
+                                          &nbsp;&nbsp;Contain at least 1 special character
+                                          (!@#$%^&*)
+                                       </li>
+                                    </ul>
+                                 </div>
+                              ) : null}
+
+                              {/* <div
                                  className={`form-text mb-4 ${
                                     errors.pass.hasError ? "text-danger" : "text-muted"
                                  }`}>
@@ -275,7 +404,7 @@ export default function Register() {
                                     <li>Contain at least 1 number (0-9)</li>
                                     <li>Contain at least 1 special character (!@#$%^&*)</li>
                                  </ul>
-                              </div>
+                              </div> */}
                            </div>
                            {/* {errors.pass.hasError && (
                               <p className="text-danger mb-4 small">
@@ -284,7 +413,7 @@ export default function Register() {
                            )} */}
 
                            {/* confirm pass field */}
-                           <div className="form-floating">
+                           <div className="form-floating mt-4">
                               <input
                                  id="InputCPassword"
                                  type="password"

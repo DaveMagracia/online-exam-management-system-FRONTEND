@@ -20,18 +20,20 @@ export default function SubjectList() {
       if (subjectArray) {
          let subjectList_ = subjectArray.map((subjectData, i) => {
             return (
-               <motion.div
-                  className="col"
-                  key={createId()}
-                  initial={{ opacity: 0, translateY: 10 }}
-                  animate={{ opacity: 1, translateY: 0 }}
-                  transition={{ duration: 0.3, delay: i * 0.05 }}>
-                  <SubjectListBox
-                     userType={user.userType}
-                     subjectData={subjectData}
-                     getSubjects={getSubjects} //pass getSubjects to box to reload this component when an exam is deleted
-                  />
-               </motion.div>
+               <>
+                  <motion.div
+                     className="col"
+                     key={createId()}
+                     initial={{ opacity: 0, translateY: 10 }}
+                     animate={{ opacity: 1, translateY: 0 }}
+                     transition={{ duration: 0.3, delay: i * 0.05 }}>
+                     <SubjectListBox
+                        userType={user.userType}
+                        subjectData={subjectData}
+                        getSubjects={getSubjects} //pass getSubjects to box to reload this component when an exam is deleted
+                     />
+                  </motion.div>
+               </>
             );
          });
 
@@ -84,7 +86,7 @@ export default function SubjectList() {
                      exit={{ opacity: 0 }}
                      transition={{ duration: 0.2 }}
                      className={`${css.loading_root} d-flex flex-column align-items-center `}>
-                     <BarLoader loading={isLoading} color="#9c2a22" size={80} width={"100%"} />
+                     <BarLoader loading={isLoading} color="#1067ca" size={80} width={"100%"} />
                   </motion.div>
                )}
             </AnimatePresence>
@@ -105,7 +107,7 @@ export default function SubjectList() {
                   row-cols-md-2 
                   row-cols-xl-3 
                   g-3
-                  mt-3">
+                  mt-1">
                      {subjectsList}
                   </div>
                ) : (

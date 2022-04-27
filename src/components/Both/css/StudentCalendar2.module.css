@@ -1,0 +1,5 @@
+.calendar_root {
+   min-height: calc(100vh - 60px) !important;
+   max-height: calc(100vh - 60px) !important;
+   overflow: hidden;
+}

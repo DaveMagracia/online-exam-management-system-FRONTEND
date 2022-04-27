@@ -57,12 +57,6 @@ export default function StudentNavbar(props) {
       setErrors(false);
    }
 
-   async function logout() {
-      await localStorage.removeItem("token");
-      await localStorage.removeItem("isLoaded");
-      navigate("/");
-   }
-
    function handleOnChange(event) {
       const { name, value } = event.target;
 
@@ -122,6 +116,7 @@ export default function StudentNavbar(props) {
                }, 2000);
             })
             .catch((err) => {
+               console.log(err.response);
                setTimeout(() => {
                   //set errors only when modal is shown
                   if (isShownExamCodeModal) {
@@ -166,8 +161,8 @@ export default function StudentNavbar(props) {
    return (
       <>
          <nav className={`${css.stud_navbar_root} navbar navbar-expand-lg navbar-light`}>
-            <div className="container">
-               <a className="navbar-brand" href="/">
+            <div className="d-flex align-content-center w-100 ps-5 pe-4">
+               <a className={`${css.logo} navbar-brand`} href="/">
                   Online Exam
                </a>
 
@@ -184,47 +179,25 @@ export default function StudentNavbar(props) {
 
                <div className="collapse navbar-collapse" id="navbarNav">
                   <ul className="navbar-nav ms-auto">
-                     <li className="nav-item me-4">
-                        <button
-                           type="button"
-                           className={`${css.code_btn} btn btn-outline-dark`}
-                           onClick={openCodeModal}>
-                           Enter Exam Code +
-                        </button>
-                     </li>
-                     {/* <li className="nav-item me-2">
-                        <a className="nav-link active" aria-current="page" href="/dashboard">
-                           Dashboard
-                        </a>
-                     </li>
-                     <li className="nav-item me-2">
-                        <a className="nav-link" href="/">
-                           History
-                        </a>
-                     </li> */}
-                     {/* my profile dropdown */}
-                     <li className="nav-item dropdown">
-                        <a
-                           className="nav-link dropdown-toggle"
-                           href="/"
-                           id="navbarDarkDropdownMenuLink"
-                           role="button"
-                           data-bs-toggle="dropdown"
-                           aria-expanded="false">
-                           {props.username}&nbsp;
-                        </a>
-                        <ul className="dropdown-menu" aria-labelledby="navbarDarkDropdownMenuLink">
-                           <li className={`${css.nav_link} dropdown-item`} onClick={UpdateProfile}>
-                              My Profile
+                     {/* dont show this button when taking eam */}
+                     {window.location.href !== "http://localhost:3000/take-exam" && (
+                        <>
+                           <li className="nav-item me-4">
+                              <button
+                                 type="button"
+                                 className={`${css.code_btn} btn btn-outline-light`}
+                                 onClick={openCodeModal}>
+                                 Enter Exam Code +
+                              </button>
                            </li>
-                           <li className={`${css.nav_link} dropdown-item`} onClick={ChangePassword}>
-                              Change Password
+                           <li className={`${css.nav_name} nav-item d-flex`}>
+                              <div className={css.profile_pic}></div>
+                              <span className="nav-link text-light">
+                                 Welcome, {props.username}!&nbsp;
+                              </span>
                            </li>
-                           <li className={`${css.nav_link} dropdown-item`} onClick={logout}>
-                              Logout
-                           </li>
-                        </ul>
-                     </li>
+                        </>
+                     )}
                   </ul>
                </div>
             </div>

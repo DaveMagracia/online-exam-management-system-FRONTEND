@@ -12,15 +12,18 @@ import UpdateProfile from "./components/Both/UpdateProfile";
 import ChangePassword from "./components/Both/ChangePassword";
 import Subjects from "./components/Both/Subjects";
 import ExamDetails from "./components/Both/ExamDetails";
+import Calendar from "./components/Both/Calendar";
 
 //FACULTY COMPONENTS
 import QuestionBankDetails from "./components/Faculty/QuestionBankDetails";
 import CreateQuestionBank from "./components/Faculty/CreateQuestionBank";
 import CreateExam from "./components/Faculty/CreateExam";
+import ExamResultsFaculty from "./components/Faculty/ExamResultsFaculty";
 
 //STUDENT COMPONETS
 import TakeExam from "./components/Student/TakeExam";
 import ExamResults from "./components/Student/ExamResults";
+import StudentHistory from "./components/Student/StudentHistory";
 
 import { UserContext } from "./UserContext";
 
@@ -44,10 +47,12 @@ export default function App() {
                <Route path="/create-bank" element={<CreateQuestionBank />} />
                <Route path="/edit-question-bank/:bank_id" element={<CreateQuestionBank />} />
                <Route path="/question-bank/:bank_id" element={<QuestionBankDetails />} />
+               <Route path="/results/:examCode/:userId" element={<ExamResultsFaculty />} />
 
                {/* STUDENT ROUTES */}
                <Route path="/take-exam" element={<TakeExam />} />
                <Route path="/take-exam/results" element={<ExamResults />} />
+               <Route path="/history" element={<StudentHistory />} />
 
                {/* BOTH ROUTES */}
                <Route path="/dashboard" element={<Main />} />
@@ -55,6 +60,7 @@ export default function App() {
                <Route path="/change-password" element={<ChangePassword />} />
                <Route path="/exam-details/:exam_id" element={<ExamDetails />} />
                <Route path="/subjects/:subject_name" element={<Subjects />} />
+               <Route path="/calendar" element={<Calendar />} />
 
                {/* /f url has no match, display 404 page*/}
                <Route path="*" element={<PageNotFound404 />} />

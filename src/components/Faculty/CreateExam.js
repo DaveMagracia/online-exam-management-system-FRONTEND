@@ -44,6 +44,7 @@ export default function CreateExam(props) {
    const [formData, setFormData] = React.useState({
       title: "",
       subject: "",
+      passingScore: 0,
       date_from: new Date().getTime(), //set default time to current timestamp
       date_to: new Date().setMinutes(new Date().getMinutes() + 1), //set default time to current timestamp + 1 minute
       time_limit: 1, //1 minute is the default and minimum time limit
@@ -53,6 +54,10 @@ export default function CreateExam(props) {
    const [errors, setErrors] = React.useState({
       title: { hasError: false, msg: "This field is required." },
       subject: {
+         hasError: false,
+         msg: "This field is required.",
+      },
+      passingScore: {
          hasError: false,
          msg: "This field is required.",
       },
@@ -98,6 +103,11 @@ export default function CreateExam(props) {
          setErrors((prevVal) => ({
             ...prevVal,
             subject: { hasError: false, msg: "This field is required." },
+         }));
+      } else if (name === "passingScore") {
+         setErrors((prevVal) => ({
+            ...prevVal,
+            passingScore: { hasError: false, msg: "This field is required." },
          }));
       }
 
@@ -171,6 +181,7 @@ export default function CreateExam(props) {
    function validateForm() {
       let tempErrors = { ...errors };
       tempErrors.title.hasError = formData.title ? false : true;
+      tempErrors.passingScore.hasError = formData.passingScore ? false : true;
       tempErrors.subject.hasError = formData.subject ? false : true;
       tempErrors.date_from.hasError = new Date(formData.date_from).getTime() < new Date().getTime(); //check if time is less than current time
       tempErrors.date_to.hasError =
@@ -336,6 +347,7 @@ export default function CreateExam(props) {
       //checks if there are changes made. If there are changes, show dialog first
       const isTitleEmpty = formData.title ? false : true;
       const isSubjectEmpty = formData.subject ? false : true;
+      const isPassingEmpty = formData.passingScore === 0 ? false : true;
       const isDirEmpty = formData.directions ? false : true;
       const hasNoQuestions = questions.length === 0 ? true : false;
       const isFromDateChanged = initDateVals.date_from !== formData.date_from;
@@ -347,6 +359,7 @@ export default function CreateExam(props) {
       if (
          !isTitleEmpty ||
          !isSubjectEmpty ||
+         !isPassingEmpty ||
          !isDirEmpty ||
          !hasNoQuestions ||
          isFromDateChanged ||
@@ -453,13 +466,24 @@ export default function CreateExam(props) {
    }
 
    function handleTimeLimitType(event) {
-      const { value } = event.target;
+      const { value, name } = event.target;
       //if the value is empty or not an integer, set the value to empty string
-      if (!value) {
-         setFormData((prevVal) => ({
-            ...prevVal,
-            time_limit: "",
-         }));
+      var leading0Regex = /^(0|[1-9][0-9]*)$/; //regex to test if input has a leading 0
+
+      if (name === "passingScore") {
+         if (isNaN(Number(value)) || !leading0Regex.test(value)) {
+            setFormData((prevVal) => ({
+               ...prevVal,
+               passingScore: "",
+            }));
+         }
+      } else {
+         if (!value) {
+            setFormData((prevVal) => ({
+               ...prevVal,
+               time_limit: "",
+            }));
+         }
       }
    }
 
@@ -755,6 +779,30 @@ export default function CreateExam(props) {
                         </div>
                         {errors.subject.hasError && (
                            <small className="text-danger">{errors.subject.msg}</small>
+                        )}
+
+                        {/* PASSING SCORE INPUT */}
+                        <div className="w-100 mt-4">
+                           <label htmlFor="passingScore" className="me-3 mb-1">
+                              Passing Score:
+                           </label>
+                           <div className="input-group">
+                              <input
+                                 id="passingScore"
+                                 type="text"
+                                 value={formData.passingScore}
+                                 name="passingScore"
+                                 onChange={handleFormChange}
+                                 onKeyUp={handleTimeLimitType}
+                                 className={`form-control  ${
+                                    errors.passingScore.hasError && "border-danger"
+                                 }`}
+                                 placeholder="Enter passing score..."
+                              />
+                           </div>
+                        </div>
+                        {errors.passingScore.hasError && (
+                           <small className="text-danger">{errors.passingScore.msg}</small>
                         )}
 
                         {/* DATE AND TIME INPUT */}

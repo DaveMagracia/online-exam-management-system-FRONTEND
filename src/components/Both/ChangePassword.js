@@ -1,16 +1,25 @@
 import React, { useContext } from "react";
 import StudentNavbar from "../Student/StudentNavbar";
 import FacultyNavbar from "../Faculty/FacultyNavbar";
+import Sidebar from "../Both/Sidebar";
+import { motion } from "framer-motion";
 import axios from "axios";
 import css from "./css/ChangePassword.module.css";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../UserContext";
 import PuffLoader from "react-spinners/PuffLoader";
 import jwt_decode from "jwt-decode";
+import { FaExclamation, FaCheck } from "react-icons/fa";
 
 export default function ChangePassword(props) {
    const { user, setUser } = useContext(UserContext);
    const [loading, setLoading] = React.useState(false);
+   const [good, setnotgood] = React.useState(true);
+   const [good1, setnotgood1] = React.useState(true);
+   const [good2, setnotgood2] = React.useState(true);
+   const [good3, setnotgood3] = React.useState(true);
+   const [good4, setnotgood4] = React.useState(true);
+
    let navigate = useNavigate();
 
    //initialize state default values (for FORM FIELDS)
@@ -39,6 +48,62 @@ export default function ChangePassword(props) {
       newpass: false,
       cpass: false,
    });
+
+   function handleOnChangePassword(event) {
+      const { name, value, type, checked } = event.target;
+      setEmptyErrors((prevValue) => ({
+         ...prevValue,
+         [name]: false,
+      }));
+
+      const is_lenght = /^.{8,35}$/.test(value);
+      if (!is_lenght) {
+         setnotgood(true);
+      } else {
+         setnotgood(false);
+      }
+
+      const is_Upper = /(?=.*[A-Z])/.test(value);
+      if (!is_Upper) {
+         setnotgood1(true);
+      } else {
+         setnotgood1(false);
+      }
+      const is_lower = /(?=.*[a-z])/.test(value);
+      if (!is_lower) {
+         setnotgood2(true);
+      } else {
+         setnotgood2(false);
+      }
+      const is_upper = /(?=.*[0-9])/.test(value);
+      if (!is_upper) {
+         setnotgood3(true);
+      } else {
+         setnotgood3(false);
+      }
+
+      const is_Special = /(?=.*[!@#$%^&*])/.test(value);
+      if (!is_Special) {
+         setnotgood4(true);
+      } else {
+         setnotgood4(false);
+      }
+
+      if (value === "") {
+         setnotgood(true);
+         setnotgood1(true);
+         setnotgood2(true);
+         setnotgood3(true);
+         setnotgood4(true);
+      }
+
+      setFormData((prevFormData) => {
+         return {
+            ...prevFormData,
+            [name]: type === "checkbox" ? checked : value,
+         };
+      });
+   }
 
    //handles onchange on form fields
    function handleOnChange(event) {
@@ -147,8 +212,7 @@ export default function ChangePassword(props) {
 
    return (
       <>
-         {getNavbar()}
-         <div>
+         <Sidebar>
             {loading ? (
                <div
                   className={`${css.changePass_root} d-flex flex-column align-items-center justify-content-center`}>
@@ -156,7 +220,11 @@ export default function ChangePassword(props) {
                   <p className="lead mt-4">&nbsp;&nbsp;Updating Password...</p>
                </div>
             ) : (
-               <div className={`${css.changePass_root}`}>
+               <motion.div
+                  initial={{ transform: "translateX(70px)", opacity: 0 }}
+                  animate={{ transform: "translateX(0px)", opacity: 1 }}
+                  transition={{ ease: "easeOut", duration: 0.15 }}
+                  className={`${css.changePass_root}`}>
                   {/* ACTUAL FORM */}
                   <div className={`${css.form} container p-5`}>
                      <h2 className="mb-4">Change Password</h2>
@@ -199,7 +267,7 @@ export default function ChangePassword(props) {
                                  "border border-danger"
                               }`}
                               name="newpass"
-                              onChange={handleOnChange}
+                              onChange={handleOnChangePassword}
                               value={formData.newpass}
                            />
                            <label className="m-0" htmlFor="InputNewPassword">
@@ -210,15 +278,30 @@ export default function ChangePassword(props) {
                            )}
                            <div
                               className={`form-text mb-4 ${
-                                 errors.newpass.hasError ? "text-danger" : "text-muted"
+                                 errors.pass.hasError ? "text-danger" : "text-muted"
                               }`}>
                               A password must:
                               <ul>
-                                 <li>Have a minimum of 8 characters</li>
-                                 <li>Contain at least 1 uppercase letter (A-Z)</li>
-                                 <li>Contain at least 1 lowercase letter (a-z)</li>
-                                 <li>Contain at least 1 number (0-9)</li>
-                                 <li>Contain at least 1 special character (!@#$%^&*)</li>
+                                 <li className={good ? null : "text-success"}>
+                                    {good ? <FaExclamation /> : <FaCheck />}&nbsp;&nbsp;Have a
+                                    minimum of 8 characters
+                                 </li>
+                                 <li className={good1 ? null : "text-success"}>
+                                    {good1 ? <FaExclamation /> : <FaCheck />}&nbsp;&nbsp;Contain at
+                                    least 1 uppercase letter (A-Z)
+                                 </li>
+                                 <li className={good2 ? null : "text-success"}>
+                                    {good2 ? <FaExclamation /> : <FaCheck />}&nbsp;&nbsp;Contain at
+                                    least 1 lowercase letter (a-z)
+                                 </li>
+                                 <li className={good3 ? null : "text-success"}>
+                                    {good3 ? <FaExclamation /> : <FaCheck />}&nbsp;&nbsp;Contain at
+                                    least 1 number (0-9)
+                                 </li>
+                                 <li className={good4 ? null : "text-success"}>
+                                    {good4 ? <FaExclamation /> : <FaCheck />}&nbsp;&nbsp;Contain at
+                                    least 1 special character (!@#$%^&*)
+                                 </li>
                               </ul>
                            </div>
                         </div>
@@ -250,11 +333,16 @@ export default function ChangePassword(props) {
                         <button type="submit" className={`btn btn-primary`}>
                            Update Password
                         </button>
+                        <span
+                           className={`${css.link} d-block mt-4 link-primary`}
+                           onClick={() => navigate("/update-profile")}>
+                           Edit Profile
+                        </span>
                      </form>
                   </div>
-               </div>
+               </motion.div>
             )}
-         </div>
+         </Sidebar>
       </>
    );
 }

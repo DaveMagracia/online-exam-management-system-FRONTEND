@@ -15,6 +15,7 @@ export default function Main() {
    //useNavigate hook from React Router
    const { user, setUser } = useContext(UserContext);
    const [isLoading, setLoading] = React.useState(true); //if the user is already set in the context, don't show loading
+   const [isLoaded, setIsLoaded] = React.useState(true); //if the user is already set in the context, don't show loading
    const navigate = useNavigate();
 
    //REMOVED
@@ -49,7 +50,7 @@ export default function Main() {
    React.useEffect(() => {
       const token = localStorage.getItem("token");
       const isLoaded = localStorage.getItem("isLoaded");
-
+      setIsLoaded(isLoaded);
       //initially, upon logging in, this will be false because it is not yet set
       //if true, skip the loading animation whenever the user navigates to the dashboard
       if (isLoaded) {
@@ -101,7 +102,8 @@ export default function Main() {
             ) : (
                <>
                   <motion.div
-                     initial={{ opacity: 0 }}
+                     // cont animate when page is previously loaded
+                     initial={{ opacity: isLoaded ? 1 : 0 }}
                      animate={{ opacity: 1 }}
                      transition={{ duration: 0.5 }}>
                      {user.userType === "student" ? (

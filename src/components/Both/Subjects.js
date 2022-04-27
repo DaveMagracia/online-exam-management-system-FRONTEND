@@ -6,6 +6,7 @@ import jwt_decode from "jwt-decode";
 
 import FacultyNavbar from "../Faculty/FacultyNavbar";
 import StudentNavbar from "../Student/StudentNavbar";
+import Sidebar from "./Sidebar";
 import ExamList from "./ExamList";
 import axios from "axios";
 import { v1 as createId } from "uuid";
@@ -65,6 +66,9 @@ export default function Subjects(props) {
    }
 
    React.useEffect(() => {
+      document.title = `${
+         subject_name.toLowerCase() === "all" ? "All Subjects" : subject_name
+      } | Online Examination`;
       const token = localStorage.getItem("token");
       const userTokenDecoded = jwt_decode(token);
       setUser(userTokenDecoded);
@@ -73,33 +77,40 @@ export default function Subjects(props) {
 
    return (
       <>
-         {getNavbar()}
-         <div className="container">
-            <div className="dropdown mt-5">
-               <a
-                  className="dropdown-toggle text-black text-decoration-none"
-                  href="#"
-                  role="button"
-                  id="subjectsDropdown"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false">
-                  <h2 className="mt-5 d-inline">{subject_name}</h2>
-               </a>
+         <Sidebar>
+            <div className="p-3">
+               <div className="d-flex flex-column px-5 py-3">
+                  <div className="dropdown">
+                     <a
+                        className="dropdown-toggle text-black text-decoration-none"
+                        href="#"
+                        role="button"
+                        id="subjectsDropdown"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        <h1 className="d-inline mb-3">
+                           {subject_name === "all" || subject_name === "All"
+                              ? "All Subjects"
+                              : subject_name}
+                        </h1>
+                     </a>
 
-               {/* dropdown list of subjects */}
-               <ul className="dropdown-menu" aria-labelledby="subjectsDropdown">
-                  <li
-                     key={createId()}
-                     className={`${css.link} dropdown-item`}
-                     onClick={() => goToSubject("All")}>
-                     All subjects
-                  </li>
-                  {subjectNameList}
-               </ul>
+                     {/* dropdown list of subjects */}
+                     <ul className="dropdown-menu" aria-labelledby="subjectsDropdown">
+                        <li
+                           key={createId()}
+                           className={`${css.link} dropdown-item`}
+                           onClick={() => goToSubject("All")}>
+                           All subjects
+                        </li>
+                        {subjectNameList}
+                     </ul>
+                  </div>
+                  <hr className="m-0 mt-3" />
+                  <ExamList subjectName={subject_name} />
+               </div>
             </div>
-            <hr className="mt-2 mb-0" />
-            <ExamList subjectName={subject_name} />
-         </div>
+         </Sidebar>
       </>
    );
 }

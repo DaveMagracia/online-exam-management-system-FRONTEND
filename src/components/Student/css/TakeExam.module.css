@@ -2,6 +2,7 @@
    width: 980px;
    min-width: 470px;
    max-width: 980px;
+   min-height: 102vh;
 }
 
 .minimize_btn {
@@ -98,4 +99,8 @@
    min-width: 800px;
    max-width: 500px;
    height: 250px;
+}
+
+.list_item {
+   height: 43px !important;
 }

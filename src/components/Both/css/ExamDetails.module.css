@@ -8,3 +8,28 @@
    background-color: gray;
    border-radius: 50%;
 }
+
+.details_link {
+   cursor: pointer;
+}
+
+.tr_main {
+   height: 70px;
+}
+
+.tr_first {
+   height: 50px;
+   margin: 0 !important;
+}
+
+.status_badge {
+   font-size: 12px !important;
+   transform: translateY(-5px);
+}
+
+.card_icon {
+   width: 60px;
+   height: 60px;
+   background-color: rgb(196, 196, 196);
+   border-radius: 50%;
+}

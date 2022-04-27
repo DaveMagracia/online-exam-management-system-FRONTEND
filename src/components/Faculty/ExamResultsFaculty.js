@@ -1,10 +1,10 @@
 import React, { useContext, useRef } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import jwt_decode from "jwt-decode";
-import css from "./css/ExamResults.module.css";
+import css from "./css/ExamResultsFaculty.module.css";
 import { UserContext } from "../../UserContext";
-import StudentNavbar from "./StudentNavbar";
-import FacultyNavbar from "../Faculty/FacultyNavbar";
+import StudentNavbar from "../Student/StudentNavbar";
+import FacultyNavbar from "./FacultyNavbar";
 import axios from "axios";
 import { v1 as createId } from "uuid";
 import { MdMinimize, MdArrowBack } from "react-icons/md";
@@ -12,13 +12,19 @@ import _ from "lodash";
 import PuffLoader from "react-spinners/PuffLoader";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function ExamResults() {
+export default function ExamResultsFaculty() {
    const { user, setUser } = useContext(UserContext);
    const navigate = useNavigate();
-   const { state } = useLocation(); //from ExamDetails.js
-   const { results, questions, answers, exam, studentInfo } = state; //extract examId property from "state" objectc
+   const { examCode, userId } = useParams();
+
+   const [exam, setExam] = React.useState({});
+   const [results, setResults] = React.useState([]);
+   const [questions, setQuestions] = React.useState([]);
+   const [answers, setAnswers] = React.useState([]);
+   const [studentInfo, setStudentInfo] = React.useState({});
+
    const [formattedTime, setFormattedTime] = React.useState();
-   const [isLoading, setIsLoading] = React.useState(false);
+   const [isLoading, setIsLoading] = React.useState(true);
 
    function getNavbar() {
       // identifies what type of navbar to be displayed
@@ -81,8 +87,32 @@ export default function ExamResults() {
       setFormattedTime(finalTimeFormat);
    }
 
-   function backToDashboard() {
-      navigate("/");
+   async function getResultsData() {
+      await axios({
+         method: "GET",
+         headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+         },
+         baseURL: `http://localhost:5000/exams/results/${examCode}/${userId}`,
+      })
+         .then((res) => {
+            setExam(res.data.results.exam);
+            setResults(res.data.results.results);
+            setQuestions(res.data.results.questions);
+            setAnswers(res.data.results.answers);
+            setStudentInfo(res.data.results.basicInfo);
+
+            setTimeout(() => {
+               setIsLoading(false);
+            }, 1000);
+         })
+         .catch((err) => {
+            console.log(err);
+         });
+   }
+
+   function backToDetails() {
+      navigate(-1);
    }
 
    React.useEffect(() => {
@@ -93,6 +123,7 @@ export default function ExamResults() {
          const token = localStorage.getItem("token");
          const userTokenDecoded = jwt_decode(token);
          setUser(userTokenDecoded);
+         getResultsData();
       }
    }, []);
 
@@ -151,7 +182,7 @@ export default function ExamResults() {
                            <hr />
                            <p className="m-0">
                               <b>Name</b>:{" "}
-                              {studentInfo && studentInfo.fullName ? (
+                              {studentInfo.fullName ? (
                                  studentInfo.fullName
                               ) : (
                                  <span className="text-black-50">Not Specified</span>
@@ -159,31 +190,31 @@ export default function ExamResults() {
                            </p>
                            <p className="m-0">
                               <b>Student ID</b>:{" "}
-                              {studentInfo && studentInfo.studentNumId ? (
+                              {studentInfo.studentNumId ? (
                                  studentInfo.studentNumId
                               ) : (
                                  <span className="text-black-50">Not Specified</span>
                               )}
                            </p>
                            <p className="m-0">
-                              <b>Started at</b>: {formatDate(exam.startedTime)}
+                              <b>Started at</b>: {formatDate(new Date(exam.startedTime))}
                            </p>
                            <p className="m-0">
-                              <b>Finished at</b>: {formatDate(exam.finishedTime)}
+                              <b>Finished at</b>: {formatDate(new Date(exam.finishedTime))}
                            </p>
                            {/* {exam.directions && (
-                              <div className="mt-4">
-                                 <h5>Directions: </h5>
-                                 <p className={`${css.directions} text-break`}></p>
-                                 {exam.directions}
-                              </div>
-                           )} */}
+                        <div className="mt-4">
+                           <h5>Directions: </h5>
+                           <p className={`${css.directions} text-break`}></p>
+                           {exam.directions}
+                        </div>
+                     )} */}
                         </div>
 
                         {/* DISPLAY QUESTIONS */}
                         {questions.length > 0 &&
                            questions?.map((question, index) => (
-                              <div key={createId()} className="card px-5 py-5 mb-4">
+                              <div className="card px-5 py-5 mb-4">
                                  <div>
                                     <h5 className="m-0 me-3 d-inline">
                                        Question {index + 1} of {exam.totalItems}
@@ -287,8 +318,8 @@ export default function ExamResults() {
                            <button
                               type="button"
                               className="btn btn-primary px-3 py-2"
-                              onClick={backToDashboard}>
-                              Back to Dashboard
+                              onClick={backToDetails}>
+                              Back to Exam Details
                            </button>
                         </div>
                      </div>

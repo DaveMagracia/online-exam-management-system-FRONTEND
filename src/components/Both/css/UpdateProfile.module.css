@@ -1,3 +1,27 @@
 .updateProfile_root {
    min-height: calc(100vh - 60px);
 }
+
+.link {
+   cursor: pointer;
+}
+
+.profile_picture_container {
+   position: relative;
+}
+
+.profile_picture {
+   width: 250px !important;
+   height: 250px !important;
+   background-color: rgb(134, 134, 134);
+   border-radius: 50%;
+}
+
+.profile_picture_icon {
+   font-size: 70px;
+   color: rgb(255, 255, 255);
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+}
