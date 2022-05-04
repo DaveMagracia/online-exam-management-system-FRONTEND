@@ -3,6 +3,7 @@ import css from "./css/QuestionList.module.css";
 import { MdWarning } from "react-icons/md";
 import { Modal, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { MdDelete, MdEdit } from "react-icons/md";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -199,7 +200,7 @@ export default function QuestionList(props) {
                      .map((val, i) => {
                         return (
                            <div
-                              className="card p-4 mb-4 d-flex flex-row justify-content-between"
+                              className="card p-3 px-4 mb-4 d-flex flex-row justify-content-between"
                               key={i + 1}>
                               <p className="m-0 me-3">
                                  {val.questionBankTitle + " "}
@@ -210,14 +211,14 @@ export default function QuestionList(props) {
                               </p>
                               <div className="">
                                  <span
-                                    className={`${css.action_button} me-4`}
+                                    className={`${css.action_button} me-3`}
                                     onClick={() => editBank(val)}>
-                                    Edit
+                                    <MdEdit className={css.action_icon} />
                                  </span>
                                  <span
                                     className={`${css.action_button} me-0`}
                                     onClick={() => openDeleteModal(val)}>
-                                    Delete
+                                    <MdDelete className={css.action_icon} />
                                  </span>
                               </div>
                            </div>
@@ -229,26 +230,26 @@ export default function QuestionList(props) {
             {questions.length > 0 && (
                <div>
                   {/* show questions header only if there are question banks */}
-                  {questionBanks.length > 0 && <h5>Questions</h5>}
+                  {questionBanks.length > 0 && <h5>Exam Questions</h5>}
                   {/* map the array in reverse */}
                   {questions
                      .slice(0)
                      .reverse()
                      .map((val, i) => (
                         <div
-                           className="card p-4 mb-4 d-flex flex-row justify-content-between"
+                           className="card p-3 px-4 mb-4 d-flex flex-row justify-content-between"
                            key={i + 1}>
-                           <p className="m-0 me-3">{val.question}</p>
+                           <p className="m-0 me-3 text-truncate w-75">{val.question}</p>
                            <div className="">
                               <span
-                                 className={`${css.action_button} me-4`}
+                                 className={`${css.action_button} me-3`}
                                  onClick={() => editQuestion(val)}>
-                                 Edit
+                                 <MdEdit className={css.action_icon} />
                               </span>
                               <span
                                  className={`${css.action_button} me-0`}
                                  onClick={() => openDeleteModal(val)}>
-                                 Delete
+                                 <MdDelete className={css.action_icon} />
                               </span>
                            </div>
                         </div>
@@ -349,7 +350,7 @@ export default function QuestionList(props) {
             </div>
             <div>
                <button className="btn btn-primary" onClick={goToAddQuestion}>
-                  Add a Question
+                  Add Question
                </button>
                {!props.isFromBank && (
                   <button type="button" className="btn btn-primary ms-3" onClick={openBankModal}>

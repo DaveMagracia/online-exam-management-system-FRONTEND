@@ -12,9 +12,13 @@ import _ from "lodash";
 import PuffLoader from "react-spinners/PuffLoader";
 import { motion, AnimatePresence } from "framer-motion";
 
+import { useReactToPrint } from "react-to-print";
+import { PrintResults } from "./PrintResults";
+
 export default function ExamResultsFaculty() {
    const { user, setUser } = useContext(UserContext);
    const navigate = useNavigate();
+   const componentToPrintRef = useRef();
    const { examCode, userId } = useParams();
 
    const [exam, setExam] = React.useState({});
@@ -25,17 +29,22 @@ export default function ExamResultsFaculty() {
 
    const [formattedTime, setFormattedTime] = React.useState();
    const [isLoading, setIsLoading] = React.useState(true);
+   const [profileImage, setProfileImage] = React.useState("");
 
    function getNavbar() {
       // identifies what type of navbar to be displayed
       if (user) {
          if (user.userType === "student") {
-            return <StudentNavbar username={user.username} />;
+            return <StudentNavbar username={user.username} photoPath={profileImage} />;
          } else if (user.userType === "teacher") {
-            return <FacultyNavbar username={user.username} />;
+            return <FacultyNavbar username={user.username} photoPath={profileImage} />;
          }
       }
    }
+
+   const printResults = useReactToPrint({
+      content: () => componentToPrintRef.current,
+   });
 
    function formatDate(time) {
       //formats the date passed
@@ -115,15 +124,26 @@ export default function ExamResultsFaculty() {
       navigate(-1);
    }
 
+   function getUserInfoFromToken() {
+      const token = localStorage.getItem("token");
+      const userTokenDecoded = jwt_decode(token);
+      setUser(userTokenDecoded);
+
+      setProfileImage(
+         !!userTokenDecoded.photo && `/images/profilePictures/${userTokenDecoded.photo}`
+      );
+   }
+
    React.useEffect(() => {
       document.title = `Exam Results | Online Examination`;
       if (!localStorage.getItem("token")) {
-         navigate("/login");
+         navigate("/login-register");
       } else {
          const token = localStorage.getItem("token");
          const userTokenDecoded = jwt_decode(token);
          setUser(userTokenDecoded);
          getResultsData();
+         getUserInfoFromToken();
       }
    }, []);
 
@@ -151,8 +171,8 @@ export default function ExamResultsFaculty() {
                   transition={{ duration: 0.2 }}>
                   {getNavbar()}
                   {/* MAIN CONTENT */}
-                  <div className="d-flex justify-content-center">
-                     <div className={`${css.exam_container} p-3`}>
+                  <div className={`${css.results_root} d-flex justify-content-center`}>
+                     <div className={`${css.results_container} p-3`}>
                         <div className="exam_head mb-4">
                            <div className="d-flex mt-5 justify-content-between">
                               <div>
@@ -180,139 +200,157 @@ export default function ExamResultsFaculty() {
                               </div>
                            </div>
                            <hr />
-                           <p className="m-0">
-                              <b>Name</b>:{" "}
-                              {studentInfo.fullName ? (
-                                 studentInfo.fullName
-                              ) : (
-                                 <span className="text-black-50">Not Specified</span>
-                              )}
-                           </p>
-                           <p className="m-0">
-                              <b>Student ID</b>:{" "}
-                              {studentInfo.studentNumId ? (
-                                 studentInfo.studentNumId
-                              ) : (
-                                 <span className="text-black-50">Not Specified</span>
-                              )}
-                           </p>
-                           <p className="m-0">
-                              <b>Started at</b>: {formatDate(new Date(exam.startedTime))}
-                           </p>
-                           <p className="m-0">
-                              <b>Finished at</b>: {formatDate(new Date(exam.finishedTime))}
-                           </p>
-                           {/* {exam.directions && (
+                           <div className="d-flex">
+                              <div className="flex-grow-1">
+                                 <p className="m-0">
+                                    <b>Name</b>:{" "}
+                                    {studentInfo.fullName ? (
+                                       studentInfo.fullName
+                                    ) : (
+                                       <span className="text-black-50">Not Specified</span>
+                                    )}
+                                 </p>
+                                 <p className="m-0">
+                                    <b>Student ID</b>:{" "}
+                                    {studentInfo.studentNumId ? (
+                                       studentInfo.studentNumId
+                                    ) : (
+                                       <span className="text-black-50">Not Specified</span>
+                                    )}
+                                 </p>
+                                 <p className="m-0">
+                                    <b>Started at</b>: {formatDate(new Date(exam.startedTime))}
+                                 </p>
+                                 <p className="m-0">
+                                    <b>Finished at</b>: {formatDate(new Date(exam.finishedTime))}
+                                 </p>
+                                 {/* {exam.directions && (
                         <div className="mt-4">
                            <h5>Directions: </h5>
                            <p className={`${css.directions} text-break`}></p>
                            {exam.directions}
                         </div>
                      )} */}
+                              </div>
+
+                              {user && user.userType === "teacher" && (
+                                 <div className="flex-grow-1">
+                                    <button
+                                       className="btn btn-primary float-end"
+                                       onClick={printResults}>
+                                       Print Results
+                                    </button>
+                                 </div>
+                              )}
+                           </div>
                         </div>
 
-                        {/* DISPLAY QUESTIONS */}
-                        {questions.length > 0 &&
-                           questions?.map((question, index) => (
-                              <div className="card px-5 py-5 mb-4">
-                                 <div>
-                                    <h5 className="m-0 me-3 d-inline">
-                                       Question {index + 1} of {exam.totalItems}
-                                    </h5>
-                                    <small className="text-muted float-end">
-                                       {results[index]
-                                          ? questions[index].points +
-                                            (questions[index].points === 1 ? " point" : " points")
-                                          : "0 points"}
-                                    </small>
-                                 </div>
+                        <div>
+                           {/* DISPLAY QUESTIONS */}
+                           {questions.length > 0 &&
+                              questions?.map((question, index) => (
+                                 <div className="card px-5 py-5 mb-4">
+                                    <div>
+                                       <h5 className="m-0 me-3 d-inline">
+                                          Question {index + 1} of {exam.totalItems}
+                                       </h5>
+                                       <small className="text-muted float-end">
+                                          {results[index]
+                                             ? questions[index].points +
+                                               (questions[index].points === 1
+                                                  ? " point"
+                                                  : " points")
+                                             : "0 points"}
+                                       </small>
+                                    </div>
 
-                                 <p className="mt-2">{question.question}</p>
-                                 <div className="choices mt-4">
-                                    {question.shuffledChoices.map((choice) => {
-                                       if (results[index]) {
-                                          //if answer is correct
-                                          if (answers[`question${index}`] === choice.index) {
-                                             return (
-                                                <div
-                                                   key={createId()}
-                                                   className="alert alert-success m-0 p-2">
-                                                   <input
-                                                      type="radio"
-                                                      className="me-3"
-                                                      checked={
-                                                         answers[`question${index}`] ===
-                                                         choice.index
-                                                      }
-                                                      value={choice.index}
-                                                      name={`question${index}`}
-                                                      readOnly
-                                                   />
-                                                   {choice.choice}
-                                                </div>
-                                             );
+                                    <p className="mt-2">{question.question}</p>
+                                    <div className="choices mt-4">
+                                       {question.shuffledChoices.map((choice) => {
+                                          if (results[index]) {
+                                             //if answer is correct
+                                             if (answers[`question${index}`] === choice.index) {
+                                                return (
+                                                   <div
+                                                      key={createId()}
+                                                      className="alert alert-success m-0 p-2">
+                                                      <input
+                                                         type="radio"
+                                                         className="me-3"
+                                                         checked={
+                                                            answers[`question${index}`] ===
+                                                            choice.index
+                                                         }
+                                                         value={choice.index}
+                                                         name={`question${index}`}
+                                                         readOnly
+                                                      />
+                                                      {choice.choice}
+                                                   </div>
+                                                );
+                                             }
+                                          } else {
+                                             //if answer is wrong
+                                             if (answers[`question${index}`] === choice.index) {
+                                                return (
+                                                   <div
+                                                      key={createId()}
+                                                      className="alert alert-danger m-0 p-2">
+                                                      <input
+                                                         type="radio"
+                                                         className="me-3"
+                                                         checked={
+                                                            answers[`question${index}`] ===
+                                                            choice.index
+                                                         }
+                                                         value={choice.index}
+                                                         name={`question${index}`}
+                                                         readOnly
+                                                      />
+                                                      {choice.choice}
+                                                   </div>
+                                                );
+                                             } else if (choice.index === question.answer) {
+                                                return (
+                                                   <div
+                                                      key={createId()}
+                                                      className="alert alert-success m-0 p-2">
+                                                      <input
+                                                         type="radio"
+                                                         className="me-3"
+                                                         checked={
+                                                            answers[`question${index}`] ===
+                                                            choice.index
+                                                         }
+                                                         value={choice.index}
+                                                         name={`question${index}`}
+                                                         readOnly
+                                                      />
+                                                      {choice.choice}
+                                                   </div>
+                                                );
+                                             }
                                           }
-                                       } else {
-                                          //if answer is wrong
-                                          if (answers[`question${index}`] === choice.index) {
-                                             return (
-                                                <div
-                                                   key={createId()}
-                                                   className="alert alert-danger m-0 p-2">
-                                                   <input
-                                                      type="radio"
-                                                      className="me-3"
-                                                      checked={
-                                                         answers[`question${index}`] ===
-                                                         choice.index
-                                                      }
-                                                      value={choice.index}
-                                                      name={`question${index}`}
-                                                      readOnly
-                                                   />
-                                                   {choice.choice}
-                                                </div>
-                                             );
-                                          } else if (choice.index === question.answer) {
-                                             return (
-                                                <div
-                                                   key={createId()}
-                                                   className="alert alert-success m-0 p-2">
-                                                   <input
-                                                      type="radio"
-                                                      className="me-3"
-                                                      checked={
-                                                         answers[`question${index}`] ===
-                                                         choice.index
-                                                      }
-                                                      value={choice.index}
-                                                      name={`question${index}`}
-                                                      readOnly
-                                                   />
-                                                   {choice.choice}
-                                                </div>
-                                             );
-                                          }
-                                       }
-                                       return (
-                                          <div key={createId()} className=" p-2">
-                                             <input
-                                                type="radio"
-                                                className="me-3"
-                                                checked={
-                                                   answers[`question${index}`] === choice.index
-                                                }
-                                                value={choice.index}
-                                                name={`question${index}`}
-                                                readOnly
-                                             />
-                                             {choice.choice}
-                                          </div>
-                                       );
-                                    })}
+                                          return (
+                                             <div key={createId()} className=" p-2">
+                                                <input
+                                                   type="radio"
+                                                   className="me-3"
+                                                   checked={
+                                                      answers[`question${index}`] === choice.index
+                                                   }
+                                                   value={choice.index}
+                                                   name={`question${index}`}
+                                                   readOnly
+                                                />
+                                                {choice.choice}
+                                             </div>
+                                          );
+                                       })}
+                                    </div>
                                  </div>
-                              </div>
-                           ))}
+                              ))}
+                        </div>
 
                         <div className="float-end mt-1 mb-5">
                            <button
@@ -327,6 +365,14 @@ export default function ExamResultsFaculty() {
                </motion.div>
             </>
          )}
+         <PrintResults
+            ref={componentToPrintRef}
+            exam={exam}
+            studentInfo={studentInfo}
+            questions={questions}
+            results={results}
+            answers={answers}
+         />
       </>
    );
 }

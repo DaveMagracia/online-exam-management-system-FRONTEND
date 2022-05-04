@@ -1,5 +1,13 @@
 .updateProfile_root {
    min-height: calc(100vh - 60px);
+   background-color: #f2f6f8;
+   padding-bottom: 70px;
+}
+
+@media (max-width: 768px) {
+   .updateProfile_root {
+      padding-left: 55px !important;
+   }
 }
 
 .link {
@@ -13,15 +21,34 @@
 .profile_picture {
    width: 250px !important;
    height: 250px !important;
-   background-color: rgb(134, 134, 134);
    border-radius: 50%;
+   object-fit: cover;
+}
+
+.icon_container {
+   width: 250px;
+   height: 250px;
+   background-color: rgba(0, 0, 0, 0.3);
+   position: absolute;
+   top: 0;
+   border-radius: 50%;
+   cursor: pointer;
+   transition: 0.2s ease-in-out;
+}
+
+.icon_container:hover {
+   background-color: rgba(0, 0, 0, 0.5);
+}
+.icon_container:hover > .profile_picture_icon {
+   color: rgb(50, 180, 255);
 }
 
 .profile_picture_icon {
-   font-size: 70px;
+   font-size: 50px;
    color: rgb(255, 255, 255);
    position: absolute;
    top: 50%;
    left: 50%;
    transform: translate(-50%, -50%);
+   transition: 0.2s ease-in-out;
 }

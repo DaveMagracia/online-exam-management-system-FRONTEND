@@ -2,7 +2,9 @@ import React, { useContext } from "react";
 import css from "./css/StudentNavbar.module.css";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../UserContext";
+import { motion } from "framer-motion";
 import { Modal, Button } from "react-bootstrap";
+import { GiBrain } from "react-icons/gi";
 import axios from "axios";
 
 export default function StudentNavbar(props) {
@@ -12,7 +14,6 @@ export default function StudentNavbar(props) {
 
    const [isShownExamCodeModal, setIsShownExamCodeModal] = React.useState(false);
    const [isRegistering, setIsRegistering] = React.useState(false);
-
    const [formDataCode, setFormData] = React.useState({
       examCode: "",
    });
@@ -158,15 +159,32 @@ export default function StudentNavbar(props) {
          }
       }
    }
+
    return (
       <>
-         <nav className={`${css.stud_navbar_root} navbar navbar-expand-lg navbar-light`}>
+         <nav
+            className={`${css.stud_navbar_root} navbar navbar-expand-lg navbar-light border-bottom`}>
             <div className="d-flex align-content-center w-100 ps-5 pe-4">
-               <a className={`${css.logo} navbar-brand`} href="/">
-                  Online Exam
-               </a>
+               <motion.a
+                  initial={{
+                     opacity: !props.isSidebarOpen ? 1 : 0,
+                     transform: !props.isSidebarOpen ? "translateX(0px)" : "translateX(-30px)",
+                  }}
+                  animate={{
+                     opacity: !props.isSidebarOpen ? 1 : 0,
+                     transform: !props.isSidebarOpen ? "translateX(0px)" : "translateX(-30px)",
+                  }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                  className={`${css.logo} navbar-brand`}
+                  href="/">
+                  <span className={`${css.logo} navbar-brand ms-3`} href="/">
+                     Ex
+                     <GiBrain />
+                     mplify
+                  </span>
+               </motion.a>
 
-               <button
+               {/* <button
                   className="navbar-toggler"
                   type="button"
                   data-bs-toggle="collapse"
@@ -175,31 +193,37 @@ export default function StudentNavbar(props) {
                   aria-expanded="false"
                   aria-label="Toggle navigation">
                   <span className="navbar-toggler-icon"></span>
-               </button>
+               </button> */}
 
-               <div className="collapse navbar-collapse" id="navbarNav">
-                  <ul className="navbar-nav ms-auto">
-                     {/* dont show this button when taking eam */}
-                     {window.location.href !== "http://localhost:3000/take-exam" && (
-                        <>
-                           <li className="nav-item me-4">
-                              <button
-                                 type="button"
-                                 className={`${css.code_btn} btn btn-outline-light`}
-                                 onClick={openCodeModal}>
-                                 Enter Exam Code +
-                              </button>
-                           </li>
-                           <li className={`${css.nav_name} nav-item d-flex`}>
-                              <div className={css.profile_pic}></div>
-                              <span className="nav-link text-light">
-                                 Welcome, {props.username}!&nbsp;
-                              </span>
-                           </li>
-                        </>
-                     )}
-                  </ul>
-               </div>
+               {/* <div className="collapse navbar-collapse" id="navbarNav"> */}
+               <ul className="navbar-nav ms-auto">
+                  {/* dont show this button when taking eam */}
+                  {window.location.href !== "http://localhost:3000/take-exam" && (
+                     <>
+                        <li className="nav-item me-4">
+                           <button
+                              type="button"
+                              className={`${css.code_btn} btn btn-outline-primary`}
+                              onClick={openCodeModal}>
+                              Enter Exam Code +
+                           </button>
+                        </li>
+                        <li className={`${css.nav_name} nav-item d-none d-lg-flex`}>
+                           <img
+                              src={
+                                 !!props.photoPath
+                                    ? props.photoPath
+                                    : `/images/profilePictures/no_profile_picture.png`
+                              }
+                              className={css.profile_pic}
+                              alt="profile pic"
+                           />
+                           <span className="nav-link">Welcome, {props.username}!&nbsp;</span>
+                        </li>
+                     </>
+                  )}
+               </ul>
+               {/* </div> */}
             </div>
          </nav>
 

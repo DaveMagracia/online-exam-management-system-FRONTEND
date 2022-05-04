@@ -164,15 +164,15 @@ export default function ExamListBox(props) {
             <div className="d-flex flex-row justify-content-between">
                <div>
                   {/* exam title is only clickable on student side */}
-                  {user && user.userType === "teacher" ? (
+                  {/* {user && user.userType === "teacher" ? (
                      <h4 className="m-0">{examData.title}</h4>
-                  ) : (
-                     <h4
-                        className={`${css.exam_title} m-0`}
-                        onClick={() => goToExamDetails(examData._id)}>
-                        {examData.title}
-                     </h4>
-                  )}
+                  ) : ( */}
+                  <h4
+                     className={`${css.exam_title} m-0`}
+                     onClick={() => goToExamDetails(examData._id)}>
+                     {examData.title}
+                  </h4>
+                  {/* )} */}
                   <span className="mt-1">{getExamStatus(examData.status)}</span>
                </div>
 

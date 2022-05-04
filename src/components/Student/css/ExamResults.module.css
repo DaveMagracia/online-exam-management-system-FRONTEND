@@ -1,0 +1,9 @@
+.results_root {
+   height: calc(100vh - 60px);
+   overflow-y: scroll;
+}
+
+.results_container {
+   width: 800px;
+   height: max-content;
+}

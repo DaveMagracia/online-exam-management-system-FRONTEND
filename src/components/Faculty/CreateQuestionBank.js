@@ -3,6 +3,7 @@ import css from "./css/CreateQuestionBank.module.css";
 import FacultyNavbar from "./FacultyNavbar";
 import AddQuestion from "./AddQuestion";
 import QuestionList from "./QuestionList";
+import Sidebar from "../Both/Sidebar";
 import axios from "axios";
 
 import { Modal, Button } from "react-bootstrap";
@@ -21,8 +22,7 @@ export default function CreateQuestionBank(props) {
    const [isLoading, setIsLoading] = React.useState(true);
    const [isAddingQuestion, setisAddingQuestion] = React.useState(false);
    const [isShownDeleteModal, setIsShownDeleteModal] = React.useState(false);
-   const [isShownQuestionModal, setisShownQuestionModal] =
-      React.useState(false);
+   const [isShownQuestionModal, setisShownQuestionModal] = React.useState(false);
    const [titleInput, setTitleInput] = React.useState(
       bank_id ? "Bank Title" : "Enter Bank Title..."
    );
@@ -59,9 +59,7 @@ export default function CreateQuestionBank(props) {
       tempErrors.title.hasError = formData.title ? false : true;
       tempErrors.questions.hasError = questions.length === 0 ? true : false;
 
-      var hasError_ = Object.keys(tempErrors).some(
-         (k) => tempErrors[k].hasError === true
-      );
+      var hasError_ = Object.keys(tempErrors).some((k) => tempErrors[k].hasError === true);
 
       setErrors(tempErrors);
       setHasError(hasError_);
@@ -224,7 +222,7 @@ export default function CreateQuestionBank(props) {
 
    React.useEffect(() => {
       if (!localStorage.getItem("token")) {
-         navigate("/login");
+         navigate("/login-register");
       } else {
          if (bank_id) {
             getQuestionBankData();
@@ -272,11 +270,7 @@ export default function CreateQuestionBank(props) {
                      exit={{ opacity: 0 }}
                      transition={{ duration: 0.2 }}
                      className={`${css.createBank_loading} d-flex flex-column align-items-center justify-content-center`}>
-                     <PuffLoader
-                        loading={isLoading}
-                        color="#9c2a22"
-                        size={80}
-                     />
+                     <PuffLoader loading={isLoading} color="#9c2a22" size={80} />
                      <p className="lead mt-3">&nbsp;Loading...</p>
                   </motion.div>
                )}
@@ -286,93 +280,93 @@ export default function CreateQuestionBank(props) {
                initial={{ opacity: 0 }}
                animate={{ opacity: 1 }}
                transition={{ duration: 0.2 }}>
-               <FacultyNavbar username={user ? user.username : ""} />
-               {isAddingQuestion ? (
-                  <AddQuestion
-                     setisAddingQuestion={setisAddingQuestion}
-                     currentQuestion={currentQuestion}
-                     setCurrentQuestion={setCurrentQuestion}
-                     setQuestions={setQuestions}
-                  />
-               ) : (
-                  <div className="container">
-                     <h1 className="mt-5">
-                        {bank_id
-                           ? "Edit Question Bank"
-                           : "Create Question Bank"}
-                     </h1>
-                     <form onSubmit={submitForm}>
-                        {/* TITLE INPUT */}
-                        <div className="form-floating mt-4">
-                           <input
-                              id="titleInput"
-                              type="text"
-                              name="title"
-                              value={formData.title}
-                              maxLength={50}
-                              className={`${css.title_input} form-control ${
-                                 errors.title.hasError ? `border-danger` : ``
-                              }`}
-                              placeholder="Enter Exam Title..."
-                              onChange={handleFormChange}
-                              onFocus={onFocusExamTitle}
-                              onBlur={onBlurExamTitle}
-                           />
-                           <small
-                              className={`${css.char_counter_title} float-end text-muted`}>
-                              {charCountTitle}/50
-                           </small>
-                           <label
-                              htmlFor="titleInput"
-                              style={{ color: "gray" }}>
-                              {titleInput}
-                           </label>
-                        </div>
-                        {errors.title.hasError && (
-                           <small className="text-danger">
-                              {errors.title.msg}
-                           </small>
-                        )}
+               <Sidebar>
+                  {/* <FacultyNavbar username={user ? user.username : ""} /> */}
+                  {isAddingQuestion ? (
+                     <AddQuestion
+                        setisAddingQuestion={setisAddingQuestion}
+                        currentQuestion={currentQuestion}
+                        setCurrentQuestion={setCurrentQuestion}
+                        setQuestions={setQuestions}
+                     />
+                  ) : (
+                     <div className={css.createBank_root}>
+                        <motion.div
+                           initial={{ transform: "translateX(-70px)", opacity: 0 }}
+                           animate={{ transform: "translateX(0px)", opacity: 1 }}
+                           transition={{ ease: "easeOut", duration: 0.2 }}
+                           className={`${css.container_} container`}>
+                           <h1 className="mt-5">
+                              {bank_id ? "Edit Question Bank" : "Create Question Bank"}
+                           </h1>
+                           <form onSubmit={submitForm}>
+                              {/* TITLE INPUT */}
+                              <div className="form-floating mt-4">
+                                 <input
+                                    id="titleInput"
+                                    type="text"
+                                    name="title"
+                                    value={formData.title}
+                                    maxLength={50}
+                                    className={`${css.title_input} form-control ${
+                                       errors.title.hasError ? `border-danger` : ``
+                                    }`}
+                                    placeholder="Enter Exam Title..."
+                                    onChange={handleFormChange}
+                                    onFocus={onFocusExamTitle}
+                                    onBlur={onBlurExamTitle}
+                                 />
+                                 <small
+                                    className={`${css.char_counter_title} float-end text-muted`}>
+                                    {charCountTitle}/50
+                                 </small>
+                                 <label htmlFor="titleInput" style={{ color: "gray" }}>
+                                    {titleInput}
+                                 </label>
+                              </div>
+                              {errors.title.hasError && (
+                                 <small className="text-danger">{errors.title.msg}</small>
+                              )}
 
-                        <QuestionList
-                           setisAddingQuestion={setisAddingQuestion}
-                           removeQuestionError={removeQuestionError}
-                           currentQuestion={currentQuestion}
-                           isFromBank={true}
-                           setCurrentQuestion={setCurrentQuestion}
-                           isError={errors.questions}
-                           questions={questions}
-                           setQuestions={setQuestions}
-                        />
+                              <QuestionList
+                                 setisAddingQuestion={setisAddingQuestion}
+                                 removeQuestionError={removeQuestionError}
+                                 currentQuestion={currentQuestion}
+                                 isFromBank={true}
+                                 setCurrentQuestion={setCurrentQuestion}
+                                 isError={errors.questions}
+                                 questions={questions}
+                                 setQuestions={setQuestions}
+                              />
 
-                        {/* SUBMIT BUTTON */}
-                        <div className="float-end">
-                           <button
-                              type="button"
-                              onClick={backToDashboard}
-                              className="btn btn-secondary mb-5 me-2 px-4 py-2">
-                              Exit
-                           </button>
+                              {/* SUBMIT BUTTON */}
+                              <div className="float-end">
+                                 <button
+                                    type="button"
+                                    onClick={backToDashboard}
+                                    className="btn btn-secondary mb-5 me-2 px-4 py-2">
+                                    Exit
+                                 </button>
 
-                           {bank_id && (
-                              <button
-                                 type="button"
-                                 className="btn btn-danger mb-5 me-2 px-4 py-2"
-                                 data-bs-toggle="modal"
-                                 onClick={openDeleteModal}>
-                                 Delete
-                              </button>
-                           )}
+                                 {bank_id && (
+                                    <button
+                                       type="button"
+                                       className="btn btn-danger mb-5 me-2 px-4 py-2"
+                                       data-bs-toggle="modal"
+                                       onClick={openDeleteModal}>
+                                       Delete
+                                    </button>
+                                 )}
 
-                           <button
-                              type="submit"
-                              className="btn btn-primary mb-5 px-4 py-2">
-                              Save
-                           </button>
-                        </div>
-                     </form>
-                  </div>
-               )}
+                                 <button type="submit" className="btn btn-primary mb-5 px-4 py-2">
+                                    Save
+                                 </button>
+                              </div>
+                           </form>
+                        </motion.div>
+                     </div>
+                  )}
+               </Sidebar>
             </motion.div>
          )}
 
@@ -383,8 +377,8 @@ export default function CreateQuestionBank(props) {
                <Modal.Title>Delete question bank</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-               Are you sure you want to delete this Question Bank? You won't be
-               able to undo this action.
+               Are you sure you want to delete this Question Bank? You won't be able to undo this
+               action.
             </Modal.Body>
             <Modal.Footer>
                <Button variant="secondary" onClick={handleDeleteModalClose}>
@@ -400,9 +394,7 @@ export default function CreateQuestionBank(props) {
             <Modal.Header closeButton>
                <Modal.Title>Discard Changes</Modal.Title>
             </Modal.Header>
-            <Modal.Body>
-               Changes you made will not be saved once you leave this page.
-            </Modal.Body>
+            <Modal.Body>Changes you made will not be saved once you leave this page.</Modal.Body>
             <Modal.Footer>
                <Button variant="secondary" onClick={handleQuestionModalClose}>
                   Cancel

@@ -92,39 +92,41 @@ export default function SubjectList() {
             </AnimatePresence>
          ) : (
             <div>
-               <div className="pt-3">
-                  <h3 className="d-inline">Subjects</h3>
+               <div className="ps-2 py-3 d-flex align-items-center justify-content-between">
+                  <span className="text-black-50 fw-bold">Subjects</span>
+
                   {user && user.userType === "teacher" && (
                      <button className="btn btn-primary float-end" onClick={goToCreateExam}>
                         Create Exam
                      </button>
                   )}
                </div>
-               {subjectsList.length !== 0 ? (
-                  <div
-                     className="row 
-                  row-cols-1 
-                  row-cols-md-2 
-                  row-cols-xl-3 
-                  g-3
-                  mt-1">
-                     {subjectsList}
-                  </div>
-               ) : (
-                  <div className={`${css.no_subjects_container}`}>
-                     {user && user.userType === "teacher" ? (
-                        <p className="text-muted text-center">
-                           You have not created an exam yet. Subjects on exams you created will
-                           appear here.
-                        </p>
-                     ) : (
-                        <p className="text-muted text-center">
-                           You are not registered to an exam yet. Exams you have registered to will
-                           appear here.
-                        </p>
-                     )}
-                  </div>
-               )}
+               <div className="pb-5">
+                  {subjectsList.length !== 0 ? (
+                     <div
+                        className="row 
+                        row-cols-1 
+                        row-cols-md-2 
+                        row-cols-xl-3 
+                        g-3">
+                        {subjectsList}
+                     </div>
+                  ) : (
+                     <div className={`${css.no_subjects_container}`}>
+                        {user && user.userType === "teacher" ? (
+                           <p className="text-muted text-center">
+                              You have not created an exam yet. Subjects on exams you created will
+                              appear here.
+                           </p>
+                        ) : (
+                           <p className="text-muted text-center">
+                              You are not registered to an exam yet. Exams you have registered to
+                              will appear here.
+                           </p>
+                        )}
+                     </div>
+                  )}
+               </div>
             </div>
          )}
       </>

@@ -1,6 +1,6 @@
 import React from "react";
 import css from "./css/Footer.module.css";
-
+import { GiBrain } from "react-icons/gi";
 export default function Footer() {
    return (
       <>
@@ -20,32 +20,28 @@ export default function Footer() {
 
          <footer className={`${css.footer_root} text-center text-white`}>
             <div className="container p-4">
-               <section className="mb-4">
-                  <a
-                     className="btn-floating m-1 text-black text-decoration-none"
-                     href="#!"
-                     role="button">
-                     Features
+               <div className="mt-5">
+                  <span className={`${css.logo} navbar-brand`} href="/">
+                     Ex
+                     <GiBrain />
+                     mplify
+                  </span>
+               </div>
+
+               <section className="mb-4 mt-4">
+                  <a className={`${css.footer_link} mx-3 text-decoration-none`} href="#!">
+                     LOGIN
                   </a>
-                  <span className="text-black">|</span>
-                  <a
-                     className="btn-floating m-1 text-black text-decoration-none"
-                     href="#!"
-                     role="button">
-                     About
-                  </a>
-                  <span className="text-black">|</span>
-                  <a
-                     className="btn-floating m-1 text-black text-decoration-none"
-                     href="#!"
-                     role="button">
-                     Start
+                  <a className={`${css.footer_link} mx-3 text-decoration-none`} href="#!">
+                     REGISTER
                   </a>
                </section>
 
                <section className="my-5">
-                  <p className="text-black m-0">Bulacan State University</p>
-                  <p className="text-black">Website's Name</p>
+                  <p className={`${css.footer_message}`}>
+                     This website is for school project purposes only
+                  </p>
+                  <p className={`${css.website_link}`}>Examplify.com</p>
                </section>
             </div>
          </footer>

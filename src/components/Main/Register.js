@@ -5,7 +5,8 @@ import { useNavigate } from "react-router-dom";
 //THIS IS A REACT SPINNER
 //source: https://www.npmjs.com/package/react-spinners (see demo)
 import PuffLoader from "react-spinners/PuffLoader";
-import { FaExclamation, FaCheck } from "react-icons/fa";
+import { FaExclamation, FaCheck, FaCircle } from "react-icons/fa";
+import { motion } from "framer-motion";
 
 export default function Register() {
    let navigate = useNavigate();
@@ -29,12 +30,17 @@ export default function Register() {
       msg: "",
    });
 
+   const [isInit, setIsInit] = React.useState(true);
+   const [isInit1, setIsInit1] = React.useState(true);
+   const [isInit2, setIsInit2] = React.useState(true);
+   const [isInit3, setIsInit3] = React.useState(true);
+   const [isInit4, setIsInit4] = React.useState(true);
    const [good, setnotgood] = React.useState(true);
    const [good1, setnotgood1] = React.useState(true);
    const [good2, setnotgood2] = React.useState(true);
    const [good3, setnotgood3] = React.useState(true);
    const [good4, setnotgood4] = React.useState(true);
-   const [Focuss, setFocuss] = React.useState(false);
+   const [isFocused, setFocuss] = React.useState(false);
 
    //errors for validation; false value means no error
    const [errors, setErrors] = React.useState({
@@ -147,11 +153,15 @@ export default function Register() {
          [name]: false,
       }));
 
-      const is_lenght = /^.{8,35}$/.test(value);
-      if (!is_lenght) {
+      const is_length = /^.{8,35}$/.test(value);
+      if (!is_length) {
          setnotgood(true);
       } else {
          setnotgood(false);
+      }
+
+      if (isInit && is_length) {
+         setIsInit(false);
       }
 
       const is_Upper = /(?=.*[A-Z])/.test(value);
@@ -160,12 +170,22 @@ export default function Register() {
       } else {
          setnotgood1(false);
       }
+
+      if (isInit1 && is_Upper) {
+         setIsInit1(false);
+      }
+
       const is_lower = /(?=.*[a-z])/.test(value);
       if (!is_lower) {
          setnotgood2(true);
       } else {
          setnotgood2(false);
       }
+
+      if (isInit2 && is_lower) {
+         setIsInit2(false);
+      }
+
       const is_upper = /(?=.*[0-9])/.test(value);
       if (!is_upper) {
          setnotgood3(true);
@@ -173,11 +193,19 @@ export default function Register() {
          setnotgood3(false);
       }
 
+      if (isInit3 && is_upper) {
+         setIsInit3(false);
+      }
+
       const is_Special = /(?=.*[!@#$%^&*])/.test(value);
       if (!is_Special) {
          setnotgood4(true);
       } else {
          setnotgood4(false);
+      }
+
+      if (isInit4 && is_Special) {
+         setIsInit4(false);
       }
 
       if (value === "") {
@@ -220,7 +248,7 @@ export default function Register() {
                //in this then, redirect user to login page
                setTimeout(() => {
                   setLoading(false);
-                  navigate("/login");
+                  navigate("/login-register");
                }, 5000);
             })
             .catch((err) => {
@@ -240,6 +268,7 @@ export default function Register() {
       //if user accesses this page while logged in, log the user out
       localStorage.removeItem("token");
       localStorage.removeItem("isLoaded");
+      localStorage.removeItem("isSidebarOpen");
    });
 
    return (
@@ -287,7 +316,7 @@ export default function Register() {
                               />
                               <label htmlFor="Inputfullname">Full Name *</label>
                            </div>
-                           {errors.email.hasError && (
+                           {errors.fullname.hasError && (
                               <p className="text-danger mb-4 small">{errors.fullname.msg}</p>
                            )}
                            {emptyErrors.fullname && (
@@ -360,37 +389,147 @@ export default function Register() {
                                  <p className="text-danger m-0 small">This field is required</p>
                               )}
 
-                              {Focuss ? (
-                                 <div
-                                    className={`form-text mb-4 ${
-                                       errors.pass.hasError ? "text-danger" : "text-muted"
-                                    }`}>
-                                    A password must:
-                                    <ul>
-                                       <li className={good ? null : "text-success"}>
-                                          {good ? <FaExclamation /> : <FaCheck />}&nbsp;&nbsp;Have a
-                                          minimum of 8 characters
-                                       </li>
-                                       <li className={good1 ? null : "text-success"}>
-                                          {good1 ? <FaExclamation /> : <FaCheck />}
-                                          &nbsp;&nbsp;Contain at least 1 uppercase letter (A-Z)
-                                       </li>
-                                       <li className={good2 ? null : "text-success"}>
-                                          {good2 ? <FaExclamation /> : <FaCheck />}
-                                          &nbsp;&nbsp;Contain at least 1 lowercase letter (a-z)
-                                       </li>
-                                       <li className={good3 ? null : "text-success"}>
-                                          {good3 ? <FaExclamation /> : <FaCheck />}
-                                          &nbsp;&nbsp;Contain at least 1 number (0-9)
-                                       </li>
-                                       <li className={good4 ? null : "text-success"}>
-                                          {good4 ? <FaExclamation /> : <FaCheck />}
-                                          &nbsp;&nbsp;Contain at least 1 special character
-                                          (!@#$%^&*)
-                                       </li>
-                                    </ul>
+                              <motion.div
+                                 initial={{ height: "0px", opacity: 0 }}
+                                 animate={{
+                                    height: isFocused ? "130px" : "0px",
+                                    opacity: isFocused ? 1 : 0,
+                                 }}
+                                 transition={{ ease: "easeInOut", duration: 0.3 }}
+                                 className={`form-text mb-4 ${
+                                    errors.pass.hasError ? "text-danger" : "text-muted"
+                                 }`}>
+                                 A password must:
+                                 <div className="d-flex ps-2">
+                                    <div
+                                       className="d-flex flex-column align-items-center"
+                                       style={{ width: "30px" }}>
+                                       <span
+                                          className={`d-block ${
+                                             good
+                                                ? isInit
+                                                   ? "text-secondary"
+                                                   : "text-danger"
+                                                : "text-success"
+                                          }`}>
+                                          {/* show bullet only when initially loaded */}
+                                          {!isInit ? (
+                                             <>{good ? <FaExclamation /> : <FaCheck />}</>
+                                          ) : (
+                                             <FaCircle size={"6px"} />
+                                          )}
+                                       </span>
+                                       <span
+                                          className={`d-block ${
+                                             good1
+                                                ? isInit1
+                                                   ? "text-secondary"
+                                                   : "text-danger"
+                                                : "text-success"
+                                          }`}>
+                                          {!isInit1 ? (
+                                             <>{good1 ? <FaExclamation /> : <FaCheck />}</>
+                                          ) : (
+                                             <FaCircle size={"6px"} />
+                                          )}
+                                       </span>
+                                       <span
+                                          className={`d-block ${
+                                             good2
+                                                ? isInit2
+                                                   ? "text-secondary"
+                                                   : "text-danger"
+                                                : "text-success"
+                                          }`}>
+                                          {!isInit2 ? (
+                                             <>{good2 ? <FaExclamation /> : <FaCheck />}</>
+                                          ) : (
+                                             <FaCircle size={"6px"} />
+                                          )}
+                                       </span>
+                                       <span
+                                          className={`d-block ${
+                                             good3
+                                                ? isInit3
+                                                   ? "text-secondary"
+                                                   : "text-danger"
+                                                : "text-success"
+                                          }`}>
+                                          {!isInit3 ? (
+                                             <>{good3 ? <FaExclamation /> : <FaCheck />}</>
+                                          ) : (
+                                             <FaCircle size={"6px"} />
+                                          )}
+                                       </span>
+                                       <span
+                                          className={`d-block ${
+                                             good4
+                                                ? isInit4
+                                                   ? "text-secondary"
+                                                   : "text-danger"
+                                                : "text-success"
+                                          }`}>
+                                          {!isInit4 ? (
+                                             <>{good4 ? <FaExclamation /> : <FaCheck />}</>
+                                          ) : (
+                                             <FaCircle size={"6px"} />
+                                          )}
+                                       </span>
+                                    </div>
+                                    <div>
+                                       <span
+                                          className={`d-block ${
+                                             good
+                                                ? isInit
+                                                   ? "text-secondary"
+                                                   : "text-danger"
+                                                : "text-success"
+                                          }`}>
+                                          Have a minimum of 8 characters
+                                       </span>
+                                       <span
+                                          className={`d-block ${
+                                             good1
+                                                ? isInit1
+                                                   ? "text-secondary"
+                                                   : "text-danger"
+                                                : "text-success"
+                                          }`}>
+                                          Contain at least 1 uppercase letter (A-Z)
+                                       </span>
+                                       <span
+                                          className={`d-block ${
+                                             good2
+                                                ? isInit2
+                                                   ? "text-secondary"
+                                                   : "text-danger"
+                                                : "text-success"
+                                          }`}>
+                                          Contain at least 1 lowercase letter (a-z)
+                                       </span>
+                                       <span
+                                          className={`d-block ${
+                                             good3
+                                                ? isInit3
+                                                   ? "text-secondary"
+                                                   : "text-danger"
+                                                : "text-success"
+                                          }`}>
+                                          Contain at least 1 number (0-9)
+                                       </span>
+                                       <span
+                                          className={`d-block ${
+                                             good4
+                                                ? isInit4
+                                                   ? "text-secondary"
+                                                   : "text-danger"
+                                                : "text-success"
+                                          }`}>
+                                          Contain at least 1 special character (!@#$%^&*)
+                                       </span>
+                                    </div>
                                  </div>
-                              ) : null}
+                              </motion.div>
 
                               {/* <div
                                  className={`form-text mb-4 ${

@@ -2,13 +2,14 @@
 
 * {
    box-sizing: border-box;
+   font-family: "Roboto", sans-serif;
 }
 
 body {
    margin: 0;
    padding: 0;
    height: 100%;
-   overflow-y: scroll;
+   overflow-y: hidden;
 }
 
 textarea:focus,
@@ -20,15 +21,52 @@ select.form-select:focus {
    /* border: 1px solid #0d6efd !important; */
 }
 
-/* input[type="text"]:focus,
-input[type="password"]:focus,
-input[type="email"]:focus,
-input[type="number"]:focus,
-[type="text"].form-control:focus,
-[type="password"].form-control:focus,
-[type="email"].form-control:focus,
-[type="tel"].form-control:focus,
-[contenteditable].form-control:focus  */
+input.form-control,
+textarea.form-control,
+#floatingSelect,
+select {
+   background-color: rgb(242, 245, 248) !important;
+   padding: 10px !important;
+   /* border: 1px solid rgb(238, 238, 238) !important; */
+}
+
+/* FROM CREATE EXAM COMPONENT */
+#titleInput[name="title"] {
+   padding-bottom: 0px !important;
+}
+
+#directionsTextArea {
+   padding: 30px 13px !important;
+}
+
+#questionTextArea {
+   padding: 25px 13px !important;
+}
+
+#timeLimitInput {
+   padding: 0 !important;
+}
+
+#InputEmail,
+#Inputfullname,
+#InputEmail,
+#InputUsername,
+#InputPassword,
+#InputCPassword,
+#floatingSelect,
+#InputEmailUsername,
+#InputLoginPassword,
+#InputExamCode,
+#InputOldPassword,
+#InputNewPassword,
+#InputCPassword,
+#InputUsername {
+   padding: 25px 13px 13px 13px !important;
+}
+
+input[type="file"] {
+   padding: 4px 10px !important;
+}
 
 /* BOOTSTRAP COLORS */
 /* $blue:    #0d6efd;

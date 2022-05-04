@@ -1,0 +1,36 @@
+.results_container {
+   width: 800px;
+   height: max-content;
+}
+
+.question,
+.choices {
+   font-size: 14px;
+}
+
+@media all {
+   .page-break {
+      display: none;
+   }
+}
+
+@media print {
+   html,
+   body {
+      height: initial !important;
+      overflow: initial !important;
+      -webkit-print-color-adjust: exact;
+   }
+}
+
+@media print {
+   .page-break {
+      display: block;
+      page-break-before: auto;
+   }
+}
+
+@page {
+   size: auto;
+   margin: 12mm;
+}

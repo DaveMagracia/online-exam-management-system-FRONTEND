@@ -15,6 +15,7 @@ import PuffLoader from "react-spinners/PuffLoader";
 import jwt_decode from "jwt-decode";
 import { motion, AnimatePresence } from "framer-motion";
 import { MdContentCopy } from "react-icons/md";
+import Sidebar from "../Both/Sidebar";
 
 export default function CreateExam(props) {
    const navigate = useNavigate();
@@ -40,6 +41,7 @@ export default function CreateExam(props) {
    const [initDateVals, setInitDateVals] = React.useState({});
    const [hasError, setHasError] = React.useState(false);
    const [currentQuestion, setCurrentQuestion] = React.useState();
+   const [profileImage, setProfileImage] = React.useState("");
 
    const [formData, setFormData] = React.useState({
       title: "",
@@ -647,6 +649,16 @@ export default function CreateExam(props) {
          });
    }
 
+   function getUserInfoFromToken() {
+      const token = localStorage.getItem("token");
+      const userTokenDecoded = jwt_decode(token);
+      setUser(userTokenDecoded);
+
+      setProfileImage(
+         !!userTokenDecoded.photo && `/images/profilePictures/${userTokenDecoded.photo}`
+      );
+   }
+
    //the useEffects are used for setting the user context.
    //this fixes the problem where the user context is lost for everytime the page is reloaded
    React.useEffect(() => {
@@ -668,9 +680,7 @@ export default function CreateExam(props) {
             setIsLoading(false);
          }
 
-         const token = localStorage.getItem("token");
-         const userTokenDecoded = jwt_decode(token);
-         setUser(userTokenDecoded);
+         getUserInfoFromToken();
       }
    }, []);
 
@@ -707,371 +717,385 @@ export default function CreateExam(props) {
                      initial={{ opacity: 1 }}
                      exit={{ opacity: 0 }}
                      transition={{ duration: 0.2 }}
-                     className={`${css.createExam_root} d-flex flex-column align-items-center justify-content-center`}>
+                     className={`${css.loading_root} d-flex flex-column align-items-center justify-content-center`}>
                      <PuffLoader loading={isLoading} color="#9c2a22" size={80} />
                      <p className="lead mt-3">&nbsp;Loading...</p>
                   </motion.div>
                )}
             </AnimatePresence>
          ) : (
-            <motion.div
-               initial={{ opacity: 0 }}
-               animate={{ opacity: 1 }}
-               transition={{ duration: 0.2 }}>
-               <FacultyNavbar username={user ? user.username : ""} />
-               {/* show AddQuestion component when adding questions */}
-               {isAddingQuestion ? (
-                  <AddQuestion
-                     setisAddingQuestion={setisAddingQuestion}
-                     currentQuestion={currentQuestion}
-                     setCurrentQuestion={setCurrentQuestion}
-                     setQuestions={setQuestions}
-                  />
-               ) : (
-                  <div className="container">
-                     <h1 className="mt-5">{exam_id ? "Edit Exam" : "Create Exam"}</h1>
-                     <form onSubmit={openCreateConfirmModal}>
-                        {/* TITLE INPUT */}
-                        <div className="form-floating mt-4">
-                           <input
-                              id="titleInput"
-                              type="text"
-                              name="title"
-                              value={formData.title}
-                              maxLength={50}
-                              className={`${css.title_input} form-control ${
-                                 errors.title.hasError ? `border-danger` : ``
-                              }`}
-                              placeholder="Enter Exam Title..."
-                              onChange={handleFormChange}
-                              onFocus={onFocusExamTitle}
-                              onBlur={onBlurExamTitle}
-                           />
-                           <small className={`${css.char_counter_title} float-end text-muted`}>
-                              {charCountTitle}/50
-                           </small>
-                           <label htmlFor="titleInput" style={{ color: "gray" }}>
-                              {titleInput}
-                           </label>
-                        </div>
-                        {errors.title.hasError && (
-                           <small className="text-danger">{errors.title.msg}</small>
-                        )}
+            <Sidebar>
+               <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.2 }}>
+                  {/* <FacultyNavbar username={user ? user.username : ""} photoPath={profileImage} /> */}
+                  {/* show AddQuestion component when adding questions */}
+                  {isAddingQuestion ? (
+                     <AddQuestion
+                        setisAddingQuestion={setisAddingQuestion}
+                        currentQuestion={currentQuestion}
+                        setCurrentQuestion={setCurrentQuestion}
+                        setQuestions={setQuestions}
+                     />
+                  ) : (
+                     <div className={css.createExam_root}>
+                        <motion.div
+                           initial={{ transform: "translateX(-70px)", opacity: 0 }}
+                           animate={{ transform: "translateX(0px)", opacity: 1 }}
+                           transition={{ ease: "easeOut", duration: 0.2 }}
+                           className={`${css.container_} container`}>
+                           <h1 className="mt-5">{exam_id ? "Edit Exam" : "Create Exam"}</h1>
+                           <form onSubmit={openCreateConfirmModal}>
+                              {/* TITLE INPUT */}
+                              <div className="form-floating mt-4">
+                                 <input
+                                    id="titleInput"
+                                    type="text"
+                                    name="title"
+                                    value={formData.title}
+                                    maxLength={50}
+                                    className={`${css.title_input} form-control ${
+                                       errors.title.hasError ? `border-danger` : ``
+                                    }`}
+                                    placeholder="Enter Exam Title..."
+                                    onChange={handleFormChange}
+                                    onFocus={onFocusExamTitle}
+                                    onBlur={onBlurExamTitle}
+                                 />
+                                 <small
+                                    className={`${css.char_counter_title} float-end text-muted`}>
+                                    {charCountTitle}/50
+                                 </small>
+                                 <label htmlFor="titleInput" style={{ color: "gray" }}>
+                                    {titleInput}
+                                 </label>
+                              </div>
+                              {errors.title.hasError && (
+                                 <small className="text-danger">{errors.title.msg}</small>
+                              )}
 
-                        {/* SUBJECT INPUT */}
-                        <div className="w-100 mt-4">
-                           <label htmlFor="subject" className="me-3 mb-1">
-                              Subject:
-                           </label>
-                           <div className="input-group">
-                              <input
-                                 id="subject"
-                                 type="text"
-                                 value={formData.subject}
-                                 name="subject"
-                                 onChange={handleFormChange}
-                                 className={`form-control  ${
-                                    errors.subject.hasError && "border-danger"
-                                 }`}
-                                 placeholder="Enter subject title..."
-                              />
-                           </div>
-                        </div>
-                        {errors.subject.hasError && (
-                           <small className="text-danger">{errors.subject.msg}</small>
-                        )}
-
-                        {/* PASSING SCORE INPUT */}
-                        <div className="w-100 mt-4">
-                           <label htmlFor="passingScore" className="me-3 mb-1">
-                              Passing Score:
-                           </label>
-                           <div className="input-group">
-                              <input
-                                 id="passingScore"
-                                 type="text"
-                                 value={formData.passingScore}
-                                 name="passingScore"
-                                 onChange={handleFormChange}
-                                 onKeyUp={handleTimeLimitType}
-                                 className={`form-control  ${
-                                    errors.passingScore.hasError && "border-danger"
-                                 }`}
-                                 placeholder="Enter passing score..."
-                              />
-                           </div>
-                        </div>
-                        {errors.passingScore.hasError && (
-                           <small className="text-danger">{errors.passingScore.msg}</small>
-                        )}
-
-                        {/* DATE AND TIME INPUT */}
-                        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                           <h4 className="mt-5">Date of availability</h4>
-                           <div className="d-flex flex-column ms-4">
-                              <div className="d-flex align-items-center">
-                                 <span className={`${css.label} me-2`}>Available From:</span>
-                                 <div className="d-flex flex-column">
-                                    <DateTimePicker
-                                       id="date-picker-from"
-                                       name="date_from"
-                                       className={`${css.date_field} ${
-                                          errors.date_from.hasError && "mb-0"
+                              {/* SUBJECT INPUT */}
+                              <div className="w-100 mt-4">
+                                 <label htmlFor="subject" className="me-3 mb-1">
+                                    Subject:
+                                 </label>
+                                 <div className="input-group">
+                                    <input
+                                       id="subject"
+                                       type="text"
+                                       value={formData.subject}
+                                       name="subject"
+                                       onChange={handleFormChange}
+                                       className={`form-control  ${
+                                          errors.subject.hasError && "border-danger"
                                        }`}
-                                       disablePast="true"
-                                       format="MMM dd, yyyy - hh:mm a"
-                                       margin="normal"
-                                       variant="dialog"
-                                       inputVariant="outlined"
-                                       emptyLabel="Date"
-                                       value={formData.date_from}
-                                       onChange={handleFromDateChange}
+                                       placeholder="Enter subject title..."
                                     />
-                                    {errors.date_from.hasError && (
-                                       <small className={`text-danger ${css.date_error}`}>
-                                          {errors.date_from.msg}
-                                       </small>
-                                    )}
                                  </div>
                               </div>
-                              <div className="d-flex align-items-center">
-                                 <span className={`${css.label} me-2`}>Until:</span>
-                                 <div className="d-flex flex-column">
-                                    <DateTimePicker
-                                       id="date-picker-to"
-                                       name="date_to"
-                                       disablePast="true"
-                                       className={`${css.date_field} ${
-                                          errors.date_to.hasError && "mb-0"
+                              {errors.subject.hasError && (
+                                 <small className="text-danger">{errors.subject.msg}</small>
+                              )}
+
+                              {/* PASSING SCORE INPUT */}
+                              <div className="w-100 mt-4">
+                                 <label htmlFor="passingScore" className="me-3 mb-1">
+                                    Passing Score:
+                                 </label>
+                                 <div className="input-group">
+                                    <input
+                                       id="passingScore"
+                                       type="text"
+                                       value={formData.passingScore}
+                                       name="passingScore"
+                                       onChange={handleFormChange}
+                                       onKeyUp={handleTimeLimitType}
+                                       className={`form-control  ${
+                                          errors.passingScore.hasError && "border-danger"
                                        }`}
-                                       format="MMM dd, yyyy - hh:mm a"
-                                       margin="normal"
-                                       variant="dialog"
-                                       minDate={formData.date_from}
-                                       inputVariant="outlined"
-                                       emptyLabel="Date"
-                                       value={formData.date_to}
-                                       onChange={handleToDateChange}
+                                       placeholder="Enter passing score..."
                                     />
-                                    {errors.date_to.hasError && (
-                                       <small className={`text-danger ${css.date_error}`}>
-                                          {errors.date_to.msg}
-                                       </small>
-                                    )}
                                  </div>
                               </div>
+                              {errors.passingScore.hasError && (
+                                 <small className="text-danger">{errors.passingScore.msg}</small>
+                              )}
 
-                              {/* TIME LIMIT FIELD */}
-                              <div className="d-flex align-items-center mt-3">
-                                 <div className={`${css.label} d-flex flex-column me-2`}>
-                                    <span className="me-2">Time Limit (Minutes): </span>
-                                    <small className="me-2 text-muted">1 minute minimum</small>
-                                 </div>
-                                 <div className="d-flex flex-column ">
-                                    <div className="d-flex flex-row ">
-                                       <button
-                                          type="button"
-                                          className={`${css.decrement_btn} btn btn-primary`}
-                                          onMouseDown={decrementTimeLimit}
-                                          onMouseLeave={timeoutClear}
-                                          onMouseUp={timeoutClear}>
-                                          -
-                                       </button>
-                                       {/* TODO: DEBUG ONKEYUP  */}
-                                       <input
-                                          type="text"
-                                          name="time_limit"
-                                          value={formData.time_limit}
-                                          onChange={handleTimeLimitInput}
-                                          onKeyUp={handleTimeLimitType}
-                                          className={`${css.time_limit_input} mx-1 form-control ${
-                                             errors.time_limit.hasError && "border-danger"
-                                          }`}
-                                       />
-                                       <button
-                                          type="button"
-                                          className={`${css.increment_btn} btn btn-primary`}
-                                          onMouseDown={incrementTimeLimit}
-                                          onMouseLeave={timeoutClear}
-                                          onMouseUp={timeoutClear}>
-                                          +
-                                       </button>
+                              {/* DATE AND TIME INPUT */}
+                              <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                                 <h4 className="mt-5">Date of availability</h4>
+                                 <div className="d-flex flex-column ms-4">
+                                    <div className="d-flex align-items-center">
+                                       <span className={`${css.label} me-2`}>Available From:</span>
+                                       <div className="d-flex flex-column">
+                                          <DateTimePicker
+                                             id="date-picker-from"
+                                             name="date_from"
+                                             className={`${css.date_field} ${
+                                                errors.date_from.hasError && "mb-0"
+                                             }`}
+                                             disablePast="true"
+                                             format="MMM dd, yyyy - hh:mm a"
+                                             margin="normal"
+                                             variant="dialog"
+                                             inputVariant="outlined"
+                                             emptyLabel="Date"
+                                             value={formData.date_from}
+                                             onChange={handleFromDateChange}
+                                          />
+                                          {errors.date_from.hasError && (
+                                             <small className={`text-danger ${css.date_error}`}>
+                                                {errors.date_from.msg}
+                                             </small>
+                                          )}
+                                       </div>
                                     </div>
-                                    {errors.time_limit.hasError && (
-                                       <small className="text-danger">
-                                          {errors.time_limit.msg}
-                                       </small>
-                                    )}
+                                    <div className="d-flex align-items-center">
+                                       <span className={`${css.label} me-2`}>Until:</span>
+                                       <div className="d-flex flex-column">
+                                          <DateTimePicker
+                                             id="date-picker-to"
+                                             name="date_to"
+                                             disablePast="true"
+                                             className={`${css.date_field} ${
+                                                errors.date_to.hasError && "mb-0"
+                                             }`}
+                                             format="MMM dd, yyyy - hh:mm a"
+                                             margin="normal"
+                                             variant="dialog"
+                                             minDate={formData.date_from}
+                                             inputVariant="outlined"
+                                             emptyLabel="Date"
+                                             value={formData.date_to}
+                                             onChange={handleToDateChange}
+                                          />
+                                          {errors.date_to.hasError && (
+                                             <small className={`text-danger ${css.date_error}`}>
+                                                {errors.date_to.msg}
+                                             </small>
+                                          )}
+                                       </div>
+                                    </div>
+
+                                    {/* TIME LIMIT FIELD */}
+                                    <div className="d-flex align-items-center mt-3">
+                                       <div className={`${css.label} d-flex flex-column me-2`}>
+                                          <span className="me-2">Time Limit (Minutes): </span>
+                                          <small className="me-2 text-muted">
+                                             1 minute minimum
+                                          </small>
+                                       </div>
+                                       <div className="d-flex flex-column ">
+                                          <div className="d-flex flex-row ">
+                                             <button
+                                                type="button"
+                                                className={`${css.decrement_btn} btn btn-primary`}
+                                                onMouseDown={decrementTimeLimit}
+                                                onMouseLeave={timeoutClear}
+                                                onMouseUp={timeoutClear}>
+                                                -
+                                             </button>
+                                             {/* TODO: DEBUG ONKEYUP  */}
+                                             <input
+                                                id="timeLimitInput"
+                                                type="text"
+                                                name="time_limit"
+                                                value={formData.time_limit}
+                                                onChange={handleTimeLimitInput}
+                                                onKeyUp={handleTimeLimitType}
+                                                className={`${
+                                                   css.time_limit_input
+                                                } mx-1 form-control ${
+                                                   errors.time_limit.hasError && "border-danger"
+                                                }`}
+                                             />
+                                             <button
+                                                type="button"
+                                                className={`${css.increment_btn} btn btn-primary`}
+                                                onMouseDown={incrementTimeLimit}
+                                                onMouseLeave={timeoutClear}
+                                                onMouseUp={timeoutClear}>
+                                                +
+                                             </button>
+                                          </div>
+                                          {errors.time_limit.hasError && (
+                                             <small className="text-danger">
+                                                {errors.time_limit.msg}
+                                             </small>
+                                          )}
+                                       </div>
+                                    </div>
                                  </div>
+                              </MuiPickersUtilsProvider>
+                              <br />
+
+                              {/* DIRECTIONS INPUT */}
+                              <label htmlFor="directionsTextArea" className="form-label mt-4">
+                                 Enter your general directions. This will be shown on the topmost
+                                 part of the exam before the actual questions.
+                              </label>
+                              <div className="form-floating">
+                                 <textarea
+                                    id="directionsTextArea"
+                                    name="directions"
+                                    maxLength={1000}
+                                    className={`${css.gen_directions_textarea} form-control`}
+                                    placeholder="General Directions"
+                                    onChange={handleFormChange}
+                                    defaultValue={formData.directions}
+                                    style={{ height: "200px" }}></textarea>
+                                 <small className={`${css.char_counter} float-end`}>
+                                    {charCountDesc}/1000
+                                 </small>
+                                 <label htmlFor="directionsTextArea" style={{ color: "gray" }}>
+                                    General Directions (optional)
+                                 </label>
                               </div>
-                           </div>
-                        </MuiPickersUtilsProvider>
-                        <br />
 
-                        {/* DIRECTIONS INPUT */}
-                        <label htmlFor="directionsTextArea" className="form-label mt-4">
-                           Enter your general directions. This will be shown on the topmost part of
-                           the exam before the actual questions.
-                        </label>
-                        <div className="form-floating">
-                           <textarea
-                              id="directionsTextArea"
-                              name="directions"
-                              maxLength={1000}
-                              className={`${css.gen_directions_textarea} form-control`}
-                              placeholder="General Directions"
-                              onChange={handleFormChange}
-                              defaultValue={formData.directions}
-                              style={{ height: "200px" }}></textarea>
-                           <small className={`${css.char_counter} float-end`}>
-                              {charCountDesc}/1000
-                           </small>
-                           <label htmlFor="directionsTextArea" style={{ color: "gray" }}>
-                              General Directions (optional)
-                           </label>
-                        </div>
+                              {/* QUESTIONS SECTION */}
+                              <QuestionList
+                                 setisAddingQuestion={setisAddingQuestion}
+                                 removeQuestionError={removeQuestionError}
+                                 currentQuestion={currentQuestion}
+                                 setCurrentQuestion={setCurrentQuestion}
+                                 isError={errors.questions}
+                                 questions={questions}
+                                 setQuestions={setQuestions}
+                              />
 
-                        {/* QUESTIONS SECTION */}
-                        <QuestionList
-                           setisAddingQuestion={setisAddingQuestion}
-                           removeQuestionError={removeQuestionError}
-                           currentQuestion={currentQuestion}
-                           setCurrentQuestion={setCurrentQuestion}
-                           isError={errors.questions}
-                           questions={questions}
-                           setQuestions={setQuestions}
-                        />
-
-                        {/* SUBMIT BUTTON */}
-                        <div className="float-end">
-                           <button
-                              type="button"
-                              onClick={backToDashboard}
-                              className="btn btn-secondary mb-5 me-2 px-4 py-2">
-                              Exit
-                           </button>
-                           {/* only show delete button when editing an exam */}
-                           {exam_id && (
-                              <button
-                                 type="button"
-                                 onClick={openDeleteExamModal}
-                                 className="btn btn-danger mb-5 me-2 px-4 py-2">
-                                 Delete Exam
-                              </button>
-                           )}
-                           <button
-                              type="button"
-                              className="btn btn-primary mb-5 me-2 px-4 py-2"
-                              onClick={saveChanges}>
-                              Save Changes
-                           </button>
-                           <button type="submit" className="btn btn-success mb-5 px-4 py-2">
-                              Publish
-                           </button>
-                        </div>
-                     </form>
-                  </div>
-               )}
-
-               {/* MODAL FROM REACT-BOOTSTRAP LIBRARY */}
-
-               <Modal show={isShownQuestionModal} onHide={handleQuestionModalClose}>
-                  <Modal.Header closeButton>
-                     <Modal.Title>Discard Changes</Modal.Title>
-                  </Modal.Header>
-                  <Modal.Body>
-                     Changes you made will not be saved once you leave this page.
-                  </Modal.Body>
-                  <Modal.Footer>
-                     <Button variant="secondary" onClick={handleQuestionModalClose}>
-                        Cancel
-                     </Button>
-                     <Button
-                        variant="primary"
-                        onClick={() => {
-                           navigate("/");
-                        }}>
-                        Continue
-                     </Button>
-                  </Modal.Footer>
-               </Modal>
-
-               {/* modal for deleting exam */}
-               <Modal show={isShownExamModal} onHide={handleExamModalClose}>
-                  <Modal.Header closeButton>
-                     <Modal.Title>Delete Exam</Modal.Title>
-                  </Modal.Header>
-                  <Modal.Body>
-                     Are you sure you want to delete this exam? You won't be able to undo this
-                     action.
-                  </Modal.Body>
-                  <Modal.Footer>
-                     <Button variant="secondary" onClick={handleExamModalClose}>
-                        Cancel
-                     </Button>
-                     <Button variant="primary" onClick={deleteExam}>
-                        Continue
-                     </Button>
-                  </Modal.Footer>
-               </Modal>
-
-               {/* modal for create confimation */}
-               <Modal show={isShownCreateModal} onHide={handleCreateModalClose}>
-                  <Modal.Header closeButton>
-                     <Modal.Title>Publish Exam</Modal.Title>
-                  </Modal.Header>
-                  <Modal.Body>
-                     Are you sure you want to publish this exam? You won't be able to make changes
-                     once the exam is published.
-                  </Modal.Body>
-                  <Modal.Footer>
-                     <Button variant="secondary" onClick={handleCreateModalClose}>
-                        Cancel
-                     </Button>
-                     <Button variant="primary" onClick={submitForm}>
-                        Continue
-                     </Button>
-                  </Modal.Footer>
-               </Modal>
-
-               {/* MODAL FOR EXAM CODE */}
-               <Modal
-                  show={isShownExamCodeModal}
-                  onHide={handleCodeModalClose}
-                  size="lg" //size of the modal. can't change in css idk why
-                  centered>
-                  <Modal.Header className={css.modal_header}>
-                     <h5 className="m-0">Exam Code</h5>
-                  </Modal.Header>
-                  <Modal.Body className={css.modal_body}>
-                     <div className={`${css.body_container}`}>
-                        <div className={css.tooltip}>
-                           <button
-                              onClick={copyExamCode}
-                              onMouseLeave={onMouseOutTooltip}
-                              className={`${css.copy_button}`}>
-                              <span className={css.tooltiptext} id="tooltip">
-                                 Copy to clipboard
-                              </span>
-                              <MdContentCopy />
-                           </button>
-                        </div>
-                        <input
-                           id="exam_code"
-                           type={"text"}
-                           value={examCode}
-                           className={`${css.exam_code} display-1 text-center`}
-                           readOnly
-                        />
+                              {/* SUBMIT BUTTON */}
+                              <div className="float-end">
+                                 <button
+                                    type="button"
+                                    onClick={backToDashboard}
+                                    className="btn btn-secondary mb-5 me-2 px-4 py-2">
+                                    Exit
+                                 </button>
+                                 {/* only show delete button when editing an exam */}
+                                 {exam_id && (
+                                    <button
+                                       type="button"
+                                       onClick={openDeleteExamModal}
+                                       className="btn btn-danger mb-5 me-2 px-4 py-2">
+                                       Delete Exam
+                                    </button>
+                                 )}
+                                 <button
+                                    type="button"
+                                    className="btn btn-primary mb-5 me-2 px-4 py-2"
+                                    onClick={saveChanges}>
+                                    Save Changes
+                                 </button>
+                                 <button type="submit" className="btn btn-success mb-5 px-4 py-2">
+                                    Publish
+                                 </button>
+                              </div>
+                           </form>
+                        </motion.div>
                      </div>
-                  </Modal.Body>
-                  <Modal.Footer className={css.footer}>
-                     <Button variant="primary" onClick={handleCodeModalClose}>
-                        Continue
-                     </Button>
-                  </Modal.Footer>
-               </Modal>
-            </motion.div>
+                  )}
+
+                  {/* MODAL FROM REACT-BOOTSTRAP LIBRARY */}
+
+                  <Modal show={isShownQuestionModal} onHide={handleQuestionModalClose}>
+                     <Modal.Header closeButton>
+                        <Modal.Title>Discard Changes</Modal.Title>
+                     </Modal.Header>
+                     <Modal.Body>
+                        Changes you made will not be saved once you leave this page.
+                     </Modal.Body>
+                     <Modal.Footer>
+                        <Button variant="secondary" onClick={handleQuestionModalClose}>
+                           Cancel
+                        </Button>
+                        <Button
+                           variant="primary"
+                           onClick={() => {
+                              navigate("/");
+                           }}>
+                           Continue
+                        </Button>
+                     </Modal.Footer>
+                  </Modal>
+
+                  {/* modal for deleting exam */}
+                  <Modal show={isShownExamModal} onHide={handleExamModalClose}>
+                     <Modal.Header closeButton>
+                        <Modal.Title>Delete Exam</Modal.Title>
+                     </Modal.Header>
+                     <Modal.Body>
+                        Are you sure you want to delete this exam? You won't be able to undo this
+                        action.
+                     </Modal.Body>
+                     <Modal.Footer>
+                        <Button variant="secondary" onClick={handleExamModalClose}>
+                           Cancel
+                        </Button>
+                        <Button variant="primary" onClick={deleteExam}>
+                           Continue
+                        </Button>
+                     </Modal.Footer>
+                  </Modal>
+
+                  {/* modal for create confimation */}
+                  <Modal show={isShownCreateModal} onHide={handleCreateModalClose}>
+                     <Modal.Header closeButton>
+                        <Modal.Title>Publish Exam</Modal.Title>
+                     </Modal.Header>
+                     <Modal.Body>
+                        Are you sure you want to publish this exam? You won't be able to make
+                        changes once the exam is published.
+                     </Modal.Body>
+                     <Modal.Footer>
+                        <Button variant="secondary" onClick={handleCreateModalClose}>
+                           Cancel
+                        </Button>
+                        <Button variant="primary" onClick={submitForm}>
+                           Continue
+                        </Button>
+                     </Modal.Footer>
+                  </Modal>
+
+                  {/* MODAL FOR EXAM CODE */}
+                  <Modal
+                     show={isShownExamCodeModal}
+                     onHide={handleCodeModalClose}
+                     size="lg" //size of the modal. can't change in css idk why
+                     centered>
+                     <Modal.Header className={css.modal_header}>
+                        <h5 className="m-0">Exam Code</h5>
+                     </Modal.Header>
+                     <Modal.Body className={css.modal_body}>
+                        <div className={`${css.body_container}`}>
+                           <div className={css.tooltip}>
+                              <button
+                                 onClick={copyExamCode}
+                                 onMouseLeave={onMouseOutTooltip}
+                                 className={`${css.copy_button}`}>
+                                 <span className={css.tooltiptext} id="tooltip">
+                                    Copy to clipboard
+                                 </span>
+                                 <MdContentCopy />
+                              </button>
+                           </div>
+                           <input
+                              id="exam_code"
+                              type={"text"}
+                              value={examCode}
+                              className={`${css.exam_code} display-1 text-center`}
+                              readOnly
+                           />
+                        </div>
+                     </Modal.Body>
+                     <Modal.Footer className={css.footer}>
+                        <Button variant="primary" onClick={handleCodeModalClose}>
+                           Continue
+                        </Button>
+                     </Modal.Footer>
+                  </Modal>
+               </motion.div>
+            </Sidebar>
          )}
       </>
    );

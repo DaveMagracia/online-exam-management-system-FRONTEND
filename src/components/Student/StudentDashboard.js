@@ -11,11 +11,13 @@ export default function StudentDashboard(props) {
    return (
       <>
          <Sidebar>
-            <div className={`${css.stud_dashboard_root} p-3`}>
-               <div className="d-flex flex-column px-5 py-3">
-                  <h1 className="m-0 mb-3">Dashboard</h1>
-                  <hr className="m-0" />
+            <div className={`${css.stud_dashboard_root} ps-md-4 py-4 pe-4`}>
+               <div className="d-flex flex-column  bg-white card">
+                  <h5 className={`${css.dashboard_title} m-0 p-3 ps-4 text-light`}>Dashboard</h5>
+                  {/* <hr className="m-0" /> */}
+               </div>
 
+               <div className="d-flex flex-column mt-3 ">
                   <SubjectList />
                </div>
             </div>

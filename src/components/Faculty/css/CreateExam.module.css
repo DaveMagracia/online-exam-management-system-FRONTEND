@@ -1,5 +1,14 @@
-.createExam_root {
+.loading_root {
    height: 100vh;
+}
+
+.createExam_root {
+   height: calc(100vh - 60px);
+   overflow-y: auto;
+}
+
+.container_ {
+   max-width: 1100px;
 }
 
 .title_input {

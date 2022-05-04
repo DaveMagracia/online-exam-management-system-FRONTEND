@@ -64,7 +64,8 @@ export default function Main() {
                setLoading(false);
                localStorage.removeItem("token");
                localStorage.removeItem("isLoaded");
-               navigate("/login"); //redirect to login page if something went wrong
+               localStorage.removeItem("isSidebarOpen");
+               navigate("/login-register"); //redirect to login page if something went wrong
             } else {
                setTimeout(() => {
                   setUser(userTokenDecoded);
@@ -72,14 +73,20 @@ export default function Main() {
                }, 2000);
             }
          } else {
-            navigate("/login"); //if user tries to access dashboard while not logged in, redirect to login page
+            navigate("/login-register"); //if user tries to access dashboard while not logged in, redirect to login page
          }
       }
    }, []); // empty array as the second agument means this effect will only run once after the component mounts
 
    React.useEffect(() => {
       //this will allow the page to reload. if this is set, the loading animation will cancel
-      if (localStorage.getItem("token")) localStorage.setItem("isLoaded", true);
+      if (localStorage.getItem("token")) {
+         localStorage.setItem("isLoaded", true);
+      }
+
+      if (localStorage.getItem("isSidebarOpen") === null) {
+         localStorage.setItem("isSidebarOpen", true);
+      }
    });
 
    return (

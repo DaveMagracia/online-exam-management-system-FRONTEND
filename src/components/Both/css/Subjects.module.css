@@ -1,3 +1,18 @@
+.subjects_root {
+   height: calc(100vh - 60px);
+   overflow-y: auto;
+}
+
+.subjects_title {
+   background-color: #3a414e;
+}
+
 .link {
    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+   .subjects_root {
+      padding-left: 70px !important;
+   }
 }

@@ -372,21 +372,21 @@ export default function TakeExam() {
    }, [timeLimit]);
 
    React.useEffect(() => {
-      document.addEventListener("visibilitychange", function () {
-         setActionLog((prevVal) => [...prevVal, { time: new Date(), action: "ALT TAB" }]);
-      });
+      // document.addEventListener("visibilitychange", function () {
+      //    setActionLog((prevVal) => [...prevVal, { time: new Date(), action: "ALT TAB" }]);
+      // });
 
-      document.addEventListener("mouseleave", function () {
-         setActionLog((prevVal) => [...prevVal, { time: new Date(), action: "MOUSE LEAVE" }]);
-      });
+      // document.addEventListener("mouseleave", function () {
+      //    setActionLog((prevVal) => [...prevVal, { time: new Date(), action: "MOUSE LEAVE" }]);
+      // });
 
-      document.addEventListener("mouseenter", function () {
-         setActionLog((prevVal) => [...prevVal, { time: new Date(), action: "MOUSE ENTER" }]);
-      });
+      // document.addEventListener("mouseenter", function () {
+      //    setActionLog((prevVal) => [...prevVal, { time: new Date(), action: "MOUSE ENTER" }]);
+      // });
 
       document.title = `Take Exam | Online Examination`;
       if (!localStorage.getItem("token")) {
-         navigate("/login");
+         navigate("/login-register");
       } else {
          const token = localStorage.getItem("token");
          const userTokenDecoded = jwt_decode(token);
@@ -395,15 +395,11 @@ export default function TakeExam() {
       }
 
       return () => {
-         document.documentElement.removeEventListener("mouseleave");
-         document.documentElement.removeEventListener("mouseenter");
-         document.documentElement.removeEventListener("visibilitychange");
+         // document.documentElement.removeEventListener("mouseleave");
+         // document.documentElement.removeEventListener("mouseenter");
+         // document.documentElement.removeEventListener("visibilitychange");
       };
    }, []);
-
-   React.useEffect(() => {
-      console.log(actionLog);
-   });
 
    //confirmation before leaving page
    //IDK WHAT THIS IS

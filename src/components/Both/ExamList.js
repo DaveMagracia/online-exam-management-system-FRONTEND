@@ -18,18 +18,20 @@ export default function ExamList(props) {
       //populate the examsList with elements of each exam
       if (examArray) {
          let examsList_ = examArray.map((examData, i) => (
-            <motion.div
-               className="col"
-               key={i}
-               initial={{ opacity: 0, translateY: 10 }}
-               animate={{ opacity: 1, translateY: 0 }}
-               transition={{ duration: 0.3, delay: i * 0.05 }}>
-               <ExamListBox
-                  examData={examData}
-                  getExams={getExams} //pass getExams to box to reload this component when an exam is deleted
-               />
-               {/* SAMPLE exam id only*/}
-            </motion.div>
+            <>
+               <motion.div
+                  className="col"
+                  key={i}
+                  initial={{ opacity: 0, translateY: 10 }}
+                  animate={{ opacity: 1, translateY: 0 }}
+                  transition={{ duration: 0.3, delay: i * 0.05 }}>
+                  <ExamListBox
+                     examData={examData}
+                     getExams={getExams} //pass getExams to box to reload this component when an exam is deleted
+                  />
+                  {/* SAMPLE exam id only*/}
+               </motion.div>
+            </>
          ));
 
          setExamsList(examsList_);
@@ -103,37 +105,48 @@ export default function ExamList(props) {
                      exit={{ opacity: 0 }}
                      transition={{ duration: 0.2 }}
                      className={`${css.loading_root} d-flex flex-column align-items-center `}>
-                     <BarLoader loading={isLoading} color="#9c2a22" size={80} width={"100%"} />
+                     <BarLoader loading={isLoading} color="#1067ca" size={80} width={"100%"} />
                   </motion.div>
                )}
             </AnimatePresence>
          ) : (
             <div>
-               <div className="pt-3">
-                  <h3 className="d-inline">Exams</h3>
+               <div className="d-flex align-items-center justify-content-between">
+                  <div className="ps-2 pb-3 mt-3">
+                     <span className="text-black-50 fw-bold">Exams</span>
+                  </div>
                   {user && user.userType === "teacher" && (
                      <button className="btn btn-primary float-end" onClick={goToCreateExam}>
                         Create Exam
                      </button>
                   )}
                </div>
-               {examsList.length !== 0 ? (
-                  <div
-                     className="row 
-                  row-cols-1 
-                  row-cols-md-2 
-                  row-cols-xl-3 
-                  g-3
-                  mt-3">
-                     {examsList}
-                  </div>
-               ) : (
-                  <div className={`${css.no_exams_container}`}>
-                     <p className="text-muted text-center">
-                        You have not created an exam yet. Exams you have created will appear here.
-                     </p>
-                  </div>
-               )}
+               <div className="pb-5">
+                  {examsList.length !== 0 ? (
+                     <div
+                        className="row 
+                        row-cols-1 
+                        row-cols-md-2 
+                        row-cols-xl-3 
+                        g-3">
+                        {examsList}
+                     </div>
+                  ) : (
+                     <div className={`${css.no_exams_container}`}>
+                        {user && user.userType === "teacher" ? (
+                           <p className="text-muted text-center">
+                              You have not created an exam yet. Subjects on exams you created will
+                              appear here.
+                           </p>
+                        ) : (
+                           <p className="text-muted text-center">
+                              You are not registered to an exam yet. Exams you have registered to
+                              will appear here.
+                           </p>
+                        )}
+                     </div>
+                  )}
+               </div>
             </div>
          )}
       </>

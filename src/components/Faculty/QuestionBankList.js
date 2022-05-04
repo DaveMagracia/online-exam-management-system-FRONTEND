@@ -13,17 +13,19 @@ export default function QuestionBankList() {
       //populate the examsList with elements of each exam
       if (bankArray) {
          let examsList_ = bankArray.map((questionBankData, i) => (
-            <motion.div
-               key={i}
-               initial={{ opacity: 0, translateY: 10 }}
-               animate={{ opacity: 1, translateY: 0 }}
-               transition={{ duration: 0.3, delay: i * 0.05 }}>
-               <QuestionBankListBox
-                  questionBankData={questionBankData}
-                  getQuestionBanks={getQuestionBanks} //pass getExams to box to reload this component when an exam is deleted
-               />
-               {/* SAMPLE exam id only*/}
-            </motion.div>
+            <>
+               <motion.div
+                  key={i}
+                  initial={{ opacity: 0, translateY: 10 }}
+                  animate={{ opacity: 1, translateY: 0 }}
+                  transition={{ duration: 0.3, delay: i * 0.05 }}>
+                  <QuestionBankListBox
+                     questionBankData={questionBankData}
+                     getQuestionBanks={getQuestionBanks} //pass getExams to box to reload this component when an exam is deleted
+                  />
+                  {/* SAMPLE exam id only*/}
+               </motion.div>
+            </>
          ));
 
          setQuestionBanksList(examsList_);

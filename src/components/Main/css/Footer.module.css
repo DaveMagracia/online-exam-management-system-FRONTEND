@@ -1,7 +1,30 @@
 .footer_root {
-   background-color: #9c2a22;
+   min-height: 400px;
+   background-color: #252e3e;
+}
+
+.logo {
+   color: rgb(255, 255, 255) !important;
+   font-family: "Raleway", sans-serif;
+   font-weight: 900;
+   font-size: 40px !important;
+   margin-top: 100px !important;
+   position: relative;
 }
 
 .styles_link {
    text-decoration: none;
+}
+
+.footer_link {
+   color: rgb(161, 161, 161) !important;
+   font-size: 14px;
+}
+
+.footer_message {
+   color: rgba(255, 255, 255, 0.301);
+}
+
+.website_link {
+   color: rgb(30, 154, 255);
 }

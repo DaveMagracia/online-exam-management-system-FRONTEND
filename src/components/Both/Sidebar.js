@@ -13,14 +13,23 @@ import StudentNavbar from "../Student/StudentNavbar";
 import FacultyNavbar from "../Faculty/FacultyNavbar";
 import StudentDashboard from "../Student/StudentDashboard";
 import { UserContext } from "../../UserContext";
+import { GiBrain } from "react-icons/gi";
 import jwt_decode from "jwt-decode";
-import { saveSidebarState, getSidebarState } from "./utils/StoreSidebarState";
+// import { saveSidebarState, getSidebarState } from "./utils/StoreSidebarState";
 
 export default function StudentSidebar({ children }) {
    const navigate = useNavigate();
-   const [isOpen, setIsOpen] = useState(getSidebarState);
+   const [isOpen, setIsOpen] = useState(localStorage.getItem("isSidebarOpen") === "true");
    const { user, setUser } = useContext(UserContext);
    const [isShownLogoutModal, setIsShownLogoutModal] = React.useState(false);
+   const [userInfo, setUserInfo] = React.useState({
+      photo: "",
+      email: "",
+      username: "",
+      fullname: "",
+   });
+   const [profileImage, setProfileImage] = React.useState("");
+
    const [formData, setFormData] = React.useState({
       email: "",
       username: "",
@@ -28,7 +37,7 @@ export default function StudentSidebar({ children }) {
 
    function toggle() {
       setIsOpen(!isOpen);
-      saveSidebarState(!isOpen);
+      localStorage.setItem("isSidebarOpen", !isOpen);
    }
 
    function handleLogoutModalClose() {
@@ -51,19 +60,20 @@ export default function StudentSidebar({ children }) {
          path: "/subjects/All",
          subPath: "/subjects",
          subPath2: "/subjects",
+         subPath4: "/create-exam",
          name: "Exams",
          icon: <IoDocumentText />,
       },
 
-      ...(user && user.userType === "student"
-         ? [
-              {
-                 path: "/history",
-                 name: "History",
-                 icon: <FaHistory />,
-              },
-           ]
-         : []),
+      // ...(user && user.userType === "student"
+      //    ? [
+      //         {
+      //            path: "/history",
+      //            name: "History",
+      //            icon: <FaHistory />,
+      //         },
+      //      ]
+      //    : []),
 
       {
          path: "/calendar",
@@ -72,16 +82,48 @@ export default function StudentSidebar({ children }) {
       },
    ];
 
+   function getUserInfoFromToken() {
+      const token = localStorage.getItem("token");
+      const userTokenDecoded = jwt_decode(token);
+      setUser(userTokenDecoded);
+      setUserInfo((prevVal) => ({
+         photo: "",
+         email: userTokenDecoded.email,
+         username: userTokenDecoded.username,
+         fullname: userTokenDecoded.fullname,
+      }));
+
+      setProfileImage(
+         !!userTokenDecoded.photo && `/images/profilePictures/${userTokenDecoded.photo}`
+      );
+   }
+
    function getNavbar() {
       // identifies what type of navbar to be displayed
       if (user) {
          if (user.userType === "student") {
-            return <StudentNavbar username={user.username} />;
+            return (
+               <StudentNavbar
+                  username={user.username}
+                  photoPath={profileImage}
+                  isSidebarOpen={isOpen}
+               />
+            );
          } else if (user.userType === "teacher") {
-            return <FacultyNavbar username={user.username} />;
+            return (
+               <FacultyNavbar
+                  username={user.username}
+                  photoPath={profileImage}
+                  isSidebarOpen={isOpen}
+               />
+            );
          }
       }
    }
+
+   React.useEffect(() => {
+      getUserInfoFromToken();
+   }, []);
 
    function setIsLinkActive(route) {
       if (window.location.href === `http://localhost:3000${route.path}`) {
@@ -112,6 +154,14 @@ export default function StudentSidebar({ children }) {
          if (isOpen) return css.active_link;
          return css.active_link_closed;
       }
+
+      if (
+         route.hasOwnProperty("subPath4") &&
+         window.location.href.startsWith(`http://localhost:3000/create-exam`)
+      ) {
+         if (isOpen) return css.active_link;
+         return css.active_link_closed;
+      }
    }
 
    function openLogoutModal() {
@@ -122,6 +172,7 @@ export default function StudentSidebar({ children }) {
       //remove data from local storage
       await localStorage.removeItem("token");
       await localStorage.removeItem("isLoaded");
+      await localStorage.removeItem("isSidebarOpen");
       // await localStorage.removeItem("userData");
       navigate("/", { replace: true }); //dont store the current page in history
    }
@@ -139,7 +190,6 @@ export default function StudentSidebar({ children }) {
 
    return (
       <>
-         {getNavbar()}
          <div className={`${css.main_Container}`}>
             <motion.div
                initial={{ width: isOpen ? "300px" : "50px" }}
@@ -147,11 +197,21 @@ export default function StudentSidebar({ children }) {
                className={`${css.sidebar} d-flex flex-column justify-content-between`}>
                <div>
                   <div className={`${css.top_Section}`}>
-                     {isOpen && <span className={`${css.logo} ms-3`}></span>}
+                     {isOpen && (
+                        <span
+                           className={`${css.logo} navbar-brand ms-4`}
+                           onClick={() => navigate("/")}>
+                           Ex
+                           <GiBrain />
+                           mplify
+                        </span>
+                     )}
+
                      <div className={`${css.bars}`}>
                         <FaBars onClick={toggle} className={css.toggleButton} />
                      </div>
                   </div>
+                  <hr className="text-muted m-0 mb-4" />
                   <section className={`${css.routes}`}>
                      {routes.map((route) => (
                         <NavLink
@@ -172,10 +232,21 @@ export default function StudentSidebar({ children }) {
                   <div className={`${css.icon}`}>
                      <MdLogout />
                   </div>
-                  <div className={`${css.link_text}`}>Logout</div>
+                  <div className={`${css.link_text} ${isOpen ? "d-block" : "d-none"}`}>Logout</div>
                </div>
             </motion.div>
-            <main className={`${css.main}`}>{children}</main>
+            <main className={`${css.main}`}>
+               {getNavbar()}
+               {children}
+            </main>
+
+            <motion.div
+               initial={{ opacity: !isOpen ? 1 : 0, visibility: isOpen ? "visible" : "hidden" }}
+               animate={{ opacity: !isOpen ? 0 : 1, visibility: isOpen ? "visible" : "hidden" }}
+               transition={{ duration: 0.25, ease: "easeOut" }}
+               onClick={toggle}
+               className={`${css.scrim} d-block d-md-none`}></motion.div>
+            {/* black backdrop when sidebar is open on small screens */}
          </div>
 
          <Modal show={isShownLogoutModal} onHide={handleLogoutModalClose}>

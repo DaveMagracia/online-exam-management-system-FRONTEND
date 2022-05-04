@@ -9,11 +9,17 @@ import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../UserContext";
 import PuffLoader from "react-spinners/PuffLoader";
 import jwt_decode from "jwt-decode";
-import { FaExclamation, FaCheck } from "react-icons/fa";
+import { FaExclamation, FaCheck, FaCircle } from "react-icons/fa";
+import { VscCircleFilled } from "react-icons/vsc";
 
 export default function ChangePassword(props) {
    const { user, setUser } = useContext(UserContext);
    const [loading, setLoading] = React.useState(false);
+   const [isInit, setIsInit] = React.useState(true);
+   const [isInit1, setIsInit1] = React.useState(true);
+   const [isInit2, setIsInit2] = React.useState(true);
+   const [isInit3, setIsInit3] = React.useState(true);
+   const [isInit4, setIsInit4] = React.useState(true);
    const [good, setnotgood] = React.useState(true);
    const [good1, setnotgood1] = React.useState(true);
    const [good2, setnotgood2] = React.useState(true);
@@ -56,11 +62,15 @@ export default function ChangePassword(props) {
          [name]: false,
       }));
 
-      const is_lenght = /^.{8,35}$/.test(value);
-      if (!is_lenght) {
+      const is_length = /^.{8,35}$/.test(value);
+      if (!is_length) {
          setnotgood(true);
       } else {
          setnotgood(false);
+      }
+
+      if (isInit && is_length) {
+         setIsInit(false);
       }
 
       const is_Upper = /(?=.*[A-Z])/.test(value);
@@ -69,12 +79,22 @@ export default function ChangePassword(props) {
       } else {
          setnotgood1(false);
       }
+
+      if (isInit1 && is_Upper) {
+         setIsInit1(false);
+      }
+
       const is_lower = /(?=.*[a-z])/.test(value);
       if (!is_lower) {
          setnotgood2(true);
       } else {
          setnotgood2(false);
       }
+
+      if (isInit2 && is_lower) {
+         setIsInit2(false);
+      }
+
       const is_upper = /(?=.*[0-9])/.test(value);
       if (!is_upper) {
          setnotgood3(true);
@@ -82,11 +102,19 @@ export default function ChangePassword(props) {
          setnotgood3(false);
       }
 
+      if (isInit3 && is_upper) {
+         setIsInit3(false);
+      }
+
       const is_Special = /(?=.*[!@#$%^&*])/.test(value);
       if (!is_Special) {
          setnotgood4(true);
       } else {
          setnotgood4(false);
+      }
+
+      if (isInit4 && is_Special) {
+         setIsInit4(false);
       }
 
       if (value === "") {
@@ -281,28 +309,135 @@ export default function ChangePassword(props) {
                                  errors.pass.hasError ? "text-danger" : "text-muted"
                               }`}>
                               A password must:
-                              <ul>
-                                 <li className={good ? null : "text-success"}>
-                                    {good ? <FaExclamation /> : <FaCheck />}&nbsp;&nbsp;Have a
-                                    minimum of 8 characters
-                                 </li>
-                                 <li className={good1 ? null : "text-success"}>
-                                    {good1 ? <FaExclamation /> : <FaCheck />}&nbsp;&nbsp;Contain at
-                                    least 1 uppercase letter (A-Z)
-                                 </li>
-                                 <li className={good2 ? null : "text-success"}>
-                                    {good2 ? <FaExclamation /> : <FaCheck />}&nbsp;&nbsp;Contain at
-                                    least 1 lowercase letter (a-z)
-                                 </li>
-                                 <li className={good3 ? null : "text-success"}>
-                                    {good3 ? <FaExclamation /> : <FaCheck />}&nbsp;&nbsp;Contain at
-                                    least 1 number (0-9)
-                                 </li>
-                                 <li className={good4 ? null : "text-success"}>
-                                    {good4 ? <FaExclamation /> : <FaCheck />}&nbsp;&nbsp;Contain at
-                                    least 1 special character (!@#$%^&*)
-                                 </li>
-                              </ul>
+                              <div className="d-flex ps-2">
+                                 <div
+                                    className="d-flex flex-column align-items-center"
+                                    style={{ width: "30px" }}>
+                                    <span
+                                       className={`d-block ${
+                                          good
+                                             ? isInit
+                                                ? "text-secondary"
+                                                : "text-danger"
+                                             : "text-success"
+                                       }`}>
+                                       {/* show bullet only when initially loaded */}
+                                       {!isInit ? (
+                                          <>{good ? <FaExclamation /> : <FaCheck />}</>
+                                       ) : (
+                                          <FaCircle size={"6px"} />
+                                       )}
+                                    </span>
+                                    <span
+                                       className={`d-block ${
+                                          good1
+                                             ? isInit1
+                                                ? "text-secondary"
+                                                : "text-danger"
+                                             : "text-success"
+                                       }`}>
+                                       {!isInit1 ? (
+                                          <>{good1 ? <FaExclamation /> : <FaCheck />}</>
+                                       ) : (
+                                          <FaCircle size={"6px"} />
+                                       )}
+                                    </span>
+                                    <span
+                                       className={`d-block ${
+                                          good2
+                                             ? isInit2
+                                                ? "text-secondary"
+                                                : "text-danger"
+                                             : "text-success"
+                                       }`}>
+                                       {!isInit2 ? (
+                                          <>{good2 ? <FaExclamation /> : <FaCheck />}</>
+                                       ) : (
+                                          <FaCircle size={"6px"} />
+                                       )}
+                                    </span>
+                                    <span
+                                       className={`d-block ${
+                                          good3
+                                             ? isInit3
+                                                ? "text-secondary"
+                                                : "text-danger"
+                                             : "text-success"
+                                       }`}>
+                                       {!isInit3 ? (
+                                          <>{good3 ? <FaExclamation /> : <FaCheck />}</>
+                                       ) : (
+                                          <FaCircle size={"6px"} />
+                                       )}
+                                    </span>
+                                    <span
+                                       className={`d-block ${
+                                          good4
+                                             ? isInit4
+                                                ? "text-secondary"
+                                                : "text-danger"
+                                             : "text-success"
+                                       }`}>
+                                       {!isInit4 ? (
+                                          <>{good4 ? <FaExclamation /> : <FaCheck />}</>
+                                       ) : (
+                                          <FaCircle size={"6px"} />
+                                       )}
+                                    </span>
+                                 </div>
+                                 <div>
+                                    <span
+                                       className={`d-block ${
+                                          good
+                                             ? isInit
+                                                ? "text-secondary"
+                                                : "text-danger"
+                                             : "text-success"
+                                       }`}>
+                                       Have a minimum of 8 characters
+                                    </span>
+                                    <span
+                                       className={`d-block ${
+                                          good1
+                                             ? isInit1
+                                                ? "text-secondary"
+                                                : "text-danger"
+                                             : "text-success"
+                                       }`}>
+                                       Contain at least 1 uppercase letter (A-Z)
+                                    </span>
+                                    <span
+                                       className={`d-block ${
+                                          good2
+                                             ? isInit2
+                                                ? "text-secondary"
+                                                : "text-danger"
+                                             : "text-success"
+                                       }`}>
+                                       Contain at least 1 lowercase letter (a-z)
+                                    </span>
+                                    <span
+                                       className={`d-block ${
+                                          good3
+                                             ? isInit3
+                                                ? "text-secondary"
+                                                : "text-danger"
+                                             : "text-success"
+                                       }`}>
+                                       Contain at least 1 number (0-9)
+                                    </span>
+                                    <span
+                                       className={`d-block ${
+                                          good4
+                                             ? isInit4
+                                                ? "text-secondary"
+                                                : "text-danger"
+                                             : "text-success"
+                                       }`}>
+                                       Contain at least 1 special character (!@#$%^&*)
+                                    </span>
+                                 </div>
+                              </div>
                            </div>
                         </div>
 

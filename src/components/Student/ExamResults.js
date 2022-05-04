@@ -88,7 +88,7 @@ export default function ExamResults() {
    React.useEffect(() => {
       document.title = `Exam Results | Online Examination`;
       if (!localStorage.getItem("token")) {
-         navigate("/login");
+         navigate("/login-register");
       } else {
          const token = localStorage.getItem("token");
          const userTokenDecoded = jwt_decode(token);
@@ -120,8 +120,8 @@ export default function ExamResults() {
                   transition={{ duration: 0.2 }}>
                   {getNavbar()}
                   {/* MAIN CONTENT */}
-                  <div className="d-flex justify-content-center">
-                     <div className={`${css.exam_container} p-3`}>
+                  <div className={`${css.results_root} d-flex justify-content-center`}>
+                     <div className={`${css.results_container} p-3`}>
                         <div className="exam_head mb-4">
                            <div className="d-flex mt-5 justify-content-between">
                               <div>

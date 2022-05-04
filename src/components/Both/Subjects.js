@@ -78,8 +78,8 @@ export default function Subjects(props) {
    return (
       <>
          <Sidebar>
-            <div className="p-3">
-               <div className="d-flex flex-column px-5 py-3">
+            <div>
+               <div className={`${css.subjects_root} d-flex flex-column ps-md-4 py-4 pe-4 `}>
                   <div className="dropdown">
                      <a
                         className="dropdown-toggle text-black text-decoration-none"
@@ -88,11 +88,11 @@ export default function Subjects(props) {
                         id="subjectsDropdown"
                         data-bs-toggle="dropdown"
                         aria-expanded="false">
-                        <h1 className="d-inline mb-3">
+                        <h5 className="d-inline mb-3 ">
                            {subject_name === "all" || subject_name === "All"
                               ? "All Subjects"
                               : subject_name}
-                        </h1>
+                        </h5>
                      </a>
 
                      {/* dropdown list of subjects */}

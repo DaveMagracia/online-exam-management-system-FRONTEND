@@ -1,7 +1,26 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Raleway:wght@600;900&display=swap");
+
 .sidebar {
-   background: rgb(34, 34, 34);
+   background: #252e3e;
    color: white;
    min-height: calc(100vh - 60px);
+   height: 100vh;
+   z-index: 5;
+   overflow: hidden;
+}
+
+@media (max-width: 768px) {
+   .sidebar {
+      position: fixed;
+   }
+}
+
+.scrim {
+   position: fixed;
+   min-width: 100vh;
+   min-height: 100vh;
+   background-color: rgba(0, 0, 0, 0.6);
+   z-index: 4;
 }
 
 .top_Section {
@@ -15,12 +34,16 @@
 }
 
 .logo {
-   font-size: 18px;
+   font-size: 20px !important;
+   font-family: "Raleway", sans-serif;
+   font-weight: 900;
+   cursor: pointer;
+   color: rgb(45, 171, 255);
 }
 
 .link {
    display: flex;
-   color: white;
+   color: rgb(184, 184, 184);
    gap: 20px;
    padding: 10px 15px;
    text-decoration: none;
@@ -35,8 +58,8 @@
 .link:hover {
    border-right: 4px solid rgb(45, 171, 255);
    transition: 0.2s cubic-bezier(0.6, -0.28, 0.735, 0.045);
-   background: #293a5f;
-   color: rgb(255, 255, 255);
+   /* background: #293a5f; */
+   color: rgb(45, 171, 255);
    cursor: pointer;
 }
 
@@ -44,17 +67,20 @@
 .active_link_closed {
    border-right: 4px solid rgb(45, 171, 255);
    transition: 0.2s cubic-bezier(0.6, -0.28, 0.735, 0.045);
-   background: #293a5f;
-   color: rgb(61, 184, 255);
+   /* background: #293a5f; */
+   background: #202434;
+   /* color: rgb(61, 184, 255); */
+   color: rgb(255, 255, 255);
 }
 
 .active_link_closed {
+   /* color: rgb(255, 255, 255); */
    color: rgb(255, 255, 255);
 }
 
 .link_text {
    white-space: nowrap;
-   font-size: 15px;
+   font-size: 14px;
    text-decoration: none;
    transform: translateY(5px);
 }
@@ -68,7 +94,8 @@
 }
 
 .icon {
-   font-size: 20px;
+   font-size: 18px;
+   line-height: 30px;
 }
 
 .main_Container {
@@ -78,4 +105,5 @@
 
 .main {
    width: 100%;
+   min-height: calc(100vh - 60px);
 }

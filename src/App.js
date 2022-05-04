@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Login from "./components/Main/Login";
 import Register from "./components/Main/Register";
 import Landing from "./components/Main/Landing";
+import LoginRegister from "./components/Main/LoginRegister";
 
 //BOTH COMPONENTS
 import Main from "./components/Both/Main";
@@ -38,8 +39,9 @@ export default function App() {
             <Routes>
                {/* PUBLIC ROUTES */}
                <Route path="/" element={<Landing />} />
-               <Route path="/login" element={<Login />} />
-               <Route path="/register" element={<Register />} />
+               {/* <Route path="/login" element={<Login />} />
+               <Route path="/register" element={<Register />} /> */}
+               <Route path="/login-register" element={<LoginRegister />} />
 
                {/* FACULTY ROUTES */}
                <Route path="/create-exam" element={<CreateExam />} />

@@ -4,6 +4,7 @@ import { UserContext } from "../../UserContext";
 import { FaArrowCircleLeft } from "react-icons/fa";
 import { MdWarning } from "react-icons/md";
 import { Modal, Button } from "react-bootstrap";
+import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 //library to create unique ids for the questions
 //NOTE: the uuid generated is only stored locally, it is different from the id on the database
@@ -187,7 +188,7 @@ export default function AddQuestion(props) {
    //this fixes the problem where the user context is lost for everytime the page is reloaded
    React.useEffect(() => {
       if (!localStorage.getItem("token")) {
-         navigate("/login");
+         navigate("/login-register");
       } else {
          let currentQuestion = props.currentQuestion;
          if (props.currentQuestion) {
@@ -231,231 +232,231 @@ export default function AddQuestion(props) {
    });
 
    return (
-      <>
-         <div>
-            {/* <FacultyNavbar username={user ? user.username : ""} /> */}
-            <div className="container">
-               <div className="d-flex align-items-center mt-5">
-                  <FaArrowCircleLeft
-                     size={"35px"}
-                     className={`text-primary ${css.back_arrow}`}
-                     onClick={backToCreateExam}
-                  />
-                  <h1 className="ms-3 d-inline">Add a Question</h1>
-               </div>
-
-               <form onSubmit={submitQuestion}>
-                  {/* TITLE INPUT */}
-                  <div className="form-floating mt-4">
-                     <textarea
-                        id="questionTextArea"
-                        name="question"
-                        maxLength={1000}
-                        className={`form-control ${errors.question && "border-danger"}`}
-                        placeholder="Question"
-                        onChange={handleFormChange}
-                        defaultValue={formData.question}
-                        style={{ height: "100px" }}></textarea>
-                     <label htmlFor="questionTextArea" style={{ color: "gray" }}>
-                        Question
-                     </label>
-                  </div>
-                  {errors.question && errorHelper()}
-
-                  {/* CHOICE 1 */}
-                  <h3 className="mt-4">Choices</h3>
-                  <label htmlFor="choice1" className="mb-2 mt-3">
-                     Choice 1:
-                  </label>
-                  <div className="input-group">
-                     <input
-                        type="text"
-                        value={formData.choice1}
-                        name="choice1"
-                        onChange={handleFormChange}
-                        className={`form-control ${errors.choice1 && "border-danger"}`}
-                        id="choice1"
-                        placeholder="Enter choice value"
-                     />
-                     {errors.choice1 && errorAddOn()}
-                  </div>
-                  {errors.choice1 && errorHelper()}
-
-                  {/* CHOICE 2 */}
-                  <label htmlFor="choice2" className="mb-2 mt-3 d-block">
-                     Choice 2:
-                  </label>
-                  <div className="input-group">
-                     <input
-                        type="text"
-                        value={formData.choice2}
-                        name="choice2"
-                        onChange={handleFormChange}
-                        className={`form-control ${errors.choice2 && "border-danger"}`}
-                        id="choice2"
-                        placeholder="Enter choice value"
-                     />
-                     {errors.choice2 && errorAddOn()}
-                  </div>
-                  {errors.choice2 && errorHelper()}
-
-                  {/* CHOICE 3 */}
-                  <label htmlFor="choice3" className="mb-2 mt-3 d-block">
-                     Choice 3:
-                  </label>
-                  <div className="input-group">
-                     <input
-                        type="text"
-                        className={`form-control ${errors.choice3 && "border-danger"}`}
-                        value={formData.choice3}
-                        name="choice3"
-                        onChange={handleFormChange}
-                        id="choice3"
-                        placeholder="Enter choice value"
-                     />
-                     {errors.choice3 && errorAddOn()}
-                  </div>
-                  {errors.choice3 && errorHelper()}
-
-                  {/* CHOICE 4 */}
-                  <label htmlFor="choice4" className="mb-2 mt-3 d-block">
-                     Choice 4:
-                  </label>
-                  <div className="input-group">
-                     <input
-                        type="text"
-                        className={`form-control ${errors.choice4 && "border-danger"}`}
-                        value={formData.choice4}
-                        name="choice4"
-                        onChange={handleFormChange}
-                        id="choice4"
-                        placeholder="Enter choice value"
-                     />
-                     {errors.choice4 && errorAddOn()}
-                  </div>
-                  {errors.choice4 && errorHelper()}
-
-                  {/* ANSWER */}
-                  <label htmlFor="correct_answer" className="mb-2 mt-3 d-block">
-                     Correct Answer:
-                  </label>
-                  <select
-                     id="correct_answer"
-                     className={`form-select ${errors.answer && "border-danger"}`}
-                     value={formData.answer}
-                     name="answer"
-                     onChange={handleFormChange}>
-                     <option value="none" disabled hidden>
-                        Select an option
-                     </option>
-                     <option value={1}>Choice 1</option>
-                     <option value={2}>Choice 2</option>
-                     <option value={3}>Choice 3</option>
-                     <option value={4}>Choice 4</option>
-                  </select>
-                  {errors.answer && errorHelper()}
-
-                  {/* POINTS */}
-                  <label htmlFor="points_field" className="mb-2 mt-3 d-block">
-                     Points:
-                  </label>
-                  <div className="input-group">
-                     <input
-                        id="points_field"
-                        type="text"
-                        className={`form-control ${css.points_input} ${
-                           errors.points && "border-danger"
-                        }`}
-                        name="points"
-                        value={formData.points}
-                        onChange={handleTimeLimitInput}
-                     />
-                     {errors.points && errorAddOn()}
-                  </div>
-                  {errors.points && (
-                     <small className="text-danger">
-                        Invalid Input. Must be a positive integer.
-                     </small>
-                  )}
-
-                  {/* COGNITIVE PROCESS DIMENSION */}
-                  <label htmlFor="cpd_field" className="mb-2 mt-5 d-block">
-                     Cognitive Process Dimension:
-                  </label>
-                  <select
-                     id="cpd_field"
-                     name="cpd"
-                     className={`form-select ${errors.cpd && "border-danger"}`}
-                     value={formData.cpd}
-                     onChange={handleFormChange}>
-                     <option value="none" disabled hidden>
-                        Select an option
-                     </option>
-                     <option value="remember">Remember</option>
-                     <option value="understand">Understand</option>
-                     <option value="apply">Apply</option>
-                     <option value="analyze">Analyze</option>
-                     <option value="evaluate">Evaluate</option>
-                     <option value="create">Create</option>
-                  </select>
-                  {errors.cpd && errorHelper()}
-
-                  {/* KNOWLEDGE DIMENSION */}
-                  <label htmlFor="kd_field" className="mb-2 mt-3 d-block">
-                     Knowledge Dimension:
-                  </label>
-                  <select
-                     id="kd_field"
-                     name="kd"
-                     className={`form-select ${errors.kd && "border-danger"}`}
-                     value={formData.kd}
-                     onChange={handleFormChange}
-                     placeholder="select"
-                     aria-label="Default select example">
-                     <option value="none" disabled hidden>
-                        Select an option
-                     </option>
-                     <option value="factual">Factual</option>
-                     <option value="procedural">Procedural</option>
-                     <option value="metacognitive">Metacognitive</option>
-                  </select>
-                  {errors.kd && errorHelper()}
-
-                  {/* SUBMIT BUTTON */}
-                  <div className="float-end mb-5 mt-5">
-                     <button
-                        type="button"
-                        onClick={backToCreateExam}
-                        className="btn btn-primary me-3 px-4 py-2">
-                        Cancel
-                     </button>
-                     <button className="btn btn-primary px-4 py-2" type="submit">
-                        Submit
-                     </button>
-                  </div>
-               </form>
+      <div className={`${css.addquestion_root}`}>
+         {/* <FacultyNavbar username={user ? user.username : ""} /> */}
+         <motion.div
+            initial={{ transform: "translateX(-70px)", opacity: 0 }}
+            animate={{ transform: "translateX(0px)", opacity: 1 }}
+            transition={{ ease: "easeOut", duration: 0.2 }}
+            className={`${css.container_} container px-5 py-1 my-5 card`}>
+            <div className="d-flex align-items-center mt-5">
+               <FaArrowCircleLeft
+                  size={"28px"}
+                  className={`text-primary ${css.back_arrow}`}
+                  onClick={backToCreateExam}
+               />
+               <h3 className="ms-3 d-inline">Add Question</h3>
             </div>
 
-            {/* MODAL FROM REACT-BOOTSTRAP LIBRARY */}
-            <Modal show={isShownModal} onHide={handleModalClose}>
-               <Modal.Header closeButton>
-                  <Modal.Title>Discard changes?</Modal.Title>
-               </Modal.Header>
-               <Modal.Body>Changes you made will not be saved once you leave this page.</Modal.Body>
-               <Modal.Footer>
-                  <Button variant="secondary" onClick={handleModalClose}>
+            <form onSubmit={submitQuestion}>
+               {/* TITLE INPUT */}
+               <div className="form-floating mt-4">
+                  <textarea
+                     id="questionTextArea"
+                     name="question"
+                     maxLength={1000}
+                     className={`form-control ${errors.question && "border-danger"}`}
+                     placeholder="Question"
+                     onChange={handleFormChange}
+                     defaultValue={formData.question}
+                     style={{ height: "100px" }}></textarea>
+                  <label htmlFor="questionTextArea" style={{ color: "gray" }}>
+                     Question
+                  </label>
+               </div>
+               {errors.question && errorHelper()}
+
+               {/* CHOICE 1 */}
+               <h3 className="mt-4">Choices</h3>
+               <label htmlFor="choice1" className="mb-2 mt-3">
+                  Choice 1:
+               </label>
+               <div className="input-group">
+                  <input
+                     type="text"
+                     value={formData.choice1}
+                     name="choice1"
+                     onChange={handleFormChange}
+                     className={`form-control ${errors.choice1 && "border-danger"}`}
+                     id="choice1"
+                     placeholder="Enter choice value"
+                  />
+                  {errors.choice1 && errorAddOn()}
+               </div>
+               {errors.choice1 && errorHelper()}
+
+               {/* CHOICE 2 */}
+               <label htmlFor="choice2" className="mb-2 mt-3 d-block">
+                  Choice 2:
+               </label>
+               <div className="input-group">
+                  <input
+                     type="text"
+                     value={formData.choice2}
+                     name="choice2"
+                     onChange={handleFormChange}
+                     className={`form-control ${errors.choice2 && "border-danger"}`}
+                     id="choice2"
+                     placeholder="Enter choice value"
+                  />
+                  {errors.choice2 && errorAddOn()}
+               </div>
+               {errors.choice2 && errorHelper()}
+
+               {/* CHOICE 3 */}
+               <label htmlFor="choice3" className="mb-2 mt-3 d-block">
+                  Choice 3:
+               </label>
+               <div className="input-group">
+                  <input
+                     type="text"
+                     className={`form-control ${errors.choice3 && "border-danger"}`}
+                     value={formData.choice3}
+                     name="choice3"
+                     onChange={handleFormChange}
+                     id="choice3"
+                     placeholder="Enter choice value"
+                  />
+                  {errors.choice3 && errorAddOn()}
+               </div>
+               {errors.choice3 && errorHelper()}
+
+               {/* CHOICE 4 */}
+               <label htmlFor="choice4" className="mb-2 mt-3 d-block">
+                  Choice 4:
+               </label>
+               <div className="input-group">
+                  <input
+                     type="text"
+                     className={`form-control ${errors.choice4 && "border-danger"}`}
+                     value={formData.choice4}
+                     name="choice4"
+                     onChange={handleFormChange}
+                     id="choice4"
+                     placeholder="Enter choice value"
+                  />
+                  {errors.choice4 && errorAddOn()}
+               </div>
+               {errors.choice4 && errorHelper()}
+
+               {/* ANSWER */}
+               <label htmlFor="correct_answer" className="mb-2 mt-3 d-block">
+                  Correct Answer:
+               </label>
+               <select
+                  id="correct_answer"
+                  className={`form-select ${errors.answer && "border-danger"}`}
+                  value={formData.answer}
+                  name="answer"
+                  onChange={handleFormChange}>
+                  <option value="none" disabled hidden>
+                     Select an option
+                  </option>
+                  <option value={1}>Choice 1</option>
+                  <option value={2}>Choice 2</option>
+                  <option value={3}>Choice 3</option>
+                  <option value={4}>Choice 4</option>
+               </select>
+               {errors.answer && errorHelper()}
+
+               {/* POINTS */}
+               <label htmlFor="points_field" className="mb-2 mt-3 d-block">
+                  Points:
+               </label>
+               <div className="input-group">
+                  <input
+                     id="points_field"
+                     type="text"
+                     className={`form-control ${css.points_input} ${
+                        errors.points && "border-danger"
+                     }`}
+                     name="points"
+                     value={formData.points}
+                     onChange={handleTimeLimitInput}
+                  />
+                  {errors.points && errorAddOn()}
+               </div>
+               {errors.points && (
+                  <small className="text-danger">Invalid Input. Must be a positive integer.</small>
+               )}
+
+               {/* KNOWLEDGE DIMENSION */}
+               <label htmlFor="kd_field" className="mb-2 mt-5 d-block">
+                  Knowledge Dimension:
+               </label>
+               <select
+                  id="kd_field"
+                  name="kd"
+                  className={`form-select ${errors.kd && "border-danger"}`}
+                  value={formData.kd}
+                  onChange={handleFormChange}
+                  placeholder="select"
+                  aria-label="Default select example">
+                  <option value="none" disabled hidden>
+                     Select an option
+                  </option>
+                  <option value="factual">Factual</option>
+                  <option value="procedural">Procedural</option>
+                  <option value="metacognitive">Metacognitive</option>
+               </select>
+               {errors.kd && errorHelper()}
+
+               {/* COGNITIVE PROCESS DIMENSION */}
+               <label htmlFor="cpd_field" className="mb-2 mt-3 d-block">
+                  Cognitive Process Dimension:
+               </label>
+               <select
+                  id="cpd_field"
+                  name="cpd"
+                  className={`form-select ${errors.cpd && "border-danger"}`}
+                  value={formData.cpd}
+                  onChange={handleFormChange}>
+                  <option value="none" disabled hidden>
+                     Select an option
+                  </option>
+                  <option value="remember">Remember</option>
+                  <option value="understand">Understand</option>
+                  <option value="apply">Apply</option>
+                  <option value="analyze">Analyze</option>
+                  <option value="evaluate">Evaluate</option>
+                  <option value="create">Create</option>
+               </select>
+               {errors.cpd && errorHelper()}
+
+               {/* SUBMIT BUTTON */}
+               <div className="d-flex justify-content-end mb-5 mt-5">
+                  <button
+                     type="button"
+                     onClick={backToCreateExam}
+                     className="btn btn-primary me-3 px-4 py-2">
                      Cancel
-                  </Button>
-                  <Button
-                     variant="primary"
-                     onClick={() => {
-                        props.setisAddingQuestion(false);
-                     }}>
-                     Continue
-                  </Button>
-               </Modal.Footer>
-            </Modal>
-         </div>
-      </>
+                  </button>
+                  <button className="btn btn-primary px-4 py-2" type="submit">
+                     Submit
+                  </button>
+               </div>
+            </form>
+         </motion.div>
+
+         {/* MODAL FROM REACT-BOOTSTRAP LIBRARY */}
+         <Modal show={isShownModal} onHide={handleModalClose}>
+            <Modal.Header closeButton>
+               <Modal.Title>Discard changes?</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>Changes you made will not be saved once you leave this page.</Modal.Body>
+            <Modal.Footer>
+               <Button variant="secondary" onClick={handleModalClose}>
+                  Cancel
+               </Button>
+               <Button
+                  variant="primary"
+                  onClick={() => {
+                     props.setisAddingQuestion(false);
+                  }}>
+                  Continue
+               </Button>
+            </Modal.Footer>
+         </Modal>
+      </div>
    );
 }

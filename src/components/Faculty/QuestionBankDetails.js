@@ -8,7 +8,7 @@ export default function QuestionBankDetails() {
 
    React.useEffect(() => {
       if (!localStorage.getItem("token")) {
-         navigate("/login");
+         navigate("/login-register");
       }
    }, []);
 

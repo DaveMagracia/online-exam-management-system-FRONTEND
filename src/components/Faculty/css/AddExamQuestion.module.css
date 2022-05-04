@@ -2,6 +2,17 @@
    cursor: pointer;
 }
 
+.addquestion_root {
+   height: calc(100vh - 60px);
+   overflow-y: auto;
+   background-color: #ffffff;
+}
+
+.container_ {
+   max-width: 900px !important;
+   background-color: #ffffff;
+}
+
 .error_addon {
    color: white !important;
    background-color: #dc3545 !important;

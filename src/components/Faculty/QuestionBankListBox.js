@@ -95,7 +95,8 @@ export default function QuestionBankListBox(props) {
                <Modal.Title>Hold up!</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-               You cannot delete this bank at the moment. This bank is currently in use by an exam.
+               You cannot delete this bank at the moment. This bank is currently in use by a
+               published exam.
             </Modal.Body>
             <Modal.Footer>
                <Button variant="primary" onClick={handleCantDeleteModalClose}>
