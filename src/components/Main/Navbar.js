@@ -58,11 +58,18 @@ export default function Navbar(props) {
                            Home
                         </a>
                      </li> */}
-                     <li className="nav-item me-2">
+                     <li className="nav-item me-3">
                         <a
                            className={`${css.nav_button} btn btn-primary nav-link`}
                            onClick={goToLogin}>
-                           Get Started
+                           Sign In
+                        </a>
+                     </li>
+                     <li className="nav-item me-2">
+                        <a
+                           className={`${css.nav_button_outline} btn btn-outline-primary nav-link`}
+                           onClick={goToRegister}>
+                           Sign Up
                         </a>
                      </li>
                      {/* <li className="nav-item me-2">

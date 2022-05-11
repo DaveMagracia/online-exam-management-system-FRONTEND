@@ -8,14 +8,17 @@ import { FaArrowRight, FaHandPointUp } from "react-icons/fa";
 import { GiReceiveMoney } from "react-icons/gi";
 import { IoCalendar } from "react-icons/io5";
 import { CDBAnimation } from "cdbreact";
+import { CarouselProvider, Slider, Slide, ButtonBack, ButtonNext } from "pure-react-carousel";
+import "pure-react-carousel/dist/react-carousel.es.css";
+import { IoMdArrowDropleft, IoMdArrowDropright } from "react-icons/io";
 
 export default function Landing() {
    const navigate = useNavigate();
    const [navbarOpened, setNavbarOpened] = React.useState(false);
    const [triggerFeaturesAnim, setTriggerFeaturesAnim] = React.useState(false);
 
-   function login() {
-      navigate("/login-register");
+   function goToLogin() {
+      navigate("/login-register", { state: { name: "login" } });
    }
 
    function handleScrollEvent(event) {
@@ -63,7 +66,9 @@ export default function Landing() {
                            <h5 className={`${css.hero_small_text} mb-5 text-center text-lg-start`}>
                               A web-based online examination system
                            </h5>
-                           <button className={`${css.nav_button} btn btn-primary`} onClick={login}>
+                           <button
+                              className={`${css.nav_button} btn btn-primary`}
+                              onClick={goToLogin}>
                               Get Started <FaArrowRight size={16} className="ms-1" />
                            </button>
                         </motion.div>
@@ -185,101 +190,177 @@ export default function Landing() {
                   </section>
 
                   {/*LEARN MORE ABOUT WEBSITE*/}
-                  <section className={`${css.learn_more_container}`}>
-                     <h4 className="display-5 mb-2">About Us</h4>
+                  <section
+                     className={`${css.learn_more_container} d-flex flex-column justify-content-center pt-5`}>
+                     <h4 className="display-5 mb-2">About our website</h4>
                      <div className="container">
-                        <div className="row d-flex justify-content-center">
-                           {/* <div className="col-lg-6 p-4">
-                              <div className="img-fluid">
-                                 <img alt="" height="300px" width="300px" />
-                              </div>
-                              <button
-                                 type="button"
-                                 className="btn btn-outline-primary title-sm mt-3 mb-3">
-                                 Continue as Student
-                              </button>
-                           </div>
-                           <div className="col-lg-6 p-4">
-                              <div className="img-fluid animated">
-                                 <img alt="" height="300px" width="300px" />
-                              </div>
-                              <button
-                                 type="button"
-                                 className="btn btn-outline-primary justify-content-center title-sm mt-3 mb-3">
-                                 Continue as Teacher
-                              </button>
-                           </div> */}
-                           <div className="m-0 d-flex flex-column align-items-center">
+                        <div className="row d-flex justify-content-center ">
+                           <div
+                              className={`${css.about_us_container} m-0 d-flex flex-column align-items-center`}>
                               <p className={`${css.about_us_p1} ${css.feature_desc} m-0`}>
-                                 Sed fermentum, felis ut cursus varius, purus velit placerat tortor,
-                                 at faucibus elit purus posuere velit. Integer sit amet felis
-                                 ligula.
+                                 Welcome to Examplify! We make online examinations easier!
                               </p>
                               <p
                                  className={`${css.about_us_p2} ${css.feature_desc} mt-5 text-start`}>
-                                 Sed varius vel ligula non luctus. Donec sagittis rhoncus purus ut
-                                 fermentum. Donec volutpat purus quam, tincidunt venenatis risus
-                                 tincidunt sed. Curabitur quis risus lorem. Proin consequat mauris
-                                 fermentum massa dictum, id molestie turpis pharetra. Suspendisse at
-                                 tempus lacus.
+                                 Nowadays, people are more dependent on online products and
+                                 services, and even more during and after the pandemic. Since then,
+                                 almost every daily activities are conducted online. People have
+                                 started adapting technology to their lives even more. That is why
+                                 we built a website that provides service for online learning
+                                 particulary in conducting online examinations.
                                  <br />
                                  <br />
-                                 Sed quis nulla accumsan, cursus diam suscipit, congue sem. Proin
-                                 semper augue id ligula convallis, in tincidunt ipsum maximus. Morbi
-                                 semper ante in justo feugiat faucibus. Curabitur sollicitudin
-                                 tincidunt metus et ullamcorper. Maecenas cursus eleifend dui, id
-                                 sagittis erat blandit eu. Morbi sit amet sapien commodo, imperdiet
-                                 sapien a, convallis sem. Pellentesque sollicitudin commodo lacinia.
-                                 <br />
-                                 <br />
-                                 Proin aliquam ligula vel ligula pulvinar tincidunt. Suspendisse
-                                 potenti. Cras sit amet rutrum erat. Aliquam ultrices blandit
-                                 sapien, vitae pulvinar sem tincidunt vitae. Nam ultrices fermentum
-                                 nunc et porta. Quisque ullamcorper sapien congue lorem porttitor
-                                 volutpat. Donec id felis vitae arcu accumsan consequat. Praesent
-                                 nibh urna, viverra vel volutpat vel, mollis eu magna. Praesent
-                                 libero magna, volutpat vel ultrices malesuada, rutrum vel elit. In
-                                 luctus mi id magna tincidunt aliquet. Sed eu tortor nisl, eu
-                                 viverra mauris. Cras pellentesque ultricies volutpat. Sed
-                                 fermentum, felis ut cursus varius, purus velit placerat tortor, at
-                                 faucibus elit purus posuere velit. Integer sit amet felis ligula.
+                                 Students today have adapted to the online learning setup, so we
+                                 wanted them at least to make their online learning easier and
+                                 enjoyable, especially to those who are not very literate when it
+                                 comes to the latest technologies. Same applies to the side of the
+                                 teachers. It is has not been very easy for all of us. Teachers need
+                                 to work twice as hard only to share their knowledge for their
+                                 students and at the same time, they needed to adapt to the new mode
+                                 of teaching as online teaching is new almost to every teachers out
+                                 there. With this website, we hope that it would make online
+                                 learning a lot more enjoyable
                               </p>
                            </div>
                         </div>
                      </div>
                   </section>
 
-                  <section className={`${css.learn_more_container}`}>
+                  <section className={`${css.our_team_container}`}>
                      <h4 className="display-5 mb-2">Our Team</h4>
                      <div className="container">
                         <div className="row d-flex justify-content-center">
-                           {/* <div className="col-lg-6 p-4">
-                              <div className="img-fluid">
-                                 <img alt="" height="300px" width="300px" />
-                              </div>
-                              <button
-                                 type="button"
-                                 className="btn btn-outline-primary title-sm mt-3 mb-3">
-                                 Continue as Student
-                              </button>
-                           </div>
-                           <div className="col-lg-6 p-4">
-                              <div className="img-fluid animated">
-                                 <img alt="" height="300px" width="300px" />
-                              </div>
-                              <button
-                                 type="button"
-                                 className="btn btn-outline-primary justify-content-center title-sm mt-3 mb-3">
-                                 Continue as Teacher
-                              </button>
-                           </div> */}
                            <div className="m-0 d-flex flex-column align-items-center">
                               <p className={`${css.about_us_p1} ${css.feature_desc} m-0`}>
                                  Meet the team behind Examplify
                               </p>
-                              <div class="container mt-5">
-                                 <div class="row p-3">
-                                    <div class={`${css.team_image} col p-0`}>
+                              <div className="container mt-5">
+                                 <CarouselProvider
+                                    totalSlides={2}
+                                    naturalSlideWidth={100}
+                                    naturalSlideHeight={125}
+                                    className="d-flex align-items-center">
+                                    <ButtonBack
+                                       className={`${css.carousel_btn} btn btn-primary me-2`}>
+                                       <IoMdArrowDropleft className={css.carousel_btn_icon_left} />
+                                    </ButtonBack>
+
+                                    <Slider className={css.slider_container}>
+                                       <Slide index={0}>
+                                          <div className="d-flex">
+                                             <div className={`${css.team_image} col p-0`}>
+                                                <div className={css.img_container}>
+                                                   <img src="/images/res/Marleigh1.jpg" alt="" />
+                                                </div>
+                                                <div className={`${css.lower_sec} text-start mb-3`}>
+                                                   <h5>Mereniza Marleigh Tolentino</h5>
+                                                   <p className={css.member_role}>Project Leader</p>
+                                                   {/* <p>
+                                                      Lorem ipsum dolor sit amet, consectetur
+                                                      adipiscing elit. Maecenas ac ligula eu justo
+                                                      convallis fringilla.
+                                                   </p> */}
+                                                </div>
+                                             </div>
+                                             <div className={`${css.team_image} col p-0`}>
+                                                <div className={css.img_container}>
+                                                   <img src="/images/res/Alliah1.jpg" alt="" />
+                                                </div>
+                                                <div className={`${css.lower_sec} text-start mb-3`}>
+                                                   <h5>Alliah Baluyut</h5>
+                                                   <p className={css.member_role}>
+                                                      Frontend Developer
+                                                   </p>
+                                                   {/* <p>
+                                                      Lorem ipsum dolor sit amet, consectetur
+                                                      adipiscing elit. Maecenas ac ligula eu justo
+                                                      convallis fringilla.
+                                                   </p> */}
+                                                </div>
+                                             </div>
+                                             <div className={`${css.team_image} col p-0`}>
+                                                <div className={css.img_container}>
+                                                   <img src="/images/res/Josie1.jpg" alt="" />
+                                                </div>
+                                                <div className={`${css.lower_sec} text-start mb-3`}>
+                                                   <h5>Josie De Jesus</h5>
+                                                   <p className={css.member_role}>UI/UX Designer</p>
+                                                   {/* <p>
+                                                      Lorem ipsum dolor sit amet, consectetur
+                                                      adipiscing elit. Maecenas ac ligula eu justo
+                                                      convallis fringilla.
+                                                   </p> */}
+                                                </div>
+                                             </div>
+                                          </div>
+                                       </Slide>
+                                       <Slide index={1}>
+                                          <div className="d-flex">
+                                             <div className={`${css.team_image} col p-0`}>
+                                                <div className={css.img_container}>
+                                                   <img src="/images/res/Jhezmark1.jpg" alt="" />
+                                                </div>
+                                                <div className={`${css.lower_sec} text-start mb-3`}>
+                                                   <h5>Jhezmark Hernandez</h5>
+                                                   <p className={css.member_role}>
+                                                      Lead Programmer
+                                                   </p>
+                                                   {/* <p>
+                                                      Lorem ipsum dolor sit amet, consectetur
+                                                      adipiscing elit. Maecenas ac ligula eu justo
+                                                      convallis fringilla.
+                                                   </p> */}
+                                                </div>
+                                             </div>
+                                             <div className={`${css.team_image} col p-0`}>
+                                                <div className={css.img_container}>
+                                                   <img src="/images/res/Peter1.jpg" alt="" />
+                                                </div>
+                                                <div className={`${css.lower_sec} text-start mb-3`}>
+                                                   <h5>Peter Paul Briones</h5>
+                                                   <p className={css.member_role}>
+                                                      Backend Developer
+                                                   </p>
+                                                   {/* <p>
+                                                      Lorem ipsum dolor sit amet, consectetur
+                                                      adipiscing elit. Maecenas ac ligula eu justo
+                                                      convallis fringilla.
+                                                   </p> */}
+                                                </div>
+                                             </div>
+                                             <div className={`${css.team_image} col p-0`}>
+                                                <div className={css.img_container}>
+                                                   <img
+                                                      src="/images/res/Dave1.jpg"
+                                                      alt=""
+                                                      className={css.img_dave}
+                                                   />
+                                                </div>
+                                                <div className={`${css.lower_sec} text-start mb-3`}>
+                                                   <h5>Marc David Magracia</h5>
+                                                   <p className={css.member_role}>
+                                                      Lead Programmer
+                                                   </p>
+                                                   {/* <p>
+                                                      Lorem ipsum dolor sit amet, consectetur
+                                                      adipiscing elit. Maecenas ac ligula eu justo
+                                                      convallis fringilla.
+                                                   </p> */}
+                                                </div>
+                                             </div>
+                                          </div>
+                                       </Slide>
+                                    </Slider>
+
+                                    <ButtonNext
+                                       className={`${css.carousel_btn} btn btn-primary ms-2`}>
+                                       <IoMdArrowDropright
+                                          className={css.carousel_btn_icon_right}
+                                       />
+                                    </ButtonNext>
+                                 </CarouselProvider>
+                                 {/* <div className="row p-3">
+                                    <div className={`${css.team_image} col p-0`}>
                                        <div className={css.img_container}></div>
                                        <div className="text-center mt-4 mb-3 p-3">
                                           <h5>Team member 1</h5>
@@ -290,7 +371,7 @@ export default function Landing() {
                                           </p>
                                        </div>
                                     </div>
-                                    <div class={`${css.team_image} col p-0`}>
+                                    <div className={`${css.team_image} col p-0`}>
                                        <div className={css.img_container}></div>
                                        <div className="text-center mt-4 mb-3 p-3">
                                           <h5>Team member 2</h5>
@@ -301,7 +382,7 @@ export default function Landing() {
                                           </p>
                                        </div>
                                     </div>
-                                    <div class={`${css.team_image} col p-0`}>
+                                    <div className={`${css.team_image} col p-0`}>
                                        <div className={css.img_container}></div>
                                        <div className="text-center mt-4 mb-3 p-3">
                                           <h5>Team member 3</h5>
@@ -312,7 +393,7 @@ export default function Landing() {
                                           </p>
                                        </div>
                                     </div>
-                                 </div>
+                                 </div> */}
                               </div>
                            </div>
                         </div>

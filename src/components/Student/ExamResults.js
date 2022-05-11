@@ -81,8 +81,8 @@ export default function ExamResults() {
       setFormattedTime(finalTimeFormat);
    }
 
-   function backToDashboard() {
-      navigate("/");
+   function backToDetails() {
+      navigate(-1);
    }
 
    React.useEffect(() => {
@@ -107,7 +107,7 @@ export default function ExamResults() {
                      exit={{ opacity: 0 }}
                      transition={{ duration: 0.2 }}
                      className={`${css.examDetails_loading} d-flex flex-column align-items-center justify-content-center min-vh-100`}>
-                     <PuffLoader loading={isLoading} color="#9c2a22" size={80} />
+                     <PuffLoader loading={isLoading} color="#006ec9" size={80} />
                      <p className="lead mt-3">&nbsp;Loading...</p>
                   </motion.div>
                )}
@@ -189,14 +189,19 @@ export default function ExamResults() {
                                        Question {index + 1} of {exam.totalItems}
                                     </h5>
                                     <small className="text-muted float-end">
-                                       {results[index]
-                                          ? questions[index].points +
-                                            (questions[index].points === 1 ? " point" : " points")
-                                          : "0 points"}
+                                       {results[index] ? questions[index].points : "0"}/
+                                       {questions[index].points}
+                                       {questions[index].points === 1 ? " point" : " points"}
                                     </small>
                                  </div>
 
-                                 <p className="mt-2">{question.question}</p>
+                                 <div
+                                    className={`${css.question_container} mt-2`}
+                                    dangerouslySetInnerHTML={{
+                                       __html: question.question,
+                                    }}
+                                 />
+                                 {/* <p className="mt-2">{question.question}</p> */}
                                  <div className="choices mt-4">
                                     {question.shuffledChoices.map((choice) => {
                                        if (results[index]) {
@@ -287,8 +292,8 @@ export default function ExamResults() {
                            <button
                               type="button"
                               className="btn btn-primary px-3 py-2"
-                              onClick={backToDashboard}>
-                              Back to Dashboard
+                              onClick={backToDetails}>
+                              Back to Exam Details
                            </button>
                         </div>
                      </div>

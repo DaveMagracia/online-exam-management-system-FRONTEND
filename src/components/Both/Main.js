@@ -101,7 +101,7 @@ export default function Main() {
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.5 }}
                         className={`${css.loading} d-flex flex-column align-items-center justify-content-center`}>
-                        <PuffLoader loading={isLoading} color="#9c2a22" size={80} />
+                        <PuffLoader loading={isLoading} color="#006ec9" size={80} />
                         <p className="lead mt-3">&nbsp;Logging In...</p>
                      </motion.div>
                   )}

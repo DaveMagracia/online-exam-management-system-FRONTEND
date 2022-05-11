@@ -160,6 +160,17 @@ export default function QuestionList(props) {
       props.removeQuestionError();
    }
 
+   function removeHTMLTagsFromQuestion(str) {
+      // source: geeksforgeeks.org/how-to-strip-out-html-tags-from-a-string-using-javascript/#:~:text=To%20strip%20out%20all%20the,innerText%20property%20from%20HTML%20DOM.
+      if (str === null || str === "") return false;
+      else str = str.toString();
+
+      // Regular expression to identify HTML tags in
+      // the input string. Replacing the identified
+      // HTML tag with a null string.
+      return str.replace(/(<([^>]+)>)/gi, "");
+   }
+
    //will contain the elements based on the "questions" state from CreateExam component
    function getQuestionList() {
       //shows only if questions are empty
@@ -239,7 +250,9 @@ export default function QuestionList(props) {
                         <div
                            className="card p-3 px-4 mb-4 d-flex flex-row justify-content-between"
                            key={i + 1}>
-                           <p className="m-0 me-3 text-truncate w-75">{val.question}</p>
+                           <p className="m-0 me-3 text-truncate w-75">
+                              {removeHTMLTagsFromQuestion(val.question)}
+                           </p>
                            <div className="">
                               <span
                                  className={`${css.action_button} me-3`}

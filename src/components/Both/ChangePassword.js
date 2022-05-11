@@ -244,7 +244,7 @@ export default function ChangePassword(props) {
             {loading ? (
                <div
                   className={`${css.changePass_root} d-flex flex-column align-items-center justify-content-center`}>
-                  <PuffLoader loading={loading} color="#9c2a22" size={80} />
+                  <PuffLoader loading={loading} color="#006ec9" size={80} />
                   <p className="lead mt-4">&nbsp;&nbsp;Updating Password...</p>
                </div>
             ) : (

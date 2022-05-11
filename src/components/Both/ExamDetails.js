@@ -16,6 +16,8 @@ import { v1 as createId } from "uuid";
 import { FaUser, FaUserCheck, FaUserTimes } from "react-icons/fa";
 import { BsFileEarmarkCheckFill, BsFileEarmarkExcelFill } from "react-icons/bs";
 import { GoGraph } from "react-icons/go";
+import { IoMdDownload } from "react-icons/io";
+import { CSVLink } from "react-csv";
 
 import { useReactToPrint } from "react-to-print";
 import { PrintTOS } from "../Faculty/PrintTOS";
@@ -50,6 +52,16 @@ export default function ExamDetails() {
    const [exam, setExam] = React.useState({});
    const [questions, setQuestions] = React.useState([]);
    const [tableObject, setTableObject] = React.useState({});
+   const [showFullName, setShowFullName] = React.useState(true);
+   const [results, setResults] = React.useState(true);
+   const [questionsSheet, setQuestionsSheet] = React.useState();
+   const [answersSheet, setAnswersSheet] = React.useState();
+
+   const [spreadSheetResults, setSpreadSheetResults] = React.useState([
+      //Headers
+      ["Username", "Student ID/Number", "Full Name", "                               "],
+      // ["val.username", "val.basicInfo.studentNumId ? val.basicInfo.studentNumId ", "val.fullname"],
+   ]);
 
    const printTOS = useReactToPrint({
       content: () => componentToPrintRef.current,
@@ -305,6 +317,7 @@ export default function ExamDetails() {
 
                setStudentsSubmitted(tempSubmitted);
                setStudentsUnanswered(tempUnanswered);
+               if (tempSubmitted.length > 0) getResultsData(examData_.examCode);
 
                setTimeout(() => {
                   setIsLoading(false);
@@ -314,6 +327,81 @@ export default function ExamDetails() {
          .catch((err) => {
             console.log(err);
             navigate("/");
+         });
+   }
+
+   function removeHTMLTagsFromQuestion(str) {
+      // source: geeksforgeeks.org/how-to-strip-out-html-tags-from-a-   string-using-javascript/#:~:text=To%20strip%20out%20all%20the,innerText%20property%20from%20HTML%20DOM.
+      if (str === null || str === "") return false;
+      else str = str.toString();
+      // Regular expression to identify HTML tags in
+      // the input string. Replacing the identified
+      // HTML tag with a null string.
+      return str.replace(/(<([^>]+)>)/gi, "");
+   }
+
+   async function getResultsData(examCode) {
+      await axios({
+         method: "GET",
+         headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+         },
+         baseURL: `http://localhost:5000/exams/results/${examCode}`,
+      })
+         .then((res) => {
+            console.log(res.data.results);
+
+            setResults(res.data.results);
+            var firstUserQuesOrder = []; //variable to be used in spreadsheet to know the order of questions
+            //add question headers to previous value of this state
+            setSpreadSheetResults((prevVal) => {
+               //will contain the array of headers + questions without html tags
+               let headers_ = res.data.results[0].questions.map((val) => {
+                  firstUserQuesOrder.push(val.question);
+                  return removeHTMLTagsFromQuestion(val.question).trim().length === 0
+                     ? "No question title"
+                     : removeHTMLTagsFromQuestion(val.question).substring(0, 15) + "..."; //add string truncation. Limit to 15 chars so that the whole text will not be shown
+               });
+
+               return [[...prevVal[0], ...headers_]];
+            });
+
+            // set fields for each user
+            setSpreadSheetResults((prevVal) => {
+               return [
+                  ...prevVal,
+                  ...res.data.results.map((userData) => {
+                     return [
+                        userData.username,
+                        userData.basicInfo.studentNumId
+                           ? userData.basicInfo.studentNumId
+                           : "Not Specified",
+                        userData.fullname,
+                        "                               ", //whitespace
+                        ...firstUserQuesOrder.map((firstUserQuesVal) => {
+                           //get original index of the question
+                           //every user has a randomized set of questions
+                           let origQuestionIndex = userData.questions.findIndex(
+                              (currUserQues) => currUserQues.question === firstUserQuesVal
+                           );
+
+                           let currQuestionChoices =
+                              userData.questions[origQuestionIndex].shuffledChoices;
+
+                           return currQuestionChoices[
+                              currQuestionChoices.findIndex(
+                                 (val) =>
+                                    val.index === userData.answers[`question${origQuestionIndex}`]
+                              )
+                           ].choice;
+                        }),
+                     ];
+                  }),
+               ];
+            });
+         })
+         .catch((err) => {
+            console.log(err);
          });
    }
 
@@ -330,6 +418,10 @@ export default function ExamDetails() {
       finalTimeFormat += `${seconds ? seconds : 0}s `;
 
       return finalTimeFormat;
+   }
+
+   function toggleFullName() {
+      setShowFullName((prevVal) => !prevVal);
    }
 
    function getExamStatus(status) {
@@ -417,6 +509,25 @@ export default function ExamDetails() {
       }
    }
 
+   function getItemsAndPoints() {
+      let items = examData.totalItems;
+      // let points = examData.totalPoints === 0 ? 1 : examData.totalPoints;
+      let points = examData.totalPoints === 0 ? examData.totalItems : examData.totalPoints;
+
+      items += examData.totalItems === 1 ? " item" : " items";
+
+      if (!examData.isQuestionBankEmpty) {
+         //this character will only show if the exam includes a question bank
+         //this is because since the questions are randomly pulled on every instance of the exam,
+         //there is no way to identify what the total points of the exam will be
+         points += "+ points";
+      } else {
+         points += examData.totalPoints === 1 ? " point" : " points";
+      }
+
+      return `${items} ⸱ ${points}`;
+   }
+
    React.useEffect(() => {
       document.title = `Exam Details ${
          examData.title && "- " + examData.title
@@ -442,7 +553,7 @@ export default function ExamDetails() {
                      exit={{ opacity: 0 }}
                      transition={{ duration: 0.2 }}
                      className={`${css.examDetails_loading} d-flex flex-column align-items-center justify-content-center`}>
-                     <PuffLoader loading={isLoading} color="#9c2a22" size={80} />
+                     <PuffLoader loading={isLoading} color="#006ec9" size={80} />
                      <p className="lead mt-3">&nbsp;Loading...</p>
                   </motion.div>
                )}
@@ -477,11 +588,12 @@ export default function ExamDetails() {
                                  )}
 
                                  <p className="d-inline m-0">
-                                    {examData.totalItems}{" "}
+                                    {/* {examData.totalItems}{" "}
                                     {examData.totalItems === 1 ? "item" : "items"} ⸱{" "}
                                     {examData.totalPoints}
                                     {!examData.isQuestionBankEmpty && "+"}{" "}
-                                    {examData.totalPoints === 1 ? "point" : "points"}
+                                    {examData.totalPoints === 1 ? "point" : "points"} */}
+                                    {getItemsAndPoints()}
                                  </p>
                                  <p className="d-inline">
                                     Passing Score: {examData.passingScore} points
@@ -509,8 +621,16 @@ export default function ExamDetails() {
                                        }}
                                        disabled={
                                           // enable button only when exam is in open state
-                                          examData.status !== "open" ||
-                                          registeredExamStatus === "attempted"
+                                          (examData.status === "closed" &&
+                                             (registeredExamStatus === "unanswered" ||
+                                                registeredExamStatus === "attempted")) ||
+                                          (examData.status === "open" &&
+                                             registeredExamStatus === "attempted") ||
+                                          (examData.status !== "closed" &&
+                                             examData.status !== "open" &&
+                                             (registeredExamStatus === "attempted" ||
+                                                registeredExamStatus === "unanswered" ||
+                                                registeredExamStatus === "submitted"))
                                              ? true
                                              : false
                                        }>
@@ -651,16 +771,39 @@ export default function ExamDetails() {
 
                         {/* STUDENT LIST SECTION */}
                         <div className="py-4 px-3 my-5">
-                           <h5 className="mb-4">
-                              Students{" "}
-                              <small className="text-muted">
-                                 (
-                                 {user && user.userType === "teacher"
-                                    ? studentsSubmitted.length + studentsUnanswered.length
-                                    : studentList.length}
-                                 )
-                              </small>
-                           </h5>
+                           <div className="d-flex justify-content-between">
+                              <h5 className="mb-4">
+                                 Students{" "}
+                                 <small className="text-muted">
+                                    (
+                                    {user && user.userType === "teacher"
+                                       ? studentsSubmitted.length + studentsUnanswered.length
+                                       : studentList.length}
+                                    )
+                                 </small>
+                              </h5>
+
+                              <div>
+                                 <input
+                                    id="fullNameInput"
+                                    type="checkbox"
+                                    defaultChecked={showFullName}
+                                    onChange={toggleFullName}
+                                    className="me-2"
+                                 />
+                                 <label htmlFor="fullNameInput">Show Full Name</label>
+                                 {user &&
+                                    user.userType === "teacher" &&
+                                    studentsSubmitted.length > 0 && (
+                                       <CSVLink
+                                          filename={`${examData.title} results`}
+                                          data={spreadSheetResults}
+                                          className="btn btn-success ms-4">
+                                          <IoMdDownload className="me-1" /> Download Spreadsheet
+                                       </CSVLink>
+                                    )}
+                              </div>
+                           </div>
 
                            {/* THIS TABLE IS ONLY SHOWN ON FACULTY SIDE */}
                            {user && user.userType === "teacher" && (
@@ -676,137 +819,175 @@ export default function ExamDetails() {
                                  ) : (
                                     <>
                                        {/* TABLE OF SUBMITTED STUDENTS */}
-                                       {examData.status === "open" && studentsSubmitted.length > 0 && (
-                                          <div className="table-responsive mt-4">
-                                             <table className="table">
-                                                <tbody>
-                                                   <tr className={css.tr_first}>
-                                                      <th scope="col">Student Name</th>
-                                                      <th scope="col">Passed/Failed</th>
-                                                      <th scope="col">Score</th>
-                                                      <th scope="col">Duration</th>
-                                                      <th scope="col">Submitted on</th>
-                                                      <th scope="col"></th>
-                                                   </tr>
-
-                                                   {studentsSubmitted.map((student, i) => (
-                                                      <tr
-                                                         key={createId()}
-                                                         className={`${css.tr_main}`}>
-                                                         {/* TR IS A SINGLE ROW */}
-                                                         <td scope="row" className="align-middle">
-                                                            <div className="d-flex align-items-center ms-3">
-                                                               <div
-                                                                  className={
-                                                                     css.student_image
-                                                                  }></div>
-                                                               <span className="ms-3 fw-bold">
-                                                                  {student.username}
-                                                               </span>
-                                                            </div>
-                                                         </td>
-
-                                                         {/* details of students who already have submitted */}
-
-                                                         <td className="align-middle">
-                                                            {student.totalScore >=
-                                                            student.passingScore ? (
-                                                               <span className="badge rounded-pill bg-success">
-                                                                  Passed
-                                                               </span>
-                                                            ) : (
-                                                               <span className="badge rounded-pill bg-danger">
-                                                                  Failed
-                                                               </span>
-                                                            )}
-                                                         </td>
-                                                         <td className="align-middle">
-                                                            <span
-                                                               className={`${
-                                                                  student.totalScore >=
-                                                                  student.passingScore
-                                                                     ? "text-success"
-                                                                     : "text-danger"
-                                                               } text-success fw-bold`}>
-                                                               {student.totalScore}/
-                                                               {student.totalPoints}
-                                                               <span className="ms-1">
-                                                                  (
-                                                                  {getAverageScore(
-                                                                     student.totalScore,
-                                                                     student.totalPoints
-                                                                  )}
-                                                                  %)
-                                                               </span>
-                                                            </span>
-                                                         </td>
-                                                         <td className="align-middle">
-                                                            <span>
-                                                               {formatTime(
-                                                                  (new Date(
-                                                                     student.finishedTime
-                                                                  ).getTime() -
-                                                                     new Date(
-                                                                        student.startedTime
-                                                                     ).getTime()) /
-                                                                     1000
-                                                               )}
-                                                            </span>
-                                                         </td>
-                                                         <td className="align-middle">
-                                                            <span>
-                                                               {formatDate(student.finishedTime)}
-                                                            </span>
-                                                         </td>
-                                                         <td className="align-middle">
-                                                            <span
-                                                               className={`${css.details_link} text-decoration-none text-primary`}
-                                                               onClick={() =>
-                                                                  goToStudentExamResults(
-                                                                     student.user
-                                                                  )
-                                                               }>
-                                                               View Results
-                                                            </span>
-                                                         </td>
+                                       {(examData.status === "open" ||
+                                          examData.status === "closed") &&
+                                          studentsSubmitted.length > 0 && (
+                                             <div className="table-responsive mt-4">
+                                                <table className="table">
+                                                   <tbody>
+                                                      <tr className={css.tr_first}>
+                                                         <th scope="col">Student Name</th>
+                                                         <th scope="col">Passed/Failed</th>
+                                                         <th scope="col">Score</th>
+                                                         <th scope="col">Duration</th>
+                                                         <th scope="col">Submitted on</th>
+                                                         <th scope="col"></th>
                                                       </tr>
-                                                   ))}
-                                                </tbody>
-                                             </table>
-                                          </div>
-                                       )}
+
+                                                      {studentsSubmitted.map((student, i) => (
+                                                         <tr
+                                                            key={createId()}
+                                                            className={`${css.tr_main}`}>
+                                                            {/* TR IS A SINGLE ROW */}
+                                                            <td
+                                                               scope="row"
+                                                               className="align-middle">
+                                                               <div className="d-flex align-items-center ms-3">
+                                                                  <div
+                                                                     className={
+                                                                        css.student_image_container
+                                                                     }>
+                                                                     <img
+                                                                        className={
+                                                                           css.student_image
+                                                                        }
+                                                                        src={
+                                                                           !!student.profilePicture
+                                                                              ? `/images/profilePictures/${student.profilePicture}`
+                                                                              : `/images/profilePictures/no_profile_picture.png`
+                                                                        }
+                                                                        alt="profPic"
+                                                                     />
+                                                                  </div>
+
+                                                                  <span className="ms-3 fw-bold">
+                                                                     {showFullName
+                                                                        ? student.fullname
+                                                                        : student.username}
+                                                                  </span>
+                                                               </div>
+                                                            </td>
+
+                                                            {/* details of students who already have submitted */}
+
+                                                            <td className="align-middle">
+                                                               {student.totalScore >=
+                                                               student.passingScore ? (
+                                                                  <span className="badge rounded-pill bg-success">
+                                                                     Passed
+                                                                  </span>
+                                                               ) : (
+                                                                  <span className="badge rounded-pill bg-danger">
+                                                                     Failed
+                                                                  </span>
+                                                               )}
+                                                            </td>
+                                                            <td className="align-middle">
+                                                               <span
+                                                                  className={`${
+                                                                     student.totalScore >=
+                                                                     student.passingScore
+                                                                        ? "text-success"
+                                                                        : "text-danger"
+                                                                  } text-success fw-bold`}>
+                                                                  {student.totalScore}/
+                                                                  {student.totalPoints}
+                                                                  <span className="ms-1">
+                                                                     (
+                                                                     {getAverageScore(
+                                                                        student.totalScore,
+                                                                        student.totalPoints
+                                                                     )}
+                                                                     %)
+                                                                  </span>
+                                                               </span>
+                                                            </td>
+                                                            <td className="align-middle">
+                                                               <span>
+                                                                  {formatTime(
+                                                                     (new Date(
+                                                                        student.finishedTime
+                                                                     ).getTime() -
+                                                                        new Date(
+                                                                           student.startedTime
+                                                                        ).getTime()) /
+                                                                        1000
+                                                                  )}
+                                                               </span>
+                                                            </td>
+                                                            <td className="align-middle">
+                                                               <span>
+                                                                  {formatDate(student.finishedTime)}
+                                                               </span>
+                                                            </td>
+                                                            <td className="align-middle">
+                                                               <span
+                                                                  className={`${css.details_link} text-decoration-none text-primary`}
+                                                                  onClick={() =>
+                                                                     goToStudentExamResults(
+                                                                        student.user
+                                                                     )
+                                                                  }>
+                                                                  View Results
+                                                               </span>
+                                                            </td>
+                                                         </tr>
+                                                      ))}
+                                                   </tbody>
+                                                </table>
+                                             </div>
+                                          )}
 
                                        {/* TABLE OF STUDENTS WHO HAVE NOT ANSWERED THE EXAM YET */}
-                                       {studentsUnanswered.length > 0 && (
-                                          <div className="table-responsive mt-4">
-                                             {examData.status === "open" && (
-                                                <span className="text-black-50">Unanswered</span>
-                                             )}
+                                       {(examData.status === "open" ||
+                                          examData.status === "closed") &&
+                                          studentsUnanswered.length > 0 && (
+                                             <div className="table-responsive mt-4">
+                                                {examData.status === "open" && (
+                                                   <span className="text-black-50">Unanswered</span>
+                                                )}
 
-                                             <table className="table mt-3">
-                                                <tbody>
-                                                   {studentsUnanswered.map((student, i) => (
-                                                      <tr
-                                                         key={createId()}
-                                                         className={`${css.tr_main}`}>
-                                                         {/* TR IS A SINGLE ROW */}
-                                                         <td scope="row" className="align-middle">
-                                                            <div className="d-flex align-items-center ms-3">
-                                                               <div
-                                                                  className={
-                                                                     css.student_image
-                                                                  }></div>
-                                                               <span className="ms-3 fw-bold">
-                                                                  {student.username}
-                                                               </span>
-                                                            </div>
-                                                         </td>
-                                                      </tr>
-                                                   ))}
-                                                </tbody>
-                                             </table>
-                                          </div>
-                                       )}
+                                                <table className="table mt-3">
+                                                   <tbody>
+                                                      {studentsUnanswered.map((student, i) => (
+                                                         <tr
+                                                            key={createId()}
+                                                            className={`${css.tr_main}`}>
+                                                            {/* TR IS A SINGLE ROW */}
+                                                            <td
+                                                               scope="row"
+                                                               className="align-middle">
+                                                               <div className="d-flex align-items-center ms-3">
+                                                                  <div
+                                                                     className={
+                                                                        css.student_image_container
+                                                                     }>
+                                                                     <img
+                                                                        className={
+                                                                           css.student_image
+                                                                        }
+                                                                        src={
+                                                                           !!student.profilePicture
+                                                                              ? `/images/profilePictures/${student.profilePicture}`
+                                                                              : `/images/profilePictures/no_profile_picture.png`
+                                                                        }
+                                                                        alt="profPic"
+                                                                     />
+                                                                  </div>
+
+                                                                  <span className="ms-3 fw-bold">
+                                                                     {showFullName
+                                                                        ? student.fullname
+                                                                        : student.username}
+                                                                  </span>
+                                                               </div>
+                                                            </td>
+                                                         </tr>
+                                                      ))}
+                                                   </tbody>
+                                                </table>
+                                             </div>
+                                          )}
                                        {/* END OF FACULTY TABLE */}
                                     </>
                                  )}
@@ -823,9 +1004,22 @@ export default function ExamDetails() {
                                              {/* TR IS A SINGLE ROW */}
                                              <td scope="row" className="align-middle">
                                                 <div className="d-flex align-items-center ms-3">
-                                                   <div className={css.student_image}></div>
+                                                   <div className={css.student_image_container}>
+                                                      <img
+                                                         className={css.student_image}
+                                                         src={
+                                                            !!student.profilePicture
+                                                               ? `/images/profilePictures/${student.profilePicture}`
+                                                               : `/images/profilePictures/no_profile_picture.png`
+                                                         }
+                                                         alt="profPic"
+                                                      />
+                                                   </div>
+
                                                    <span className="ms-3 fw-bold">
-                                                      {student.username}
+                                                      {showFullName
+                                                         ? student.fullname
+                                                         : student.username}
                                                    </span>
                                                 </div>
                                              </td>

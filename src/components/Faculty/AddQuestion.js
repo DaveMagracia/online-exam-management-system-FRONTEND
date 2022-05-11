@@ -6,6 +6,10 @@ import { MdWarning } from "react-icons/md";
 import { Modal, Button } from "react-bootstrap";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { Editor } from "react-draft-wysiwyg";
+import { EditorState, convertToRaw, ContentState, convertFromHTML } from "draft-js";
+import draftToHtml from "draftjs-to-html";
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 //library to create unique ids for the questions
 //NOTE: the uuid generated is only stored locally, it is different from the id on the database
 //its purpose is to identify if the question already exists since
@@ -17,6 +21,7 @@ import { v1 as createId } from "uuid";
 export default function AddQuestion(props) {
    const navigate = useNavigate();
    const { user, setUser } = useContext(UserContext);
+   const [editorState, setEditorState] = React.useState(EditorState.createEmpty());
 
    const [formData, setFormData] = React.useState({
       question: "",
@@ -89,7 +94,8 @@ export default function AddQuestion(props) {
    function checkEmptyFields() {
       let isEmpty = { ...errors };
 
-      isEmpty.question = formData.question ? false : true;
+      // isEmpty.question = formData.question ? false : true;
+      isEmpty.question = formData.question === `<p></p>\n` ? false : true;
       isEmpty.choice1 = formData.choice1 ? false : true;
       isEmpty.choice2 = formData.choice2 ? false : true;
       isEmpty.choice3 = formData.choice3 ? false : true;
@@ -107,7 +113,8 @@ export default function AddQuestion(props) {
    function validateForm() {
       let tempErrors = { ...errors };
 
-      tempErrors.question = formData.question ? false : true;
+      // tempErrors.question = formData.question ? false : true;
+      tempErrors.question = formData.question === `<p></p>\n` ? true : false;
       tempErrors.choice1 = formData.choice1 ? false : true;
       tempErrors.choice2 = formData.choice2 ? false : true;
       tempErrors.choice3 = formData.choice3 ? false : true;
@@ -203,6 +210,11 @@ export default function AddQuestion(props) {
                kd: currentQuestion.kd,
                points: currentQuestion.points,
             });
+            setEditorState(
+               EditorState.createWithContent(
+                  ContentState.createFromBlockArray(convertFromHTML(currentQuestion.question))
+               )
+            );
          }
       }
    }, []);
@@ -231,6 +243,22 @@ export default function AddQuestion(props) {
       }
    });
 
+   React.useEffect(() => {
+      handleRichTextChange(draftToHtml(convertToRaw(editorState.getCurrentContent())));
+   }, [editorState]);
+
+   function handleRichTextChange(newValue) {
+      setErrors((prevVal) => ({
+         ...prevVal,
+         question: false,
+      }));
+
+      setFormData((prevVal) => ({
+         ...prevVal,
+         question: newValue,
+      }));
+   }
+
    return (
       <div className={`${css.addquestion_root}`}>
          {/* <FacultyNavbar username={user ? user.username : ""} /> */}
@@ -249,9 +277,38 @@ export default function AddQuestion(props) {
             </div>
 
             <form onSubmit={submitQuestion}>
-               {/* TITLE INPUT */}
-               <div className="form-floating mt-4">
-                  <textarea
+               {/* QUESTION TITLE INPUT */}
+               <div
+                  className="editor mt-3"
+                  id="questionTextArea" //put id and name. this will be used for scrolling effect when there is error
+                  name="question">
+                  {/* <RichTextEditor
+                        questionValue={formData.question}
+                        onChangeHandler={handleRichTextChange}
+                        isError={errors.question}
+                     /> */}
+                  <Editor
+                     editorState={editorState}
+                     wrapperClassName={`${css.wrapper} ${props.isError && css.error}`}
+                     toolbarClassName={css.toolbarWrapper}
+                     editorClassName={css.editorWrapper}
+                     onEditorStateChange={setEditorState}
+                     toolbar={{
+                        //specify which toolbar buttons are included
+                        options: [
+                           "inline",
+                           "blockType",
+                           "fontSize",
+                           "list",
+                           "textAlign",
+                           "link",
+                           "image",
+                        ],
+                     }}
+                  />
+               </div>
+               {/* <div className="form-floating mt-4"> */}
+               {/* <textarea
                      id="questionTextArea"
                      name="question"
                      maxLength={1000}
@@ -262,8 +319,8 @@ export default function AddQuestion(props) {
                      style={{ height: "100px" }}></textarea>
                   <label htmlFor="questionTextArea" style={{ color: "gray" }}>
                      Question
-                  </label>
-               </div>
+                  </label> */}
+               {/* </div> */}
                {errors.question && errorHelper()}
 
                {/* CHOICE 1 */}

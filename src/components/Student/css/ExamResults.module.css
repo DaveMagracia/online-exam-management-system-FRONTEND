@@ -7,3 +7,7 @@
    width: 800px;
    height: max-content;
 }
+
+.question_container img {
+   max-width: 100%;
+}

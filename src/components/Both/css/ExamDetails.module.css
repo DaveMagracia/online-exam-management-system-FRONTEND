@@ -7,11 +7,18 @@
    overflow-y: scroll;
 }
 
+.student_image_container {
+   min-width: 40px;
+   min-height: 40px;
+   background-color: gray;
+   border-radius: 50%;
+   overflow: hidden;
+}
+
 .student_image {
    width: 40px;
    height: 40px;
-   background-color: gray;
-   border-radius: 50%;
+   object-fit: cover;
 }
 
 .details_link {

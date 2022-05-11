@@ -312,6 +312,7 @@ export default function CreateExam(props) {
                },
             })
                .then((data) => {
+                  console.log("navigating");
                   navigate("/");
                })
                .catch((err) => {
@@ -618,6 +619,7 @@ export default function CreateExam(props) {
                   date_to: examData.date_to,
                   time_limit: examData.time_limit,
                   directions: examData.directions,
+                  passingScore: examData.passingScore,
                });
 
                setcharCountTitle(examData.title.length);
@@ -718,7 +720,7 @@ export default function CreateExam(props) {
                      exit={{ opacity: 0 }}
                      transition={{ duration: 0.2 }}
                      className={`${css.loading_root} d-flex flex-column align-items-center justify-content-center`}>
-                     <PuffLoader loading={isLoading} color="#9c2a22" size={80} />
+                     <PuffLoader loading={isLoading} color="#006ec9" size={80} />
                      <p className="lead mt-3">&nbsp;Loading...</p>
                   </motion.div>
                )}

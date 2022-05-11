@@ -20,6 +20,7 @@ import QuestionBankDetails from "./components/Faculty/QuestionBankDetails";
 import CreateQuestionBank from "./components/Faculty/CreateQuestionBank";
 import CreateExam from "./components/Faculty/CreateExam";
 import ExamResultsFaculty from "./components/Faculty/ExamResultsFaculty";
+import ActionLog from "./components/Faculty/ActionLog";
 
 //STUDENT COMPONETS
 import TakeExam from "./components/Student/TakeExam";
@@ -50,6 +51,7 @@ export default function App() {
                <Route path="/edit-question-bank/:bank_id" element={<CreateQuestionBank />} />
                <Route path="/question-bank/:bank_id" element={<QuestionBankDetails />} />
                <Route path="/results/:examCode/:userId" element={<ExamResultsFaculty />} />
+               <Route path="/action-log/:examCode/:userId" element={<ActionLog />} />
 
                {/* STUDENT ROUTES */}
                <Route path="/take-exam" element={<TakeExam />} />

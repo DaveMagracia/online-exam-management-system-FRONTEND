@@ -1,6 +1,7 @@
 .exam_box {
    /* width: 420px; */
    height: auto;
+   height: 240px;
    min-height: 240px;
    cursor: pointer;
 }

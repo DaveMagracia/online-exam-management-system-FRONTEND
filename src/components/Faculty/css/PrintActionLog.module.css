@@ -3,13 +3,19 @@
    height: max-content;
 }
 
-.question,
-.choices {
-   font-size: 14px;
+.vertical_rule {
+   background-color: rgb(0, 110, 201);
+   opacity: 0.4;
+   min-height: 10px !important;
 }
 
-.question_container img {
-   max-width: 100%;
+.icon_circle {
+   width: 10px;
+   height: 10px;
+   background-color: rgb(0, 110, 201);
+   border-radius: 50%;
+   opacity: 0.9;
+   display: inline;
 }
 
 @media all {

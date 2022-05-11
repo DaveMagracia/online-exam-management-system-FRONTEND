@@ -136,7 +136,8 @@ export default function ExamListBox(props) {
 
    function getItemsAndPoints() {
       let items = examData.totalItems;
-      let points = examData.totalPoints === 0 ? 1 : examData.totalPoints;
+      // let points = examData.totalPoints === 0 ? 1 : examData.totalPoints;
+      let points = examData.totalPoints === 0 ? examData.totalItems : examData.totalPoints;
 
       items += examData.totalItems === 1 ? " item" : " items";
 
@@ -169,7 +170,10 @@ export default function ExamListBox(props) {
                   ) : ( */}
                   <h4
                      className={`${css.exam_title} m-0`}
-                     onClick={() => goToExamDetails(examData._id)}>
+                     // title will only be clickable if status is not "unposted"
+                     onClick={() =>
+                        examData.status !== "unposted" && goToExamDetails(examData._id)
+                     }>
                      {examData.title}
                   </h4>
                   {/* )} */}

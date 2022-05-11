@@ -32,6 +32,7 @@ export default function TakeExam() {
    const [formattedTime, setFormattedTime] = React.useState();
    const [isExpanded, setIsExpanded] = React.useState(false);
    const [isLoading, setIsLoading] = React.useState(true);
+   const [isInfoInit, setIsInfoInit] = React.useState(true);
    const [isShownSubmitModal, setIsShownSubmitModal] = React.useState(false);
    const [isShownConfirmModal, setIsShownConfirmModal] = React.useState(false);
    const [isSubmitting, setIsSubmitting] = React.useState(false);
@@ -73,7 +74,6 @@ export default function TakeExam() {
                   }, 1000);
                } else {
                   setExam(res.data.exam);
-                  //TODO: CHANGE BACK TO res.data.exam.status === "closed"
                   if (res.data.exam.status === "closed") {
                      // navigate to exam details if exam is already closed
                      navigate(`/exam-details/${res.data.exam._id}`);
@@ -147,6 +147,10 @@ export default function TakeExam() {
 
                      setAnswerStates(questionsObj);
                      setIsLoading(false);
+                     setActionLog((prevVal) => [
+                        ...prevVal,
+                        { time: new Date(), action: "Student started taking the exam" },
+                     ]);
                   }
                }
             })
@@ -154,6 +158,16 @@ export default function TakeExam() {
                console.log(err);
             });
       }
+   }
+
+   function setFullName() {
+      const token = localStorage.getItem("token");
+      const userTokenDecoded = jwt_decode(token);
+
+      setBasicInfo((prevVal) => ({
+         ...prevVal,
+         fullName: userTokenDecoded.fullname,
+      }));
    }
 
    function handleModalClose() {
@@ -167,6 +181,14 @@ export default function TakeExam() {
          ...prevVal,
          [name]: value,
       }));
+
+      //log when user starts answering basic info
+      if (isInfoInit) {
+         setActionLog((prevVal) => {
+            return [...prevVal, { time: new Date(), action: "Started answering basic info" }];
+         });
+         setIsInfoInit(false);
+      }
    }
 
    function getNavbar() {
@@ -250,21 +272,50 @@ export default function TakeExam() {
 
    function nextQuestion() {
       setCurrQuestionNum((prevVal) => prevVal + 1);
+      setActionLog((prevVal) => {
+         var stringToLog = `Navigated to question number ${currQuestionNum + 2}`; //default value
+         return [...prevVal, { time: new Date(), action: stringToLog }];
+      });
    }
 
    function previousQuestion() {
       setCurrQuestionNum((prevVal) => prevVal - 1);
+      setActionLog((prevVal) => {
+         var stringToLog = `Navigated to question number ${currQuestionNum - 1}`; //default value
+         if (currQuestionNum - 1 === -1) {
+            stringToLog = `Navigated to basic info question`;
+         }
+         return [...prevVal, { time: new Date(), action: stringToLog }];
+      });
    }
 
    function goToQuestionNum(questionNum) {
       setCurrQuestionNum(questionNum);
+      setActionLog((prevVal) => {
+         var stringToLog = `Navigated to question number ${questionNum + 1}`; //default value
+         if (questionNum === -1) {
+            stringToLog = `Navigated to basic info question`;
+         }
+         return [...prevVal, { time: new Date(), action: stringToLog }];
+      });
    }
 
-   function handleOnChangeChoice(questionNumber, answerIndex) {
+   function handleOnChangeChoice(questionNumber, answerIndex, choiceIndex) {
       setAnswerStates((prevVal) => ({
          ...prevVal,
          [questionNumber]: answerIndex,
       }));
+
+      setActionLog((prevVal) => {
+         questionNumber = Number(questionNumber.split("question")[1]) + 1; //get question number from string. string ex : "question9"
+         return [
+            ...prevVal,
+            {
+               time: new Date(),
+               action: `Answered choice ${choiceIndex + 1} on question number ${questionNumber}`,
+            },
+         ];
+      });
    }
 
    function handleConfirmModalClose() {
@@ -302,7 +353,7 @@ export default function TakeExam() {
             details: {
                userId: user.id,
                basicInfo: basicInfo,
-               actionLog: actionLog,
+               actionLog: [...actionLog, { time: finishedTime, action: "Submitted the exam" }],
                exam: {
                   ...exam,
                   finishedTime: finishedTime,
@@ -327,6 +378,17 @@ export default function TakeExam() {
                setIsSubmitted(true);
             }, 1000);
          });
+   }
+
+   function removeHTMLTagsFromQuestion(str) {
+      // source: geeksforgeeks.org/how-to-strip-out-html-tags-from-a-string-using-javascript/#:~:text=To%20strip%20out%20all%20the,innerText%20property%20from%20HTML%20DOM.
+      if (str === null || str === "") return false;
+      else str = str.toString();
+
+      // Regular expression to identify HTML tags in
+      // the input string. Replacing the identified
+      // HTML tag with a null string.
+      return str.replace(/(<([^>]+)>)/gi, "");
    }
 
    function goToExamResults() {
@@ -372,9 +434,19 @@ export default function TakeExam() {
    }, [timeLimit]);
 
    React.useEffect(() => {
-      // document.addEventListener("visibilitychange", function () {
-      //    setActionLog((prevVal) => [...prevVal, { time: new Date(), action: "ALT TAB" }]);
-      // });
+      document.addEventListener("visibilitychange", function () {
+         if (document.visibilityState === "visible") {
+            setActionLog((prevVal) => [
+               ...prevVal,
+               { time: new Date(), action: "Resumed viewing the exam" },
+            ]);
+         } else {
+            setActionLog((prevVal) => [
+               ...prevVal,
+               { time: new Date(), action: "Changed window/tab" },
+            ]);
+         }
+      });
 
       // document.addEventListener("mouseleave", function () {
       //    setActionLog((prevVal) => [...prevVal, { time: new Date(), action: "MOUSE LEAVE" }]);
@@ -397,7 +469,7 @@ export default function TakeExam() {
       return () => {
          // document.documentElement.removeEventListener("mouseleave");
          // document.documentElement.removeEventListener("mouseenter");
-         // document.documentElement.removeEventListener("visibilitychange");
+         document.documentElement.removeEventListener("visibilitychange");
       };
    }, []);
 
@@ -424,7 +496,7 @@ export default function TakeExam() {
                      exit={{ opacity: 0 }}
                      transition={{ duration: 0.2 }}
                      className={`${css.examDetails_loading} d-flex flex-column align-items-center justify-content-center min-vh-100`}>
-                     <PuffLoader loading={isLoading} color="#9c2a22" size={80} />
+                     <PuffLoader loading={isLoading} color="#006ec9" size={80} />
                      <p className="lead mt-3">&nbsp;Loading...</p>
                   </motion.div>
                )}
@@ -514,7 +586,8 @@ export default function TakeExam() {
                                                 <span
                                                    className="d-inline-block text-truncate"
                                                    style={{ maxWidth: "240px" }}>
-                                                   {i + 1}. {val.question}{" "}
+                                                   {i + 1}.{" "}
+                                                   {removeHTMLTagsFromQuestion(val.question)}{" "}
                                                 </span>
                                                 <span
                                                    className={`float-end ${
@@ -546,7 +619,8 @@ export default function TakeExam() {
                                                 <span
                                                    className="d-inline-block text-truncate"
                                                    style={{ maxWidth: "240px" }}>
-                                                   {i + 1}. {val.question}{" "}
+                                                   {i + 1}.{" "}
+                                                   {removeHTMLTagsFromQuestion(val.question)}{" "}
                                                 </span>
                                                 <span
                                                    className={`float-end ${
@@ -578,7 +652,8 @@ export default function TakeExam() {
                                                 <span
                                                    className="d-inline-block text-truncate"
                                                    style={{ maxWidth: "240px" }}>
-                                                   {i + 1}. {val.question}{" "}
+                                                   {i + 1}.{" "}
+                                                   {removeHTMLTagsFromQuestion(val.question)}{" "}
                                                 </span>
                                                 <span
                                                    className={`float-end ${
@@ -642,9 +717,16 @@ export default function TakeExam() {
                                  {currQuestionNum === -1 ? (
                                     <div className="card px-5">
                                        <h3 className="mt-4 mb-4">Examinee Info</h3>
-                                       <label htmlFor="name" className="form-label">
-                                          Full Name:
-                                       </label>
+                                       <div className="d-flex justify-content-between">
+                                          <label htmlFor="name" className="form-label d-inline">
+                                             Full Name:
+                                          </label>
+                                          <span
+                                             className={`${css.setFullName} text-primary small`}
+                                             onClick={setFullName}>
+                                             Registered Full Name
+                                          </span>
+                                       </div>
                                        <input
                                           id="name"
                                           type="text"
@@ -682,12 +764,16 @@ export default function TakeExam() {
                                                 </small>
                                              </div>
 
-                                             <p className="mt-3">
-                                                {questions[currQuestionNum].question}
-                                             </p>
+                                             {/* SHOW THE HTML STRING AS REAL HTML */}
+                                             <div
+                                                className={`${css.question_container} mt-3`}
+                                                dangerouslySetInnerHTML={{
+                                                   __html: questions[currQuestionNum].question,
+                                                }}
+                                             />
                                              <div className="choices mt-4">
                                                 {questions[currQuestionNum].shuffledChoices?.map(
-                                                   (choice) => (
+                                                   (choice, i) => (
                                                       <p key={createId()}>
                                                          <input
                                                             id={`question${currQuestionNum}i${choice.index}`}
@@ -696,7 +782,8 @@ export default function TakeExam() {
                                                             onChange={() =>
                                                                handleOnChangeChoice(
                                                                   `question${currQuestionNum}`,
-                                                                  choice.index
+                                                                  choice.index,
+                                                                  i
                                                                )
                                                             } //pass the question number and the original choice index
                                                             //we passed the orig choice index to easily compare to the correct answer when checking

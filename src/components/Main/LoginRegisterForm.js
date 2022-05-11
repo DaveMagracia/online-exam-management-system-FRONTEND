@@ -788,7 +788,7 @@ export default function LoginRegisterForm() {
                         {loading ? (
                            <>
                               <span
-                                 class="spinner-border spinner-border-sm me-2"
+                                 className="spinner-border spinner-border-sm me-2"
                                  role="status"
                                  aria-hidden="true"></span>
                               Registering...

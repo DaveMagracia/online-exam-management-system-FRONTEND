@@ -31,3 +31,32 @@
 .time_limit_input[type="number"] {
    -moz-appearance: textfield;
 }
+
+/* TEXT EDITOR */
+.wrapper {
+   border: 1px solid rgb(231, 231, 231);
+   border-radius: 4px;
+}
+
+.error {
+   border: 1px solid rgba(255, 0, 0, 0.788);
+}
+
+.toolbarWrapper {
+   border: none;
+   border-bottom: 1px solid rgb(231, 231, 231);
+   padding: 10px;
+   margin: 0 !important;
+}
+
+.toolbarWrapper a {
+   text-decoration: none;
+   color: black;
+}
+
+.editorWrapper {
+   background-color: rgb(255, 255, 255) !important;
+   padding: 10px;
+   height: 300px !important;
+   max-height: 300px !important;
+}

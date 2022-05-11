@@ -16,15 +16,15 @@ export const DialogLeavingPage = ({
             <Modal.Title>Exit</Modal.Title>
          </Modal.Header>
          <Modal.Body>
-            The exam is still ongoing. Your exam will be submitted once you leave this page.
-            Unanswered questions will be given <strong>0</strong> points.
+            The exam is still ongoing. Your exam will be marked as attempted and not be submitted
+            once you leave this page. You will receive no points.
          </Modal.Body>
          <Modal.Footer>
             <Button variant="secondary" onClick={cancelNavigation}>
                Cancel
             </Button>
             <Button variant="primary" onClick={confirmNavigation}>
-               Submit
+               Continue
             </Button>
          </Modal.Footer>
       </Modal>

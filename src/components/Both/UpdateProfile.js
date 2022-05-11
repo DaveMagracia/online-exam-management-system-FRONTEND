@@ -247,7 +247,7 @@ export default function UpdateProfile(props) {
             {loading ? (
                <div
                   className={`${css.updateProfile_root} d-flex flex-column align-items-center justify-content-center`}>
-                  <PuffLoader loading={loading} color="#9c2a22" size={80} />
+                  <PuffLoader loading={loading} color="#006ec9" size={80} />
                   <p className="lead mt-4">&nbsp;&nbsp;Updating Profile...</p>
                </div>
             ) : (
@@ -328,35 +328,31 @@ export default function UpdateProfile(props) {
                               )}
 
                               <div>
-                                 {user && user.userType === "student" && (
-                                    <>
-                                       <div className="form-floating">
-                                          <input
-                                             id="Inputfullname"
-                                             type="text"
-                                             className={`form-control ${
-                                                errors.fullname.hasError || emptyErrors.fullname
-                                                   ? "border border-danger"
-                                                   : "mb-4"
-                                             }`}
-                                             name="fullname"
-                                             onChange={handleOnChange}
-                                             value={formData.fullname}
-                                          />
-                                          <label htmlFor="Inputfullname">Full Name</label>
-                                       </div>
-                                       {errors.fullname.hasError && (
-                                          <p className="text-danger mb-4 small">
-                                             {errors.fullname.msg}
-                                          </p>
-                                       )}
-                                       {emptyErrors.fullname && (
-                                          <p className="text-danger mb-4 small">
-                                             This field is required
-                                          </p>
-                                       )}
-                                    </>
+                                 {/* {user && user.userType === "student" && ( */}
+                                 {/* <> */}
+                                 <div className="form-floating">
+                                    <input
+                                       id="Inputfullname"
+                                       type="text"
+                                       className={`form-control ${
+                                          errors.fullname.hasError || emptyErrors.fullname
+                                             ? "border border-danger"
+                                             : "mb-4"
+                                       }`}
+                                       name="fullname"
+                                       onChange={handleOnChange}
+                                       value={formData.fullname}
+                                    />
+                                    <label htmlFor="Inputfullname">Full Name</label>
+                                 </div>
+                                 {errors.fullname.hasError && (
+                                    <p className="text-danger mb-4 small">{errors.fullname.msg}</p>
                                  )}
+                                 {emptyErrors.fullname && (
+                                    <p className="text-danger mb-4 small">This field is required</p>
+                                 )}
+                                 {/* </> */}
+                                 {/* )} */}
 
                                  <div className="form-floating">
                                     <input

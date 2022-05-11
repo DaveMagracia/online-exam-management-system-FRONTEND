@@ -1,3 +1,8 @@
+.exam_root {
+   height: calc(100vh - 60px);
+   overflow-y: scroll;
+}
+
 .exam_container {
    width: 980px;
    min-width: 470px;
@@ -64,6 +69,10 @@
    transition: all 0.25s ease-out;
 }
 
+.setFullName {
+   cursor: pointer;
+}
+
 .content ul {
    overflow-y: auto;
    max-height: 230px;
@@ -76,6 +85,10 @@
 /* dont apply to "active" items */
 .content ul li:not(.active_):hover {
    background-color: rgb(245, 245, 245);
+}
+
+.question_container img {
+   max-width: 100%;
 }
 
 .expand_icon {

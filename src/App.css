@@ -1,4 +1,4 @@
-/* UNIVERSAL STYLES */
+/* GLOBAL STYLES */
 
 * {
    box-sizing: border-box;
@@ -66,6 +66,51 @@ select {
 
 input[type="file"] {
    padding: 4px 10px !important;
+}
+
+button {
+   border-radius: 4px !important;
+}
+
+.btn-primary {
+   background-color: rgb(0, 129, 235) !important;
+   /* box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.2); */
+   transition: 0.3;
+   border-color: rgb(0, 129, 235) !important;
+}
+
+.alert-success {
+   background-color: rgb(157, 229, 193) !important;
+   color: rgb(40, 119, 80) !important;
+   border: none;
+}
+
+.alert-danger {
+   background-color: rgb(248, 180, 172) !important;
+   color: rgb(131, 66, 58) !important;
+   border: none;
+}
+
+.btn-primary:hover {
+   /* box-shadow: 0px 10px 20px #012a705b; */
+   background-color: rgb(0, 109, 235) !important;
+}
+
+.btn-outline-primary:hover {
+   background-color: rgb(0, 129, 235) !important;
+   border-color: rgb(0, 129, 235) !important;
+}
+
+.btn-success {
+   background-color: rgb(2, 145, 90) !important;
+   /* box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.2); */
+   transition: 0.3;
+   border-color: rgb(2, 145, 90) !important;
+}
+
+.btn-success:hover {
+   background-color: rgb(0, 116, 87) !important;
+   border-color: rgb(0, 116, 87) !important;
 }
 
 /* BOOTSTRAP COLORS */

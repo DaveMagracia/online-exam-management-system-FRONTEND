@@ -81,6 +81,10 @@ export default function ExamResultsFaculty() {
       return formattedTime;
    }
 
+   function goToActionLog() {
+      navigate(`/action-log/${examCode}/${userId}`);
+   }
+
    function formatTime(time) {
       //formats time (from seconds to countdown format)
       const hours = Math.floor(time / 3600);
@@ -113,7 +117,7 @@ export default function ExamResultsFaculty() {
 
             setTimeout(() => {
                setIsLoading(false);
-            }, 1000);
+            }, 500);
          })
          .catch((err) => {
             console.log(err);
@@ -158,7 +162,7 @@ export default function ExamResultsFaculty() {
                      exit={{ opacity: 0 }}
                      transition={{ duration: 0.2 }}
                      className={`${css.examDetails_loading} d-flex flex-column align-items-center justify-content-center min-vh-100`}>
-                     <PuffLoader loading={isLoading} color="#9c2a22" size={80} />
+                     <PuffLoader loading={isLoading} color="#006ec9" size={80} />
                      <p className="lead mt-3">&nbsp;Loading...</p>
                   </motion.div>
                )}
@@ -234,11 +238,16 @@ export default function ExamResultsFaculty() {
                               </div>
 
                               {user && user.userType === "teacher" && (
-                                 <div className="flex-grow-1">
+                                 <div className="d-flex flex-column">
                                     <button
                                        className="btn btn-primary float-end"
                                        onClick={printResults}>
                                        Print Results
+                                    </button>
+                                    <button
+                                       className="btn btn-primary float-end mt-2"
+                                       onClick={goToActionLog}>
+                                       Action Log
                                     </button>
                                  </div>
                               )}
@@ -249,7 +258,7 @@ export default function ExamResultsFaculty() {
                            {/* DISPLAY QUESTIONS */}
                            {questions.length > 0 &&
                               questions?.map((question, index) => (
-                                 <div className="card px-5 py-5 mb-4">
+                                 <div className="card px-5 py-5 mb-4" key={createId()}>
                                     <div>
                                        <h5 className="m-0 me-3 d-inline">
                                           Question {index + 1} of {exam.totalItems}
@@ -264,7 +273,13 @@ export default function ExamResultsFaculty() {
                                        </small>
                                     </div>
 
-                                    <p className="mt-2">{question.question}</p>
+                                    <div
+                                       className={`${css.question_container} mt-2`}
+                                       dangerouslySetInnerHTML={{
+                                          __html: question.question,
+                                       }}
+                                    />
+                                    {/* <p className="mt-2">{question.question}</p> */}
                                     <div className="choices mt-4">
                                        {question.shuffledChoices.map((choice) => {
                                           if (results[index]) {
@@ -281,8 +296,6 @@ export default function ExamResultsFaculty() {
                                                             answers[`question${index}`] ===
                                                             choice.index
                                                          }
-                                                         value={choice.index}
-                                                         name={`question${index}`}
                                                          readOnly
                                                       />
                                                       {choice.choice}
@@ -303,8 +316,6 @@ export default function ExamResultsFaculty() {
                                                             answers[`question${index}`] ===
                                                             choice.index
                                                          }
-                                                         value={choice.index}
-                                                         name={`question${index}`}
                                                          readOnly
                                                       />
                                                       {choice.choice}

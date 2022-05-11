@@ -1,5 +1,6 @@
 import React from "react";
 import css from "./css/PrintResults.module.css";
+import { v1 as createId } from "uuid";
 
 function formatDate(time) {
    //formats the date passed
@@ -109,7 +110,7 @@ export const PrintResults = React.forwardRef(
                      {/* DISPLAY QUESTIONS */}
                      {questions.length > 0 &&
                         questions?.map((question, index) => (
-                           <>
+                           <div key={createId()}>
                               <div className="page-break" />
 
                               <div className="pb-4">
@@ -122,7 +123,13 @@ export const PrintResults = React.forwardRef(
                                     </small>
                                     {/* <h5 className="m-0 me-3 d-inline">{index + 1}.</h5> */}
                                     <p className={`${css.question} m-0 mt-2`}>
-                                       <b>{index + 1}.</b> {question.question}
+                                       <b>{index + 1}.</b>
+                                       <div
+                                          className={`${css.question_container} mt-2`}
+                                          dangerouslySetInnerHTML={{
+                                             __html: question.question,
+                                          }}
+                                       />
                                     </p>
                                  </div>
 
@@ -134,7 +141,7 @@ export const PrintResults = React.forwardRef(
                                           if (answers[`question${index}`] === choice.index) {
                                              return (
                                                 <div
-                                                   // key={createId()}
+                                                   key={createId()}
                                                    className={`${css.choices} alert alert-success m-0 p-1`}>
                                                    <input
                                                       type="radio"
@@ -156,7 +163,7 @@ export const PrintResults = React.forwardRef(
                                           if (answers[`question${index}`] === choice.index) {
                                              return (
                                                 <div
-                                                   // key={createId()}
+                                                   key={createId()}
                                                    className="alert alert-danger m-0 p-1">
                                                    <input
                                                       type="radio"
@@ -175,7 +182,7 @@ export const PrintResults = React.forwardRef(
                                           } else if (choice.index === question.answer) {
                                              return (
                                                 <div
-                                                   // key={createId()}
+                                                   key={createId()}
                                                    className="alert alert-success m-0 p-1">
                                                    <input
                                                       type="radio"
@@ -194,9 +201,7 @@ export const PrintResults = React.forwardRef(
                                           }
                                        }
                                        return (
-                                          <div
-                                             //    key={createId()}
-                                             className="p-1">
+                                          <div key={createId()} className="p-1">
                                              <input
                                                 type="radio"
                                                 className="me-3"
@@ -213,7 +218,7 @@ export const PrintResults = React.forwardRef(
                                     })}
                                  </div>
                               </div>
-                           </>
+                           </div>
                         ))}
                   </div>
                </div>

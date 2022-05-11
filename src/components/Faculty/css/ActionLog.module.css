@@ -1,0 +1,27 @@
+.results_root {
+   height: calc(100vh - 60px);
+   overflow-y: scroll;
+}
+
+.results_container {
+   width: 800px;
+   height: max-content;
+}
+
+.question_container img {
+   max-width: 100%;
+}
+
+.vertical_rule {
+   background-color: rgb(0, 110, 201);
+   opacity: 0.4;
+}
+
+.icon_circle {
+   width: 10px;
+   height: 10px;
+   background-color: rgb(0, 110, 201);
+   border-radius: 50%;
+   opacity: 0.9;
+   display: inline;
+}
