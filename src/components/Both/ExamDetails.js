@@ -30,6 +30,7 @@ export default function ExamDetails() {
 
    const [isLoading, setIsLoading] = React.useState(true);
    const [isShownExamModal, setIsShownExamModal] = React.useState(false);
+   const [isRetakeExam, setIsRetakeExam] = React.useState(false);
    const [registeredExamStatus, setRegisteredExamStatus] = React.useState();
    const [examData, setExamData] = React.useState({
       title: "",
@@ -59,7 +60,17 @@ export default function ExamDetails() {
 
    const [spreadSheetResults, setSpreadSheetResults] = React.useState([
       //Headers
-      ["Username", "Student ID/Number", "Full Name", "                               "],
+      [
+         "Username",
+         "Student ID/Number",
+         "Full Name",
+         "                               ",
+         "Score",
+         "Passed/Failed",
+         "Duration",
+         "Submitted on",
+         "                               ",
+      ],
       // ["val.username", "val.basicInfo.studentNumId ? val.basicInfo.studentNumId ", "val.fullname"],
    ]);
 
@@ -306,17 +317,25 @@ export default function ExamDetails() {
                   if (val.status === "submitted")
                      tempSubmitted.push({
                         ...val,
-                        ...studentProfiles[i],
+                        ...studentProfiles[
+                           studentProfiles.findIndex((val_) => val_._id === val.user)
+                        ],
                      });
                   else
                      tempUnanswered.push({
                         ...val,
-                        ...studentProfiles[i],
+                        ...studentProfiles[
+                           studentProfiles.findIndex((val_) => val_._id === val.user)
+                        ],
                      });
                });
 
+               // console.log("tempUnanswered", tempUnanswered);
+               // console.log("tempSubmitted", tempSubmitted);
+
                setStudentsSubmitted(tempSubmitted);
                setStudentsUnanswered(tempUnanswered);
+
                if (tempSubmitted.length > 0) getResultsData(examData_.examCode);
 
                setTimeout(() => {
@@ -349,7 +368,7 @@ export default function ExamDetails() {
          baseURL: `http://localhost:5000/exams/results/${examCode}`,
       })
          .then((res) => {
-            console.log(res.data.results);
+            // console.log(res.data.results);
 
             setResults(res.data.results);
             var firstUserQuesOrder = []; //variable to be used in spreadsheet to know the order of questions
@@ -360,12 +379,13 @@ export default function ExamDetails() {
                   firstUserQuesOrder.push(val.question);
                   return removeHTMLTagsFromQuestion(val.question).trim().length === 0
                      ? "No question title"
-                     : removeHTMLTagsFromQuestion(val.question).substring(0, 15) + "..."; //add string truncation. Limit to 15 chars so that the whole text will not be shown
+                     : removeHTMLTagsFromQuestion(val.question); //add string truncation. Limit to 15 chars so that the whole text will not be shown
                });
 
                return [[...prevVal[0], ...headers_]];
             });
 
+            console.log(res.data.results);
             // set fields for each user
             setSpreadSheetResults((prevVal) => {
                return [
@@ -374,9 +394,27 @@ export default function ExamDetails() {
                      return [
                         userData.username,
                         userData.basicInfo.studentNumId
-                           ? userData.basicInfo.studentNumId
+                           ? "#" + userData.basicInfo.studentNumId
                            : "Not Specified",
                         userData.fullname,
+                        "                               ", //whitespace
+                        `${userData.exam.totalScore}/${
+                           userData.exam.totalPoints
+                        } (${getAverageScore(
+                           userData.exam.totalScore,
+                           userData.exam.totalPoints
+                        )}%)`,
+                        `${
+                           userData.exam.totalScore >= userData.exam.passingScore
+                              ? "PASSED"
+                              : "FAILED"
+                        }`,
+                        `${formatTime(
+                           (new Date(userData.exam.finishedTime).getTime() -
+                              new Date(userData.exam.startedTime).getTime()) /
+                              1000
+                        )}`,
+                        `${formatDate(userData.exam.finishedTime)}`,
                         "                               ", //whitespace
                         ...firstUserQuesOrder.map((firstUserQuesVal) => {
                            //get original index of the question
@@ -507,6 +545,23 @@ export default function ExamDetails() {
             return <FacultyNavbar username={user.username} />;
          }
       }
+   }
+
+   async function retakeExam(id) {
+      setIsRetakeExam(true);
+      await axios({
+         method: "PATCH",
+         baseURL: `http://www.localhost:5000/exams/retake-exam/${id}/${examData.examCode}`,
+         headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+         },
+      })
+         .then((res) => {
+            console.log(res.data);
+         })
+         .catch((err) => {
+            console.log(err);
+         });
    }
 
    function getItemsAndPoints() {
@@ -957,29 +1012,42 @@ export default function ExamDetails() {
                                                             <td
                                                                scope="row"
                                                                className="align-middle">
-                                                               <div className="d-flex align-items-center ms-3">
-                                                                  <div
-                                                                     className={
-                                                                        css.student_image_container
-                                                                     }>
-                                                                     <img
+                                                               <div className="d-flex align-items-center justify-content-between ms-3">
+                                                                  <div className="d-flex align-items-center">
+                                                                     <div
                                                                         className={
-                                                                           css.student_image
-                                                                        }
-                                                                        src={
-                                                                           !!student.profilePicture
-                                                                              ? `/images/profilePictures/${student.profilePicture}`
-                                                                              : `/images/profilePictures/no_profile_picture.png`
-                                                                        }
-                                                                        alt="profPic"
-                                                                     />
-                                                                  </div>
+                                                                           css.student_image_container
+                                                                        }>
+                                                                        <img
+                                                                           className={
+                                                                              css.student_image
+                                                                           }
+                                                                           src={
+                                                                              !!student.profilePicture
+                                                                                 ? `/images/profilePictures/${student.profilePicture}`
+                                                                                 : `/images/profilePictures/no_profile_picture.png`
+                                                                           }
+                                                                           alt="profPic"
+                                                                        />
+                                                                     </div>
 
-                                                                  <span className="ms-3 fw-bold">
-                                                                     {showFullName
-                                                                        ? student.fullname
-                                                                        : student.username}
-                                                                  </span>
+                                                                     <span className="ms-3 fw-bold">
+                                                                        {showFullName
+                                                                           ? student.fullname
+                                                                           : student.username}
+                                                                     </span>
+                                                                  </div>
+                                                                  {student.status ===
+                                                                     "attempted" && (
+                                                                     <button
+                                                                        className="btn btn-primary"
+                                                                        disabled={isRetakeExam}
+                                                                        onClick={() =>
+                                                                           retakeExam(student._id)
+                                                                        }>
+                                                                        Reset Exam
+                                                                     </button>
+                                                                  )}
                                                                </div>
                                                             </td>
                                                          </tr>
