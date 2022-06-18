@@ -27,7 +27,12 @@ import TakeExam from "./components/Student/TakeExam";
 import ExamResults from "./components/Student/ExamResults";
 import StudentHistory from "./components/Student/StudentHistory";
 
+// ADMIN COMPONENTS
+import LoginRegisterAdmin from "./components/Admin/LoginRegisterAdmin";
+import MainAdmin from "./components/Admin/MainAdmin";
+
 import { UserContext } from "./UserContext";
+// import Footer from "./components/Both/DashboardFooter";
 
 import "./App.css";
 
@@ -66,6 +71,11 @@ export default function App() {
                <Route path="/subjects/:subject_name" element={<Subjects />} />
                <Route path="/calendar" element={<Calendar />} />
 
+               {/* ADMIN */}
+               <Route path="/login-admin" element={<LoginRegisterAdmin />} />
+               <Route path="/admin-dashboard" element={<MainAdmin />} />
+
+               {/* <Route path="/footer" element={<Footer />} /> */}
                {/* /f url has no match, display 404 page*/}
                <Route path="*" element={<PageNotFound404 />} />
             </Routes>

@@ -15,6 +15,7 @@ import StudentDashboard from "../Student/StudentDashboard";
 import { UserContext } from "../../UserContext";
 import { GiBrain } from "react-icons/gi";
 import jwt_decode from "jwt-decode";
+import axios from "axios";
 // import { saveSidebarState, getSidebarState } from "./utils/StoreSidebarState";
 
 export default function StudentSidebar({ children }) {
@@ -27,6 +28,9 @@ export default function StudentSidebar({ children }) {
       email: "",
       username: "",
       fullname: "",
+   });
+   const [content, setContent] = React.useState({
+      logo: "",
    });
    const [profileImage, setProfileImage] = React.useState("");
 
@@ -45,25 +49,44 @@ export default function StudentSidebar({ children }) {
    }
 
    const routes = [
-      {
-         path: "/dashboard",
-         name: "Dashboard",
-         icon: <AiFillDashboard />,
-      },
+      ...(user && user.userType !== "admin"
+         ? [
+              {
+                 path: "/dashboard",
+                 name: "Dashboard",
+                 icon: <AiFillDashboard />,
+              },
+           ]
+         : []),
+      ...(user && user.userType === "admin"
+         ? [
+              {
+                 path: "/admin-dashboard",
+                 name: "Site Contents",
+                 icon: <AiFillDashboard />,
+              },
+           ]
+         : []),
+
       {
          path: "/update-profile",
          subPath3: "/change-password",
          name: "Profile",
          icon: <FaUserAlt />,
       },
-      {
-         path: "/subjects/All",
-         subPath: "/subjects",
-         subPath2: "/subjects",
-         subPath4: "/create-exam",
-         name: "Exams",
-         icon: <IoDocumentText />,
-      },
+
+      ...(user && user.userType !== "admin"
+         ? [
+              {
+                 path: "/subjects/All",
+                 subPath: "/subjects",
+                 subPath2: "/subjects",
+                 subPath4: "/create-exam",
+                 name: "Exams",
+                 icon: <IoDocumentText />,
+              },
+           ]
+         : []),
 
       // ...(user && user.userType === "student"
       //    ? [
@@ -75,11 +98,15 @@ export default function StudentSidebar({ children }) {
       //      ]
       //    : []),
 
-      {
-         path: "/calendar",
-         name: "Calendar",
-         icon: <FaRegCalendarAlt />,
-      },
+      ...(user && user.userType !== "admin"
+         ? [
+              {
+                 path: "/calendar",
+                 name: "Calendar",
+                 icon: <FaRegCalendarAlt />,
+              },
+           ]
+         : []),
    ];
 
    function getUserInfoFromToken() {
@@ -109,7 +136,7 @@ export default function StudentSidebar({ children }) {
                   isSidebarOpen={isOpen}
                />
             );
-         } else if (user.userType === "teacher") {
+         } else if (user.userType === "teacher" || user.userType === "admin") {
             return (
                <FacultyNavbar
                   username={user.username}
@@ -121,8 +148,47 @@ export default function StudentSidebar({ children }) {
       }
    }
 
+   async function getWebsiteContents() {
+      await axios({
+         method: "GET",
+         headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+         },
+         baseURL: `http://localhost:5000/admin/content`,
+      })
+         .then((res) => {
+            setContent({
+               logo: res.data.contents.logo,
+            });
+
+            console.log(res.data.contents.logo);
+         })
+         .catch((err) => {
+            console.log(err);
+         });
+   }
+
+   function setImgSrc(imageName) {
+      var url = "";
+      if (imageName === "logo.png") {
+         imageName = "logo.PNG";
+      }
+
+      try {
+         //require url to catch error if image is not found
+         const src = require(`../../../public/images/profilePictures/${imageName}`);
+         url = `/images/profilePictures/${imageName}`;
+      } catch (err) {
+         setTimeout(() => {
+            url = `/images/profilePictures/ExamplifyLogo.png`;
+         }, 100); //delay a bit
+      }
+      return url;
+   }
+
    React.useEffect(() => {
       getUserInfoFromToken();
+      getWebsiteContents();
    }, []);
 
    function setIsLinkActive(route) {
@@ -198,13 +264,23 @@ export default function StudentSidebar({ children }) {
                <div>
                   <div className={`${css.top_Section}`}>
                      {isOpen && (
-                        <span
-                           className={`${css.logo} navbar-brand ms-4`}
-                           onClick={() => navigate("/")}>
-                           Ex
-                           <GiBrain />
-                           mplify
-                        </span>
+                        <>
+                           {content.logo === "ExamplifyLogo.png" ? (
+                              <span className={`${css.logo} navbar-brand ms-3`} href="/">
+                                 Ex
+                                 <GiBrain />
+                                 mplify
+                              </span>
+                           ) : (
+                              <div className={`${css.logo_container} ms-3`}>
+                                 <img
+                                    className={css.logo_image}
+                                    src={setImgSrc(content.logo)}
+                                    alt="logo"
+                                 />
+                              </div>
+                           )}
+                        </>
                      )}
 
                      <div className={`${css.bars}`}>

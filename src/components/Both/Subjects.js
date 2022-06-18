@@ -65,10 +65,29 @@ export default function Subjects(props) {
       }
    }
 
+   async function getWebsiteContents() {
+      await axios({
+         method: "GET",
+         headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+         },
+         baseURL: `http://localhost:5000/admin/content`,
+      })
+         .then((res) => {
+            document.title = `${
+               subject_name.toLowerCase() === "all" ? "All Subjects" : subject_name
+            } | ${res.data.contents.title}`;
+         })
+         .catch((err) => {
+            console.log(err);
+         });
+   }
+
    React.useEffect(() => {
-      document.title = `${
-         subject_name.toLowerCase() === "all" ? "All Subjects" : subject_name
-      } | Online Examination`;
+      // document.title = `${
+      //    subject_name.toLowerCase() === "all" ? "All Subjects" : subject_name
+      // } | Online Examination`;
+      getWebsiteContents();
       const token = localStorage.getItem("token");
       const userTokenDecoded = jwt_decode(token);
       setUser(userTokenDecoded);

@@ -100,6 +100,7 @@ export default function ExamResultsFaculty() {
       setFormattedTime(finalTimeFormat);
    }
 
+   //627216444bba2101749be6a8
    async function getResultsData() {
       await axios({
          method: "GET",
@@ -109,18 +110,34 @@ export default function ExamResultsFaculty() {
          baseURL: `http://localhost:5000/exams/results/${examCode}/${userId}`,
       })
          .then((res) => {
-            setExam(res.data.results.exam);
-            setResults(res.data.results.results);
-            setQuestions(res.data.results.questions);
-            setAnswers(res.data.results.answers);
-            setStudentInfo(res.data.results.basicInfo);
+            const token = localStorage.getItem("token");
+            const userTokenDecoded = jwt_decode(token);
 
-            setTimeout(() => {
-               setIsLoading(false);
-            }, 500);
+            console.log(userTokenDecoded.userType === "student" && !res.data.isShownResults);
+            console.log(res.data.results.userId !== userTokenDecoded.id);
+            //redirect back to dashboard if exam results is not published or if id is not equal to results user id
+            if (userTokenDecoded.userType === "student" && !res.data.isShownResults) {
+               navigate(`/dashboard`);
+            } else if (
+               userTokenDecoded.userType === "student" &&
+               res.data.results.userId !== userTokenDecoded.id
+            ) {
+               navigate(`/dashboard`);
+            } else {
+               setExam(res.data.results.exam);
+               setResults(res.data.results.results);
+               setQuestions(res.data.results.questions);
+               setAnswers(res.data.results.answers);
+               setStudentInfo(res.data.results.basicInfo);
+
+               setTimeout(() => {
+                  setIsLoading(false);
+               }, 500);
+            }
          })
          .catch((err) => {
             console.log(err);
+            navigate(`/dashboard`);
          });
    }
 
@@ -138,8 +155,24 @@ export default function ExamResultsFaculty() {
       );
    }
 
+   async function getWebsiteContents() {
+      await axios({
+         method: "GET",
+         headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+         },
+         baseURL: `http://localhost:5000/admin/content`,
+      })
+         .then((res) => {
+            document.title = `Exam Results | ${res.data.contents.title}`;
+         })
+         .catch((err) => {
+            console.log(err);
+         });
+   }
+
    React.useEffect(() => {
-      document.title = `Exam Results | Online Examination`;
+      getWebsiteContents();
       if (!localStorage.getItem("token")) {
          navigate("/login-register");
       } else {

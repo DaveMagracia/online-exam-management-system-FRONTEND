@@ -33,6 +33,20 @@
    color: white;
 }
 
+.logo_container {
+   /* background-color: red; */
+   height: 20px;
+   width: 110px;
+   overflow: hidden;
+}
+
+.logo_image {
+   width: 100%;
+   position: relative;
+   top: 50%;
+   transform: translateY(-50%);
+}
+
 .logo {
    font-size: 20px !important;
    font-family: "Raleway", sans-serif;

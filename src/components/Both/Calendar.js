@@ -31,7 +31,7 @@ class StudentCalendar extends React.Component {
    }
 
    componentDidMount = async () => {
-      document.title = `Calendar | Online Examination`;
+      this.getWebsiteContents();
 
       await axios({
          method: "GET",
@@ -55,6 +55,22 @@ class StudentCalendar extends React.Component {
                   IsReadonly: true,
                })),
             });
+         })
+         .catch((err) => {
+            console.log(err);
+         });
+   };
+
+   getWebsiteContents = async () => {
+      await axios({
+         method: "GET",
+         headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+         },
+         baseURL: `http://localhost:5000/admin/content`,
+      })
+         .then((res) => {
+            document.title = `Calendar | ${res.data.contents.title}`;
          })
          .catch((err) => {
             console.log(err);

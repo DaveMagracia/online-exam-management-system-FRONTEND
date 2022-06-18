@@ -5,8 +5,30 @@ import Sidebar from "../Both/Sidebar";
 import ExamList from "../Both/ExamList";
 import SubjectList from "../Both/SubjectList";
 import QuestionBankList from "./QuestionBankList";
+import DashboardFooter from "../Both/DashboardFooter";
+import axios from "axios";
 
 export default function FacultyDashboard(props) {
+   async function getWebsiteContents() {
+      await axios({
+         method: "GET",
+         headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+         },
+         baseURL: `http://localhost:5000/admin/content`,
+      })
+         .then((res) => {
+            document.title = `Dashboard | ${res.data.contents.title}`;
+         })
+         .catch((err) => {
+            console.log(err);
+         });
+   }
+
+   React.useEffect(() => {
+      getWebsiteContents();
+   }, []);
+
    return (
       <>
          <Sidebar>
@@ -19,6 +41,7 @@ export default function FacultyDashboard(props) {
                   <SubjectList />
                   <hr className="mt-5" />
                   <QuestionBankList />
+                  <DashboardFooter />
                </div>
             </div>
          </Sidebar>

@@ -3,6 +3,7 @@ import QuestionBankListBox from "./QuestionBankListBox";
 import css from "./css/QuestionBankList.module.css";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { MdAdd } from "react-icons/md";
 import axios from "axios";
 
 export default function QuestionBankList() {
@@ -64,6 +65,7 @@ export default function QuestionBankList() {
             <div className="d-flex justify-content-between mb-2">
                <h3>Question Banks</h3>
                <button className="btn btn-primary float-end" onClick={goToCreateQuestionBank}>
+                  <MdAdd className="me-2" />
                   Create Question Bank
                </button>
             </div>

@@ -1,6 +1,5 @@
 import React from "react";
 import css from "./css/LoginRegisterForm.module.css";
-import Navbar from "./Navbar";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import { MdWarning } from "react-icons/md";
@@ -11,10 +10,10 @@ import { motion } from "framer-motion";
 import { IoMdArrowRoundBack } from "react-icons/io";
 // import LoginRegisterBG from "/images/res/login_register_bg.jpg";
 
-export default function LoginRegisterForm() {
-   const { state } = useLocation();
-   const { name } = state;
-   const [isContainerActive, setIsContainerActive] = React.useState(name !== "login");
+export default function LoginRegisterAdminForm() {
+   // const { state } = useLocation();
+   // const { name = "login" } = state;
+   const [isContainerActive, setIsContainerActive] = React.useState(false);
    let navigate = useNavigate();
 
    //REGISTER STATES
@@ -329,26 +328,6 @@ export default function LoginRegisterForm() {
       }
    }
 
-   async function getWebsiteContents() {
-      await axios({
-         method: "GET",
-         headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-         },
-         baseURL: `http://localhost:5000/admin/content`,
-      })
-         .then((res) => {
-            document.title = `Login | ${res.data.contents.title}`;
-         })
-         .catch((err) => {
-            console.log(err);
-         });
-   }
-
-   React.useEffect(() => {
-      getWebsiteContents();
-   }, []);
-
    React.useEffect(() => {
       //if user accesses this page while logged in, log the user out
       localStorage.removeItem("token");
@@ -412,20 +391,20 @@ export default function LoginRegisterForm() {
       if (token) navigate("/dashboard");
    });
 
-   async function loginUser(event) {
+   async function loginAdmin(event) {
       event.preventDefault();
       if (validateFormLogin()) {
          //SEND REQUEST, THEN CHECK IF USER EXISTS IN DB
          await axios({
             method: "POST",
-            url: "http://localhost:5000/user/login",
+            url: "http://localhost:5000/admin/login",
             data: formDataLogin,
          })
             //in this then, redirect user to main page
             .then((data) => {
                if (data.data.user) {
                   localStorage.setItem("token", data.data.user); //put the token in local storage
-                  navigate("/dashboard");
+                  navigate("/admin-dashboard");
                }
             })
             .catch((err) => {
@@ -503,47 +482,6 @@ export default function LoginRegisterForm() {
       setIsInit3(true);
       setIsInit4(true);
    }
-
-   const [content, setContent] = React.useState({
-      logo: "",
-   });
-
-   async function getWebsiteContents() {
-      await axios({
-         method: "GET",
-         headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-         },
-         baseURL: `http://localhost:5000/admin/content`,
-      })
-         .then((res) => {
-            setContent({
-               logo: res.data.contents.logo,
-            });
-         })
-         .catch((err) => {
-            console.log(err);
-         });
-   }
-
-   function setImgSrc(imageName) {
-      var url = "";
-      if (imageName === "logo.png") {
-         imageName = "logo.PNG";
-      }
-      try {
-         //require url to catch error if image is not found
-         const src = require(`../../../public/images/profilePictures/${imageName}`);
-         url = `/images/profilePictures/${imageName}`;
-      } catch (err) {
-         url = `/images/profilePictures/ExamplifyLogo.png`;
-      }
-      return url;
-   }
-
-   React.useEffect(() => {
-      getWebsiteContents();
-   }, []);
 
    return (
       <>
@@ -886,7 +824,7 @@ export default function LoginRegisterForm() {
 
                {/* LOGIN */}
                <div className={`${css.form_container} ${css.sign_in_container}`}>
-                  <form action="#" className={css.formLogin} onSubmit={loginUser}>
+                  <form action="#" className={css.formLogin} onSubmit={loginAdmin}>
                      <h1 className={`${css.header} mb-4`}>Sign in</h1>
                      {loginError.hasError && (
                         <div
@@ -967,22 +905,12 @@ export default function LoginRegisterForm() {
                         </button>
                      </div>
                      <div className={`${css.overlay_panel} ${css.overlay_right} `}>
-                        {content.logo === "ExamplifyLogo.png" ? (
-                           <p className={`${css.logo} m-0`}>
-                              Ex
-                              <GiBrain />
-                              mplify.
-                           </p>
-                        ) : (
-                           <div className={`${css.logo_container} ms-3`}>
-                              <img
-                                 className={css.logo_image}
-                                 src={setImgSrc(content.logo)}
-                                 alt="logo"
-                              />
-                           </div>
-                        )}
-
+                        <p className={`${css.logo} m-0`}>
+                           Ex
+                           <GiBrain />
+                           mplify.
+                        </p>
+                        <span className={`${css.admin_text} text-end`}>Admin</span>
                         {/* <h1>Welcome.</h1> */}
                         <p className={`${css.message}`}>The future of online examination</p>
                         {/* <div className="d-flex align-items-center mb-4">
@@ -990,12 +918,12 @@ export default function LoginRegisterForm() {
                            <span className={css.or}>OR</span>
                            <div className={css.line}></div>
                         </div> */}
-                        <button
+                        {/* <button
                            className={`${css.buttons} ${css.ghost}`}
                            id="signUp"
                            onClick={goToSignUp}>
                            Sign Up
-                        </button>
+                        </button> */}
                      </div>
                   </div>
                </div>

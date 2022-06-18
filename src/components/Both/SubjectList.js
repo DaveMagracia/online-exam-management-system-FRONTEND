@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
 import BarLoader from "react-spinners/BarLoader";
+import { MdAdd } from "react-icons/md";
 import { v1 as createId } from "uuid";
 
 export default function SubjectList() {
@@ -97,6 +98,7 @@ export default function SubjectList() {
 
                   {user && user.userType === "teacher" && (
                      <button className="btn btn-primary float-end" onClick={goToCreateExam}>
+                        <MdAdd className="me-2" />
                         Create Exam
                      </button>
                   )}

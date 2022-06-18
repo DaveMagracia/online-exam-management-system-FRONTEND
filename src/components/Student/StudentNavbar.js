@@ -17,6 +17,9 @@ export default function StudentNavbar(props) {
    const [formDataCode, setFormData] = React.useState({
       examCode: "",
    });
+   const [content, setContent] = React.useState({
+      logo: "",
+   });
 
    const [generalError, setGenError] = React.useState({
       hasGenError: false,
@@ -160,6 +163,42 @@ export default function StudentNavbar(props) {
       }
    }
 
+   async function getWebsiteContents() {
+      await axios({
+         method: "GET",
+         headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+         },
+         baseURL: `http://localhost:5000/admin/content`,
+      })
+         .then((res) => {
+            setContent({
+               logo: res.data.contents.logo,
+            });
+         })
+         .catch((err) => {
+            console.log(err);
+         });
+   }
+
+   function setImgSrc(imageName) {
+      var url = "";
+      if (imageName === "logo.png") {
+         imageName = "logo.PNG";
+      }
+      try {
+         //require url to catch error if image is not found
+         const src = require(`../../../public/images/profilePictures/${imageName}`);
+         url = `/images/profilePictures/${imageName}`;
+      } catch (err) {
+         url = `/images/profilePictures/ExamplifyLogo.png`;
+      }
+      return url;
+   }
+
+   React.useEffect(() => {
+      getWebsiteContents();
+   }, []);
    return (
       <>
          <nav
@@ -177,11 +216,17 @@ export default function StudentNavbar(props) {
                   transition={{ duration: 0.2, ease: "easeOut" }}
                   className={`${css.logo} navbar-brand`}
                   href="/">
-                  <span className={`${css.logo} navbar-brand ms-3`} href="/">
-                     Ex
-                     <GiBrain />
-                     mplify
-                  </span>
+                  {content.logo === "ExamplifyLogo.png" ? (
+                     <span className={`${css.logo} navbar-brand ms-3`} href="/">
+                        Ex
+                        <GiBrain />
+                        mplify
+                     </span>
+                  ) : (
+                     <div className={`${css.logo_container} ms-3`}>
+                        <img className={css.logo_image} src={setImgSrc(content.logo)} alt="logo" />
+                     </div>
+                  )}
                </motion.a>
 
                {/* <button

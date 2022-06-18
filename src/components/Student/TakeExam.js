@@ -322,6 +322,13 @@ export default function TakeExam() {
       setIsShownConfirmModal(false);
    }
 
+   function goToExamDetails() {
+      setCanShowDialogLeavingPage(false);
+      setTimeout(() => {
+         navigate(`/exam-details/${examId}`);
+      }, 1000);
+   }
+
    async function submitExam(event) {
       event.preventDefault();
       finishedTime = new Date();
@@ -433,6 +440,22 @@ export default function TakeExam() {
       return () => clearInterval(intervalId);
    }, [timeLimit]);
 
+   async function getWebsiteContents() {
+      await axios({
+         method: "GET",
+         headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+         },
+         baseURL: `http://localhost:5000/admin/content`,
+      })
+         .then((res) => {
+            document.title = `Take Exam | ${res.data.contents.title}`;
+         })
+         .catch((err) => {
+            console.log(err);
+         });
+   }
+
    React.useEffect(() => {
       document.addEventListener("visibilitychange", function () {
          if (document.visibilityState === "visible") {
@@ -456,7 +479,7 @@ export default function TakeExam() {
       //    setActionLog((prevVal) => [...prevVal, { time: new Date(), action: "MOUSE ENTER" }]);
       // });
 
-      document.title = `Take Exam | Online Examination`;
+      getWebsiteContents();
       if (!localStorage.getItem("token")) {
          navigate("/login-register");
       } else {
@@ -518,8 +541,12 @@ export default function TakeExam() {
                            <div className={`${css.submitted_container} border mt-5 p-5 bg-white`}>
                               <h3>{exam.title}</h3>
                               <h3 className="lead">Your answers were recorded</h3>
-                              <button className="btn btn-primary mt-4" onClick={goToExamResults}>
-                                 View Score
+                              <button
+                                 className="btn btn-primary mt-4"
+                                 onClick={goToExamDetails}
+                                 // onClick={goToExamResults}
+                              >
+                                 Back to exam details
                               </button>
                            </div>
                         </div>

@@ -33,6 +33,7 @@ export default function AddQuestion(props) {
       cpd: "none",
       kd: "none",
       points: 1,
+      pointsDropDown: 1,
    });
 
    const [errors, setErrors] = React.useState({
@@ -49,6 +50,7 @@ export default function AddQuestion(props) {
 
    const [hasError, setHasError] = React.useState(false);
    const [isShownModal, setisShownModal] = React.useState(false);
+   const [isShownCustomPoints, setIsShownCustomPoints] = React.useState(false);
 
    function handleFormChange(event) {
       const { name, value } = event.target;
@@ -57,16 +59,35 @@ export default function AddQuestion(props) {
       if (!hasError) {
          setHasError(false);
       }
+
+      console.log(name);
       //remove error on the field that was changed
       setErrors((prevVal) => ({
          ...prevVal,
-         [name]: false,
+         [name === "pointsDropDown" || name === "points" ? "points" : name]: false,
       }));
 
-      setFormData((prevVal) => ({
-         ...prevVal,
-         [name]: name === "answer" ? Number(value) : value, //if the answer field is changed, convert value from string to number
-      }));
+      if (name === "pointsDropDown") {
+         setFormData((prevVal) => ({
+            ...prevVal,
+            pointsDropDown: value !== "custom" ? Number(value) : "custom",
+         }));
+
+         if (value === "custom") {
+            setIsShownCustomPoints(true);
+            setFormData((prevVal) => ({
+               ...prevVal,
+               points: 1,
+            }));
+         } else {
+            setIsShownCustomPoints(false);
+         }
+      } else {
+         setFormData((prevVal) => ({
+            ...prevVal,
+            [name]: name === "answer" ? Number(value) : value, //if the answer field is changed, convert value from string to number
+         }));
+      }
    }
 
    function handleTimeLimitInput(event) {
@@ -84,6 +105,11 @@ export default function AddQuestion(props) {
             points: finalPoints,
          };
       });
+
+      setErrors((prevVal) => ({
+         ...prevVal,
+         points: false,
+      }));
    }
 
    function backToCreateExam() {
@@ -130,6 +156,26 @@ export default function AddQuestion(props) {
       setHasError(hasError_);
 
       if (hasError_) {
+         let element = "";
+         for (let key in errors) {
+            if (errors[key]) {
+               element = key;
+               break;
+            }
+         }
+
+         let firstError = document.getElementsByName(element)[0];
+
+         if (firstError) {
+            firstError.scrollIntoView({
+               behavior: "smooth",
+               block: "center",
+               inline: "start",
+            });
+         }
+      }
+
+      if (hasError_) {
          return false;
       }
 
@@ -164,7 +210,8 @@ export default function AddQuestion(props) {
                answer: formData.answer,
                cpd: formData.cpd,
                kd: formData.kd,
-               points: formData.points,
+               points:
+                  formData.pointsDropDown === "custom" ? formData.points : formData.pointsDropDown,
             });
          });
 
@@ -199,6 +246,10 @@ export default function AddQuestion(props) {
       } else {
          let currentQuestion = props.currentQuestion;
          if (props.currentQuestion) {
+            const pointsVal = currentQuestion.points;
+            const isPointChosenFromDropDown =
+               pointsVal === 1 || pointsVal === 3 || pointsVal === 5 || pointsVal === 10;
+
             setFormData({
                question: currentQuestion.question,
                choice1: currentQuestion.choice1,
@@ -208,8 +259,16 @@ export default function AddQuestion(props) {
                answer: currentQuestion.answer,
                cpd: currentQuestion.cpd,
                kd: currentQuestion.kd,
-               points: currentQuestion.points,
+               // points: currentQuestion.points,
+               ...(isPointChosenFromDropDown
+                  ? { pointsDropDown: pointsVal, points: 1 }
+                  : { pointsDropDown: "custom", points: pointsVal }),
             });
+
+            if (!isPointChosenFromDropDown) {
+               setIsShownCustomPoints(true);
+            }
+
             setEditorState(
                EditorState.createWithContent(
                   ContentState.createFromBlockArray(convertFromHTML(currentQuestion.question))
@@ -222,25 +281,24 @@ export default function AddQuestion(props) {
    React.useEffect(() => {
       //this if block finds the first field that has an error
       //if found, then scroll to that element
-      if (hasError) {
-         let element = "";
-         for (let key in errors) {
-            if (errors[key]) {
-               element = key;
-               break;
-            }
-         }
-
-         let firstError = document.getElementsByName(element)[0];
-
-         if (firstError) {
-            firstError.scrollIntoView({
-               behavior: "smooth",
-               block: "center",
-               inline: "start",
-            });
-         }
-      }
+      // if (hasError) {
+      //    let element = "";
+      //    for (let key in errors) {
+      //       if (errors[key]) {
+      //          element = key;
+      //          break;
+      //       }
+      //    }
+      //    let firstError = document.getElementsByName(element)[0];
+      //    if (firstError) {
+      //       firstError.scrollIntoView({
+      //          behavior: "smooth",
+      //          block: "center",
+      //          inline: "start",
+      //       });
+      //    }
+      // }
+      // console.log(formData);
    });
 
    React.useEffect(() => {
@@ -420,18 +478,41 @@ export default function AddQuestion(props) {
                <label htmlFor="points_field" className="mb-2 mt-3 d-block">
                   Points:
                </label>
-               <div className="input-group">
-                  <input
+               <div className="d-flex">
+                  <select
                      id="points_field"
-                     type="text"
-                     className={`form-control ${css.points_input} ${
+                     name="pointsDropDown"
+                     className={`form-select ${css.points_input} ${
                         errors.points && "border-danger"
                      }`}
-                     name="points"
-                     value={formData.points}
-                     onChange={handleTimeLimitInput}
-                  />
-                  {errors.points && errorAddOn()}
+                     value={formData.pointsDropDown}
+                     onChange={handleFormChange}
+                     placeholder="select"
+                     aria-label="Default select example">
+                     <option value="none" disabled hidden>
+                        Select an option
+                     </option>
+                     <option value={1}>1 point</option>
+                     <option value={3}>3 points</option>
+                     <option value={5}>5 points</option>
+                     <option value={10}>10 points</option>
+                     <option value="custom">Custom</option>
+                  </select>
+                  {isShownCustomPoints && (
+                     <div className="input-group ms-3">
+                        <input
+                           id="points_field"
+                           type="text"
+                           className={`form-control ${css.points_input} ${
+                              errors.points && "border-danger"
+                           }`}
+                           name="points"
+                           value={formData.points}
+                           onChange={handleTimeLimitInput}
+                        />
+                        {errors.points && errorAddOn()}
+                     </div>
+                  )}
                </div>
                {errors.points && (
                   <small className="text-danger">Invalid Input. Must be a positive integer.</small>

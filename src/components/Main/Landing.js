@@ -11,11 +11,22 @@ import { CDBAnimation } from "cdbreact";
 import { CarouselProvider, Slider, Slide, ButtonBack, ButtonNext } from "pure-react-carousel";
 import "pure-react-carousel/dist/react-carousel.es.css";
 import { IoMdArrowDropleft, IoMdArrowDropright } from "react-icons/io";
+import axios from "axios";
 
 export default function Landing() {
    const navigate = useNavigate();
    const [navbarOpened, setNavbarOpened] = React.useState(false);
    const [triggerFeaturesAnim, setTriggerFeaturesAnim] = React.useState(false);
+   const [content, setContent] = React.useState({
+      title: "",
+      logo: "",
+      vision: "",
+      mission: "",
+      go: "",
+      isVisionEnabled: true,
+      isMissionEnabled: true,
+      isGoEnabled: true,
+   });
 
    function goToLogin() {
       navigate("/login-register", { state: { name: "login" } });
@@ -35,9 +46,36 @@ export default function Landing() {
       }
    }
 
+   async function getWebsiteContents() {
+      await axios({
+         method: "GET",
+         headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+         },
+         baseURL: `http://localhost:5000/admin/content`,
+      })
+         .then((res) => {
+            document.title = res.data.contents.title;
+            setContent({
+               title: res.data.contents.title,
+               vision: res.data.contents.vision,
+               mission: res.data.contents.mission,
+               go: res.data.contents.go,
+               isVisionEnabled: res.data.contents.isVisionEnabled,
+               isMissionEnabled: res.data.contents.isMissionEnabled,
+               isGoEnabled: res.data.contents.isGoEnabled,
+            });
+         })
+         .catch((err) => {
+            console.log(err);
+         });
+   }
+
    React.useEffect(() => {
       const token = localStorage.getItem("token");
       if (token) navigate("/dashboard");
+
+      getWebsiteContents();
    }, []);
 
    return (
@@ -105,8 +143,9 @@ export default function Landing() {
                                     Our Features & Services
                                  </h1>
                                  <p className={css.feature_desc}>
-                                    Designed to make your online teaching and learning easier.
-                                    Examplify simplifies the process of conducting exams online.
+                                    Designed to make your online teaching and learning easier.&nbsp;
+                                    {content.title} simplifies the process of conducting exams
+                                    online.
                                  </p>
                                  <div className={`${css.divider} mt-3`}></div>
                               </div>
@@ -155,8 +194,8 @@ export default function Landing() {
                                  <div>
                                     <h3 className="mb-3">Save Your Money</h3>
                                     <p className={css.feature_desc}>
-                                       It's totally free! Just create an Examplify account and you
-                                       can start managing your examinations immediately.
+                                       It's totally free! Just create an {content.title} account and
+                                       you can start managing your examinations immediately.
                                     </p>
                                  </div>
                               </div>
@@ -189,16 +228,16 @@ export default function Landing() {
                      </div>
                   </section>
 
-                  {/*LEARN MORE ABOUT WEBSITE*/}
+                  {/*LEARN MORE ABOUT OUR WEBSITE*/}
                   <section
-                     className={`${css.learn_more_container} d-flex flex-column justify-content-center pt-5`}>
+                     className={`${css.learn_more_container} d-flex flex-column justify-content-center py-5`}>
                      <h4 className="display-5 mb-2">About our website</h4>
                      <div className="container">
                         <div className="row d-flex justify-content-center ">
                            <div
                               className={`${css.about_us_container} m-0 d-flex flex-column align-items-center`}>
                               <p className={`${css.about_us_p1} ${css.feature_desc} m-0`}>
-                                 Welcome to Examplify! We make online examinations easier!
+                                 Welcome to {content.title}! We make online examinations easier!
                               </p>
                               <p
                                  className={`${css.about_us_p2} ${css.feature_desc} mt-5 text-start`}>
@@ -219,12 +258,114 @@ export default function Landing() {
                                  students and at the same time, they needed to adapt to the new mode
                                  of teaching as online teaching is new almost to every teachers out
                                  there. With this website, we hope that it would make online
-                                 learning a lot more enjoyable
+                                 learning a lot more enjoyable.
                               </p>
                            </div>
                         </div>
                      </div>
                   </section>
+
+                  {(content.isVisionEnabled || content.isMissionEnabled || content.isGoEnabled) && (
+                     <section className={`${css.vmgo_container} text-white `}>
+                        <div className="container">
+                           <div className="row justify-content-center mb-5">
+                              <div className="col-xl-6 col-lg-7">
+                                 <div className="text-center d-flex flex-column align-items-center">
+                                    <h1 className="mb-25  wow fadeInUp" data-wow-delay=".2s">
+                                       Vision, Mission, and Goals
+                                    </h1>
+                                    <div className={`${css.divider} mt-3`}></div>
+                                 </div>
+                              </div>
+                           </div>
+                           <div className="row justify-content-center my-5">
+                              <div className="p-5">
+                                 <div className="d-flex flex-column align-items-center">
+                                    {content.isVisionEnabled && (
+                                       <div className="mb-5">
+                                          <h3 className="mb-3 text-center">Vision</h3>
+                                          <div
+                                             className={`${css.vmgo_desc} mt-3`}
+                                             dangerouslySetInnerHTML={{
+                                                __html: content.vision,
+                                             }}
+                                          />
+                                          {/* <p className={`${css.vmgo_desc} text-start`}>
+                                       Bulacan State University is a progressive
+                                       knowledge-generating institution globally recognized for
+                                       excellent instruction, pioneering research, and responsive
+                                       community engagements.
+                                       {content.vision}
+                                    </p> */}
+                                       </div>
+                                    )}
+
+                                    {content.isMissionEnabled && (
+                                       <div className="mb-5">
+                                          <h3 className="mb-3">Mission</h3>
+                                          <div
+                                             className={`${css.vmgo_desc} mt-3`}
+                                             dangerouslySetInnerHTML={{
+                                                __html: content.mission,
+                                             }}
+                                          />
+                                          {/* <p className={`${css.vmgo_desc} text-start`}>
+                                          Bulacan State University exists to produce highly competent,
+                                       ethical and service-oriented professionals that contribute to
+                                       the sustainable socio-economic growth and development of the
+                                       nation.
+                                          {content.mission}
+                                       </p> */}
+                                       </div>
+                                    )}
+
+                                    {content.isGoEnabled && (
+                                       <div>
+                                          <h3 className="mb-3 text-center">Goals</h3>
+                                          <div
+                                             className={`${css.vmgo_desc} mt-3`}
+                                             dangerouslySetInnerHTML={{
+                                                __html: content.go,
+                                             }}
+                                          />
+                                          {/* <div className={`${css.vmgo_desc} text-start`}>
+                                          <p className={css.vmgo_desc}>
+                                          In the pursuit of its mission, the initiatives and efforts
+                                          of the University are geared towards the attainment of the
+                                          following goals:
+                                       </p>
+                                       <ol>
+                                          <li>
+                                             Quality and Excellence. Promoting quality and relevant
+                                             educational programs that meet international standards.
+                                          </li>
+                                          <li>
+                                             Relevance and Responsiveness. Generation and
+                                             dissemination of knowledge in the broad range of
+                                             disciplines relevant and responsive to the dynamically
+                                             changing domestic and international environments.
+                                          </li>
+                                          <li>
+                                             Access and Equity. Broadening the access of deserving
+                                             and qualified students to educational opportunities.
+                                          </li>
+                                          <li>
+                                             Efficiency and Effectiveness. Optimizing of social,
+                                             institutional and individual returns and benefits
+                                             derived from the utilization of higher education
+                                             resources.
+                                          </li>
+                                       </ol>
+                                          {content.go}
+                                       </div> */}
+                                       </div>
+                                    )}
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </section>
+                  )}
 
                   <section className={`${css.our_team_container}`}>
                      <h4 className="display-5 mb-2">Our Team</h4>
@@ -232,7 +373,7 @@ export default function Landing() {
                         <div className="row d-flex justify-content-center">
                            <div className="m-0 d-flex flex-column align-items-center">
                               <p className={`${css.about_us_p1} ${css.feature_desc} m-0`}>
-                                 Meet the team behind Examplify
+                                 Meet the team behind {content.title}.
                               </p>
                               <div className="container mt-5">
                                  <CarouselProvider

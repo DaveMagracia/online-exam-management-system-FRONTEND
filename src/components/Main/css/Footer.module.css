@@ -3,12 +3,26 @@
    background-color: #252e3e;
 }
 
+.logo_container {
+   /* background-color: red; */
+   height: 40px;
+   width: 130px;
+   overflow: hidden;
+}
+
+.logo_image {
+   width: 100%;
+   position: relative;
+   top: 50%;
+   transform: translateY(-50%);
+}
+
 .logo {
    color: rgb(255, 255, 255) !important;
    font-family: "Raleway", sans-serif;
    font-weight: 900;
    font-size: 40px !important;
-   margin-top: 100px !important;
+   margin-top: 20px !important;
    position: relative;
 }
 

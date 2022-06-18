@@ -235,8 +235,24 @@ export default function UpdateProfile(props) {
       );
    }
 
+   async function getWebsiteContents() {
+      await axios({
+         method: "GET",
+         headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+         },
+         baseURL: `http://localhost:5000/admin/content`,
+      })
+         .then((res) => {
+            document.title = `Update Profile | ${res.data.contents.title}`;
+         })
+         .catch((err) => {
+            console.log(err);
+         });
+   }
+
    React.useEffect(() => {
-      document.title = `Update Profile | Online Examination`;
+      getWebsiteContents();
       //get user details from token to set the initial values of the form
       getUserInfoFromToken();
    }, []);

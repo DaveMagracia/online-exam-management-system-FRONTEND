@@ -1,0 +1,38 @@
+.footer_root {
+   min-height: auto;
+   /* background-color: #252e3e; */
+}
+
+.logo_container {
+   /* background-color: red; */
+   height: 40px;
+   width: 130px;
+   overflow: hidden;
+}
+
+.logo_image {
+   width: 100%;
+   position: relative;
+   top: 50%;
+   transform: translateY(-50%);
+}
+
+.logo {
+   color: rgb(150, 150, 150) !important;
+   font-family: "Raleway", sans-serif;
+   font-weight: 900;
+   font-size: 25px !important;
+   position: relative;
+}
+
+.hr {
+   background-color: rgb(71, 71, 71);
+}
+
+.styles_link {
+   text-decoration: none;
+}
+
+.text_muted {
+   color: rgb(179, 179, 179);
+}

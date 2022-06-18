@@ -85,8 +85,24 @@ export default function ExamResults() {
       navigate(-1);
    }
 
+   async function getWebsiteContents() {
+      await axios({
+         method: "GET",
+         headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+         },
+         baseURL: `http://localhost:5000/admin/content`,
+      })
+         .then((res) => {
+            document.title = `Exam Results | ${res.data.contents.title}`;
+         })
+         .catch((err) => {
+            console.log(err);
+         });
+   }
+
    React.useEffect(() => {
-      document.title = `Exam Results | Online Examination`;
+      getWebsiteContents();
       if (!localStorage.getItem("token")) {
          navigate("/login-register");
       } else {

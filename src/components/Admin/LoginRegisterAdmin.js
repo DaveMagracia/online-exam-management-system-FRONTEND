@@ -1,9 +1,9 @@
 import React from "react";
-import ParticlesBackground from "./ParticlesBackground";
-import LoginRegisterForm from "./LoginRegisterForm";
+import ParticlesBackground from "../Main/ParticlesBackground";
+import LoginRegisterAdminForm from "./LoginRegisterAdminForm";
 import axios from "axios";
 
-export default function LoginRegister() {
+export default function LoginRegisterAdmin() {
    async function getWebsiteContents() {
       await axios({
          method: "GET",
@@ -13,7 +13,7 @@ export default function LoginRegister() {
          baseURL: `http://localhost:5000/admin/content`,
       })
          .then((res) => {
-            document.title = `Login | ${res.data.contents.title}`;
+            document.title = `Login | ${res.data.contents.title} Admin`;
          })
          .catch((err) => {
             console.log(err);
@@ -33,7 +33,7 @@ export default function LoginRegister() {
             BECAUSE FOR EVERY STATE CHANGES IN LOGINREGISTER, THE WHOLE PAGE GETS REFRESHED
             THEN THE BACKGROUND REFRESHES
          */}
-         <LoginRegisterForm />
+         <LoginRegisterAdminForm />
       </>
    );
 }

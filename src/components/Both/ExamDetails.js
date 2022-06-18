@@ -54,9 +54,12 @@ export default function ExamDetails() {
    const [questions, setQuestions] = React.useState([]);
    const [tableObject, setTableObject] = React.useState({});
    const [showFullName, setShowFullName] = React.useState(true);
+   const [isToggleResultsEnabled, setIsToggleResultsDisabled] = React.useState(false);
+   const [isResultsChecked, setIsResultsChecked] = React.useState(false);
    const [results, setResults] = React.useState(true);
    const [questionsSheet, setQuestionsSheet] = React.useState();
    const [answersSheet, setAnswersSheet] = React.useState();
+   const [title, setTitle] = React.useState("");
 
    const [spreadSheetResults, setSpreadSheetResults] = React.useState([
       //Headers
@@ -297,6 +300,7 @@ export default function ExamDetails() {
                   time_limit: examData_.time_limit,
                   directions: examData_.directions,
                   status: examData_.status,
+                  isShownResults: examData_.isShownResults,
                   examCode: examData_.examCode,
                   totalItems: examData_.totalItems,
                   totalPoints: examData_.totalPoints,
@@ -307,6 +311,7 @@ export default function ExamDetails() {
                setRegisteredExamStatus(res.data.registeredExamStatus);
                setFacultyName(res.data.faculty);
                setStudentList(res.data.students);
+               setIsResultsChecked(res.data.exam.isShownResults);
 
                let tempSubmitted = [];
                let tempUnanswered = [];
@@ -385,7 +390,6 @@ export default function ExamDetails() {
                return [[...prevVal[0], ...headers_]];
             });
 
-            console.log(res.data.results);
             // set fields for each user
             setSpreadSheetResults((prevVal) => {
                return [
@@ -416,7 +420,7 @@ export default function ExamDetails() {
                         )}`,
                         `${formatDate(userData.exam.finishedTime)}`,
                         "                               ", //whitespace
-                        ...firstUserQuesOrder.map((firstUserQuesVal) => {
+                        ...firstUserQuesOrder.map((firstUserQuesVal, i) => {
                            //get original index of the question
                            //every user has a randomized set of questions
                            let origQuestionIndex = userData.questions.findIndex(
@@ -426,12 +430,16 @@ export default function ExamDetails() {
                            let currQuestionChoices =
                               userData.questions[origQuestionIndex].shuffledChoices;
 
-                           return currQuestionChoices[
-                              currQuestionChoices.findIndex(
-                                 (val) =>
-                                    val.index === userData.answers[`question${origQuestionIndex}`]
-                              )
-                           ].choice;
+                           var val =
+                              currQuestionChoices[
+                                 currQuestionChoices.findIndex(
+                                    (val) =>
+                                       val.index ===
+                                       userData.answers[`question${origQuestionIndex}`]
+                                 )
+                              ].choice;
+
+                           return val;
                         }),
                      ];
                   }),
@@ -460,6 +468,18 @@ export default function ExamDetails() {
 
    function toggleFullName() {
       setShowFullName((prevVal) => !prevVal);
+   }
+
+   function setImgSrc(imageName) {
+      var url = "";
+      try {
+         //require url to catch error if image is not found
+         const src = require(`../../../public/images/profilePictures/${imageName}`);
+         url = `/images/profilePictures/${imageName}`;
+      } catch (err) {
+         url = `/images/profilePictures/no_profile_picture.png`;
+      }
+      return url;
    }
 
    function getExamStatus(status) {
@@ -547,6 +567,31 @@ export default function ExamDetails() {
       }
    }
 
+   async function enableShowResults() {
+      setIsToggleResultsDisabled(true);
+      await axios({
+         method: "PATCH",
+         baseURL: `http://localhost:5000/exams/results/show/${examData.examCode}`,
+         headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+         },
+         data: {
+            isResultsChecked: !isResultsChecked,
+         },
+      })
+         .then((res) => {
+            console.log(res.data);
+            setIsResultsChecked(res.data.newIsShownResultsVal);
+            setTimeout(() => {
+               setIsToggleResultsDisabled(false);
+            }, 200);
+         })
+         .catch((err) => {
+            console.log(err);
+            setIsResultsChecked(false);
+         });
+   }
+
    async function retakeExam(id) {
       setIsRetakeExam(true);
       await axios({
@@ -558,6 +603,24 @@ export default function ExamDetails() {
       })
          .then((res) => {
             console.log(res.data);
+         })
+         .catch((err) => {
+            console.log(err);
+         });
+   }
+
+   async function getWebsiteContents() {
+      await axios({
+         method: "GET",
+         headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+         },
+         baseURL: `http://localhost:5000/admin/content`,
+      })
+         .then((res) => {
+            document.title = `Exam Details ${examData.title && "- " + examData.title} | ${
+               res.data.contents.title
+            }`;
          })
          .catch((err) => {
             console.log(err);
@@ -584,9 +647,7 @@ export default function ExamDetails() {
    }
 
    React.useEffect(() => {
-      document.title = `Exam Details ${
-         examData.title && "- " + examData.title
-      } | Online Examination`;
+      getWebsiteContents();
       if (!localStorage.getItem("token")) {
          navigate("/login-register");
       } else {
@@ -679,6 +740,8 @@ export default function ExamDetails() {
                                           (examData.status === "closed" &&
                                              (registeredExamStatus === "unanswered" ||
                                                 registeredExamStatus === "attempted")) ||
+                                          (registeredExamStatus === "submitted" &&
+                                             !examData.isShownResults) ||
                                           (examData.status === "open" &&
                                              registeredExamStatus === "attempted") ||
                                           (examData.status !== "closed" &&
@@ -847,15 +910,38 @@ export default function ExamDetails() {
                                     className="me-2"
                                  />
                                  <label htmlFor="fullNameInput">Show Full Name</label>
+
+                                 {/* results toggle button */}
+                                 {user && user.userType === "teacher" && (
+                                    <>
+                                       <label className={`${css.switch} ms-5`}>
+                                          <input
+                                             type="checkbox"
+                                             onChange={enableShowResults}
+                                             disabled={isToggleResultsEnabled}
+                                             checked={isResultsChecked}
+                                          />
+                                          <span className={`${css.slider} ${css.round}`}></span>
+                                       </label>
+                                       <span
+                                          className={`${css.toggle_results_label} ms-2`}
+                                          onClick={enableShowResults}>
+                                          Show results to students
+                                       </span>
+                                    </>
+                                 )}
+
                                  {user &&
                                     user.userType === "teacher" &&
                                     studentsSubmitted.length > 0 && (
-                                       <CSVLink
-                                          filename={`${examData.title} results`}
-                                          data={spreadSheetResults}
-                                          className="btn btn-success ms-4">
-                                          <IoMdDownload className="me-1" /> Download Spreadsheet
-                                       </CSVLink>
+                                       <>
+                                          <CSVLink
+                                             filename={`${examData.title} results`}
+                                             data={spreadSheetResults}
+                                             className="btn btn-success ms-5">
+                                             <IoMdDownload className="me-1" /> Download Spreadsheet
+                                          </CSVLink>
+                                       </>
                                     )}
                               </div>
                            </div>
@@ -906,11 +992,9 @@ export default function ExamDetails() {
                                                                         className={
                                                                            css.student_image
                                                                         }
-                                                                        src={
-                                                                           !!student.profilePicture
-                                                                              ? `/images/profilePictures/${student.profilePicture}`
-                                                                              : `/images/profilePictures/no_profile_picture.png`
-                                                                        }
+                                                                        src={setImgSrc(
+                                                                           student.profilePicture
+                                                                        )}
                                                                         alt="profPic"
                                                                      />
                                                                   </div>
@@ -1023,9 +1107,12 @@ export default function ExamDetails() {
                                                                               css.student_image
                                                                            }
                                                                            src={
-                                                                              !!student.profilePicture
-                                                                                 ? `/images/profilePictures/${student.profilePicture}`
-                                                                                 : `/images/profilePictures/no_profile_picture.png`
+                                                                              setImgSrc(
+                                                                                 student.profilePicture
+                                                                              )
+                                                                              // !!student.profilePicture
+                                                                              //    ? `/images/profilePictures/${student.profilePicture}`
+                                                                              //    : `/images/profilePictures/no_profile_picture.png`
                                                                            }
                                                                            alt="profPic"
                                                                         />
@@ -1076,9 +1163,10 @@ export default function ExamDetails() {
                                                       <img
                                                          className={css.student_image}
                                                          src={
-                                                            !!student.profilePicture
-                                                               ? `/images/profilePictures/${student.profilePicture}`
-                                                               : `/images/profilePictures/no_profile_picture.png`
+                                                            setImgSrc(student.profilePicture)
+                                                            // !!student.profilePicture
+                                                            //    ? `/images/profilePictures/${student.profilePicture}`
+                                                            //    : `/images/profilePictures/no_profile_picture.png`
                                                          }
                                                          alt="profPic"
                                                       />
