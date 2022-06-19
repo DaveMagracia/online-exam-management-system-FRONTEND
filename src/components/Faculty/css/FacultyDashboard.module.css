@@ -1,4 +1,5 @@
 .fact_dashboard_root {
    height: calc(100vh - 60px);
    overflow-y: auto;
+   background-color: #f2f6f8;
 }

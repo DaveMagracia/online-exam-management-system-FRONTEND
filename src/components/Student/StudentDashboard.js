@@ -4,6 +4,7 @@ import css from "./css/StudentDashboard.module.css";
 import Sidebar from "../Both/Sidebar";
 import SubjectList from "../Both/SubjectList";
 import { GiBrain } from "react-icons/gi";
+import Sample from "../Both/Sample";
 import DashboardFooter from "../Both/DashboardFooter";
 import axios from "axios";
 
@@ -38,22 +39,19 @@ export default function StudentDashboard(props) {
                      {/* <hr className="m-0" /> */}
                   </div>
 
-                  <div className="d-flex flex-column mt-3 ">
-                     <SubjectList />
+                  <div class="d-flex flex-column flex-lg-row">
+                     <div className="d-flex flex-column mt-3 w-100 pe-4">
+                        <SubjectList />
+                     </div>
+
+                     <div class="ms-4 ms-auto">
+                        <div className="calendar-container float-end p-2 mt-3">
+                           <Sample />
+                        </div>
+                     </div>
                   </div>
                </div>
                <DashboardFooter />
-               {/* <footer className={`${css.footer_root} text-center text-white`}>
-                  <div className="container p-4">
-                     <div className="mt-5">
-                        <span className={`${css.logo} navbar-brand`} href="/">
-                           Ex
-                           <GiBrain />
-                           mplify
-                        </span>
-                     </div>
-                  </div>
-               </footer> */}
             </div>
          </Sidebar>
       </>

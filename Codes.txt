@@ -1,0 +1,38 @@
+ACCOUNT REGISTRATION
+
+FRONTEND
+const registerUser = async (event) => {
+      event.preventDefault();
+      if (validateFormRegister()) {
+         setLoading(true);
+
+         await axios({
+            method: "POST",
+            url: "http://www.localhost:5000/user/register",
+            data: formDataRegister,
+         })
+            .then((data) => {
+               setTimeout(() => {
+                  setLoading(false);
+
+                  setFormDataRegister({
+                     fullname: "",
+                     email: "",
+                     username: "",
+                     pass: "",
+                     cpass: "",
+                     userType: "none",
+                  });
+               }, 3000);
+            })
+            .catch((err) => {
+               setTimeout(() => {
+                  setLoading(false);
+                  setGenError({
+                     hasGenError: true,
+                     msg: err.response.data.msg,
+                  });
+               }, 2000);
+            });
+      }
+   }

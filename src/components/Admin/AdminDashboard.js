@@ -17,6 +17,7 @@ export default function AdminDashboard(props) {
    const [formData, setFormData] = React.useState({
       image: "",
       title: "",
+      announcements: "",
       vision: "",
       mission: "",
       isVisionEnabled: true,
@@ -27,6 +28,7 @@ export default function AdminDashboard(props) {
 
    const [emptyErrors, setEmptyErrors] = React.useState({
       image: false,
+      announcements: false,
       title: false,
       vision: false,
       mission: false,
@@ -36,6 +38,7 @@ export default function AdminDashboard(props) {
    const [errors, setErrors] = React.useState({
       image: { hasError: false, msg: "Invalid Image" },
       title: { hasError: false, msg: "Invalid Title" },
+      announcements: { hasError: false, msg: "Invalid Announcement" },
       vision: { hasError: false, msg: "Invalid Vision" },
       mission: { hasError: false, msg: "Invalid Mission" },
       go: { hasError: false, msg: "Invalid Goals and Objectives" },
@@ -46,6 +49,9 @@ export default function AdminDashboard(props) {
    const [isShownError, setIsShownError] = React.useState(false);
    const [logoImage, setLogoImage] = React.useState("");
    const [editorStateVision, setEditorStateVision] = React.useState(EditorState.createEmpty());
+   const [editorStateAnnouncement, setEditorStateAnnouncement] = React.useState(
+      EditorState.createEmpty()
+   );
    const [editorStateMission, setEditorStateMission] = React.useState(EditorState.createEmpty());
    const [editorStateGo, setEditorStateGo] = React.useState(EditorState.createEmpty());
 
@@ -69,8 +75,10 @@ export default function AdminDashboard(props) {
    function validateForm() {
       let tempErrors = { ...emptyErrors };
 
+      console.log(formData);
       // tempErrors.question = formData.question ? false : true;
       tempErrors.title = formData.title ? false : true;
+      tempErrors.announcements = formData.announcements ? false : true;
       tempErrors.vision = formData.vision === `<p></p>\n` ? true : false;
       tempErrors.mission = formData.mission === `<p></p>\n` ? true : false;
       tempErrors.go = formData.go === `<p></p>\n` ? true : false;
@@ -125,6 +133,7 @@ export default function AdminDashboard(props) {
                ...prevVal,
                title: res.data.contents.title,
                vision: res.data.contents.vision,
+               announcements: res.data.contents.announcements,
                mission: res.data.contents.mission,
                go: res.data.contents.go,
                image: res.data.contents.logo,
@@ -135,6 +144,14 @@ export default function AdminDashboard(props) {
 
             setLogoImage(
                !!res.data.contents.logo && `/images/profilePictures/${res.data.contents.logo}`
+            );
+
+            setEditorStateAnnouncement(
+               EditorState.createWithContent(
+                  ContentState.createFromBlockArray(
+                     convertFromHTML(res.data.contents.announcements)
+                  )
+               )
             );
 
             setEditorStateVision(
@@ -180,6 +197,7 @@ export default function AdminDashboard(props) {
 
          const formData_ = new FormData();
          formData_.append("title", formData.title);
+         formData_.append("announcements", formData.announcements);
          formData_.append("vision", formData.vision);
          formData_.append("mission", formData.mission);
          formData_.append("go", formData.go);
@@ -241,6 +259,18 @@ export default function AdminDashboard(props) {
       }));
    }
 
+   function handleRichTextChangeAnnouncement(newValue) {
+      setEmptyErrors((prevVal) => ({
+         ...prevVal,
+         announcements: false,
+      }));
+
+      setFormData((prevVal) => ({
+         ...prevVal,
+         announcements: newValue,
+      }));
+   }
+
    function handleRichTextChangeMission(newValue) {
       setEmptyErrors((prevVal) => ({
          ...prevVal,
@@ -271,6 +301,12 @@ export default function AdminDashboard(props) {
          [type]: !prevVal[type],
       }));
    }
+
+   React.useEffect(() => {
+      handleRichTextChangeAnnouncement(
+         draftToHtml(convertToRaw(editorStateAnnouncement.getCurrentContent()))
+      );
+   }, [editorStateAnnouncement]);
 
    React.useEffect(() => {
       handleRichTextChangeVision(draftToHtml(convertToRaw(editorStateVision.getCurrentContent())));
@@ -391,6 +427,64 @@ export default function AdminDashboard(props) {
                            <p className="text-danger mb-5 small">{errors.title.msg}</p>
                         )}
                         {emptyErrors.title && (
+                           <p className="text-danger mb-5 small">This field is required</p>
+                        )}
+
+                        <div className="d-flex justify-content-between">
+                           <h3>Announcements</h3>
+                        </div>
+                        <div
+                           className={`form-control w-100 ${
+                              errors.announcements.hasError || emptyErrors.announcements
+                                 ? "border border-danger"
+                                 : "mb-5"
+                           }`}
+                           name="announcements">
+                           {/* <label htmlFor="subject" className="me-3 mb-1">
+                           Subject:
+                        </label> */}
+                           {/* ORIGINAL */}
+                           {/* <div className="input-group">
+                              <input
+                                 id="vision"
+                                 type="text"
+                                 name="vision"
+                                 value={formData.vision}
+                                 className={`form-control ${
+                                    errors.vision.hasError || emptyErrors.vision
+                                       ? "border border-danger"
+                                       : "mb-5"
+                                 }`}
+                                 placeholder="Vision"
+                                 onChange={handleOnChange}
+                              />
+                           </div> */}
+
+                           <Editor
+                              editorState={editorStateAnnouncement}
+                              wrapperClassName={`${css.wrapper} ${props.isError && css.error}`}
+                              toolbarClassName={css.toolbarWrapper}
+                              editorClassName={css.editorWrapper}
+                              onEditorStateChange={setEditorStateAnnouncement}
+                              // toolbar={{
+                              //    //specify which toolbar buttons are included
+                              //    options: [
+                              //       "inline",
+                              //       "blockType",
+                              //       "fontSize",
+                              //       "list",
+                              //       "textAlign",
+                              //       "link",
+                              //       "image",
+                              //    ],
+                              // }}
+                           />
+                        </div>
+
+                        {errors.announcements.hasError && (
+                           <p className="text-danger mb-5 small">{errors.announcements.msg}</p>
+                        )}
+                        {emptyErrors.announcements && (
                            <p className="text-danger mb-5 small">This field is required</p>
                         )}
 
