@@ -34,4 +34,4 @@ After nyong ma clone tong front end sa mga computer nyo, eto mga need nyo gawin:
 ## CLONING:
 1. **Sa cmd, navigate muna kayo sa folder kung san nyo gusto ilagay yung project na to**
 - Run nyo yung command na to `git clone https://github.com/DaveMagracia/online-exam-management-system-BACKEND.git`
-- pagka clone, pwede nyo na buksan yung folder sa VS Code then pwede na kau mag code :>>
+- pagka clone, pwede nyo na buksan yung folder sa VS Code then pwede na kau mag code :>>"# Examplify-FRONTEND-With-Admin" 
